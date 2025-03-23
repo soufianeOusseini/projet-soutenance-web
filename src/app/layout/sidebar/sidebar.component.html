@@ -1,0 +1,41 @@
+<nav id="sidebar" class="sidebar-wrapper">
+  <div class="app-brand px-3 py-2 d-flex align-items-center">
+    <a routerLink="/">
+      <img src="assets/images/logo.svg" class="logo" alt="Application Logo" />
+    </a>
+  </div>
+
+  <div class="sidebarMenuScroll">
+    <ul class="sidebar-menu">
+      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': item.active, 'treeview': hasChildren(item),'open': isMenuOpen(item)}">
+        <a [routerLink]="item.link ? [item.link] : null" [href]="!item.link && !hasChildren(item) ? '#!' : null" (click)="hasChildren(item) ? toggleMenu(item, $event) : null">
+          <i [class]="item.icon"></i>
+          <span class="menu-text">{{ item.text }}</span>
+          <span *ngIf="item.badge" class="badge border border-{{ item.badge.type }} text-{{ item.badge.type }} rounded-5 ms-2">{{ item.badge.text }}</span>
+        </a>
+
+        <ul *ngIf="hasChildren(item)" class="treeview-menu" [ngClass]="{'show': isMenuOpen(item)}">
+          <li *ngFor="let child of item.children">
+            <a *ngIf="!hasChildren(child)" [routerLink]="child.link ? [child.link] : null" [href]="!child.link ? '#!' : null">
+              {{ child.text }}
+            </a>
+
+            <ng-container *ngIf="hasChildren(child)">
+              <a href="#!">
+                {{ child.text }}
+                <i class="bi bi-chevron-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li *ngFor="let subChild of child.children">
+                  <a [routerLink]="subChild.link ? [subChild.link] : null" [href]="!subChild.link ? '#!' : null">
+                    {{ subChild.text }}
+                  </a>
+                </li>
+              </ul>
+            </ng-container>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>

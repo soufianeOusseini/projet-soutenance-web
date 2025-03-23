@@ -1,0 +1,81 @@
+<div class="app-body">
+
+  <!-- Container starts -->
+  <div class="container-fluid">
+
+    <!-- Row start -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Customers</h4>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-end mb-2">
+              <button type="button" class="btn btn-primary"  (click)="add()">
+                Add Customer
+              </button>
+
+            </div>
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Company</th>
+                    <th>Designation</th>
+                    <th>Location</th>
+                    <th>Social</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Kristy Collins</td>
+                    <td>infotesting.com</td>
+                    <td>999-999-9999</td>
+                    <td>Bootstrap Gallery</td>
+                    <td>UX Designer</td>
+                    <td>California</td>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <a href="javascript:void(0)">
+                          <img src="assets/images/social/facebook.svg" class="img-1x"
+                               alt="Bootstrap Gallery" />
+                        </a>
+                        <a href="javascript:void(0)">
+                          <img src="assets/images/social/twitter.svg" class="img-1x"
+                               alt="Bootstrap Gallery" />
+                        </a>
+                        <a href="javascript:void(0)">
+                          <img src="assets/images/social/linkedin.svg" class="img-1x"
+                               alt="Bootstrap Gallery" />
+                        </a>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge border border-success text-success">Active</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-success btn-sm">
+                        Activate
+                      </button>
+                    </td>
+                  </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

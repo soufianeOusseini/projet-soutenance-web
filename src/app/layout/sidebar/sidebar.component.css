@@ -1,0 +1,22 @@
+/* Dans votre fichier sidebar.component.scss */
+
+/* État par défaut du sous-menu */
+.treeview-menu {
+  display: none;
+  overflow: hidden;
+}
+
+/* Afficher le sous-menu quand parent ouvert */
+.treeview.open > .treeview-menu {
+  display: block;
+}
+
+/* Animation pour la flèche */
+.rotate-chevron {
+  transform: rotate(90deg);
+}
+
+/* Transition pour la flèche */
+.bi-chevron-right {
+  transition: transform 0.3s ease;
+}
