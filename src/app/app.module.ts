@@ -8,26 +8,19 @@ import { HeaderComponent } from './layout/header/header.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
 import {AuthModule} from "./auth/auth.module";
-import {HttpClientModule} from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {AdminModule} from "./admin/admin.module";
 import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    RouterModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    BrowserModule,
-    AppRoutingModule,
-    AuthModule,
-    AdminModule,
-    NgbModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent
+    ],
+    bootstrap: [AppComponent], imports: [RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserModule,
+        AppRoutingModule,
+        AuthModule,
+        AdminModule,
+        NgbModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
