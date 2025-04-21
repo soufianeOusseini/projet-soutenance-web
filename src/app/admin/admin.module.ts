@@ -18,6 +18,7 @@ import { TrajetComponent } from './trajet/trajet.component';
 import { ColisComponent } from './colis/colis.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { ReservationComponent } from './reservation/reservation.component';
+import { StaffsComponent } from './staffs/staffs.component';
 
 
 
@@ -33,7 +34,8 @@ import { ReservationComponent } from './reservation/reservation.component';
     TrajetComponent,
     ColisComponent,
     TicketComponent,
-    ReservationComponent
+    ReservationComponent,
+    StaffsComponent
   ],
   imports: [
     RouterModule,

@@ -29,7 +29,7 @@ export class SidebarComponent implements OnInit {
       {
         id: 2,
         icon: 'bi bi-car-front',
-        text: 'Trips',
+        text: 'Trajets',
         link: '/trips',
         badge: {
           text: 'New',
@@ -42,9 +42,32 @@ export class SidebarComponent implements OnInit {
         text: 'Compagnies',
         link: '/admin/companies',
       },
-
       {
         id: 4,
+        icon: 'bi bi-car-front',
+        text: 'Bus',
+        link: '/admin/bus',
+      },
+      {
+        id: 5,
+        icon: 'bi bi-car-front',
+        text: 'Colis',
+        link: '/admin/colis',
+      },
+      {
+        id: 6,
+        icon: 'bi bi-car-front',
+        text: 'Tickets',
+        link: '/admin/tickets',
+      },
+      {
+        id: 7,
+        icon: 'bi bi-car-front',
+        text: 'Reservations',
+        link: '/admin/reservations',
+      },
+      {
+        id: 8,
         icon: 'bi bi-calendar2',
         text: 'Calendars',
         children: [
@@ -61,6 +84,12 @@ export class SidebarComponent implements OnInit {
             link: '/calendar-google'
           }
         ]
+      },
+      {
+        id: 9,
+        icon: 'bi bi-car-front',
+        text: 'Staffs',
+        link: '/admin/staffs',
       },
     ];
   }
