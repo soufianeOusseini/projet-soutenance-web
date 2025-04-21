@@ -1,83 +1,80 @@
-<div class="modal fade" id="addContact" tabindex="-1" aria-labelledby="addContactLabel"
-     aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addContactLabel">
-          Add Contact
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+
+<div class="modal-header">
+  <h5 class="modal-title" id="addContactLabel">Création d'une compagnie</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
+      <div class="col-xl-12 col-12">
         <div class="row">
-          <div class="col-xl-12 col-12">
-            <div class="row">
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="fullName" class="form-label">Full Name</label>
-                  <input type="text" class="form-control" id="fullName" placeholder="Full Name" />
-                </div>
-              </div>
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="emailID" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="emailID" placeholder="Email ID" />
-                </div>
-              </div>
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="contactNumber" class="form-label">Phone Number</label>
-                  <input type="text" class="form-control" id="contactNumber"
-                         placeholder="Contact" />
-                </div>
-              </div>
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="companyName" class="form-label">Company</label>
-                  <input type="text" class="form-control" id="companyName"
-                         placeholder="Company" />
-                </div>
-              </div>
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="designationName" class="form-label">Designation</label>
-                  <input type="text" class="form-control" id="designationName"
-                         placeholder="Designation" />
-                </div>
-              </div>
-              <div class="col-6">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label for="locationName" class="form-label">Location</label>
-                  <input type="text" class="form-control" id="locationName"
-                         placeholder="Location" />
-                </div>
-              </div>
-              <div class="col-12">
-                <!-- Form Field Start -->
-                <div class="mb-3">
-                  <label class="form-label">Message</label>
-                  <textarea class="form-control" rows="2"></textarea>
-                </div>
-              </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Nom</label>
+              <input type="text" class="form-control" id="fullName" placeholder="Full Name" formControlName="name"/>
             </div>
           </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="emailID" class="form-label">Email</label>
+              <input type="email" class="form-control" id="emailID" placeholder="Email ID" formControlName="email"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="contactNumber" class="form-label">Adresse</label>
+              <input type="text" class="form-control" id="contactNumber" placeholder="Adresse" formControlName="address"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="companyName" class="form-label">Téléphone</label>
+              <input type="text" class="form-control" id="companyName" placeholder="Téléphone" formControlName="phone_number"/>
+            </div>
+          </div>
+
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">
-          Create Contact
-        </button>
-      </div>
-    </div>
+    </form>
+
   </div>
 </div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <span class="icon-on"
+    ><i class="ri-close-circle-line align-bottom"></i>
+      Effacer</span
+    >
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="!formGroup.value.id"
+  >
+    <span class="icon-on"
+    ><i class="ri-save-line align-bottom"></i>
+      Enregistrer</span
+    >
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    *ngIf="formGroup.value.id"
+  >
+    <span class="icon-on"
+    ><i class="ri-save-line align-bottom"></i>
+      Modifier</span
+    >
+  </button>
+</div>
+

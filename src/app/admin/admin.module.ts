@@ -10,6 +10,9 @@ import {AdminRoutingModule} from "./admin-routing.module";
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AddFormComponent } from './companies/add-form/add-form.component';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {DialogModule} from "primeng/dialog";
+import {Button} from "primeng/button";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -27,7 +30,10 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     CommonModule,
     RouterOutlet,
     AdminRoutingModule,
-    NgbModule
+    NgbModule,
+    DialogModule,
+    Button,
+    ReactiveFormsModule
   ]
 })
 export class AdminModule { }
