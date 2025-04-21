@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {Companie} from "../../../models/companie";
+import {CompanieModel} from "../../../models/companie.model";
 import {CompaniesService} from "../../../services/companies.service";
 
 @Component({
@@ -11,7 +11,7 @@ import {CompaniesService} from "../../../services/companies.service";
     standalone: false
 })
 export class AddFormComponent implements OnInit {
-  companies: Companie = new Companie();
+  companies: CompanieModel = new CompanieModel();
   formGroup: FormGroup = new FormGroup({}) ;
   constructor(public activeModal: NgbActiveModal,private fb: FormBuilder,private companiesService: CompaniesService) {}
 

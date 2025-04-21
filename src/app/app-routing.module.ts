@@ -4,15 +4,15 @@ import {LoginComponent} from "./auth/login/login.component";
 import {AdminComponent} from "./admin/admin.component";
 
 const routes: Routes = [
-  { path: '', component: AdminComponent },
-  {
-    path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
+  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  { path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
-  {
-    path: 'admin', loadChildren:() => import('./admin/admin.module').then(m => m.AdminModule)
-  }
+  { path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+  },
+  { path: 'login', component: LoginComponent },
 ];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

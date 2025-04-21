@@ -13,6 +13,11 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {DialogModule} from "primeng/dialog";
 import {Button} from "primeng/button";
 import {ReactiveFormsModule} from "@angular/forms";
+import { BusComponent } from './bus/bus.component';
+import { TrajetComponent } from './trajet/trajet.component';
+import { ColisComponent } from './colis/colis.component';
+import { TicketComponent } from './ticket/ticket.component';
+import { ReservationComponent } from './reservation/reservation.component';
 
 
 
@@ -23,7 +28,12 @@ import {ReactiveFormsModule} from "@angular/forms";
     HeaderComponent,
     CompaniesComponent,
     DashboardComponent,
-    AddFormComponent
+    AddFormComponent,
+    BusComponent,
+    TrajetComponent,
+    ColisComponent,
+    TicketComponent,
+    ReservationComponent
   ],
   imports: [
     RouterModule,

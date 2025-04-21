@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {User} from "../models/user";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
-import {Companie} from "../models/companie";
+import {CompanieModel} from "../models/companie.model";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class CompaniesService {
   constructor(private http: HttpClient) { }
 
 
-  save(companies: Companie): Observable<Companie> {
-    return this.http.post<Companie>(`${(this.url)}`, companies)
+  save(companies: CompanieModel): Observable<CompanieModel> {
+    return this.http.post<CompanieModel>(`${(this.url)}`, companies)
   }
 }
