@@ -1,42 +1,127 @@
-
 <div class="modal-header">
-  <h5 class="modal-title" id="addContactLabel">Création d'une compagnie</h5>
+  <h5 class="modal-title" id="addContactLabel">{{ isEditMode ? 'Modification' : 'Création' }} d'une compagnie</h5>
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
   <div class="row">
-    <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
+    <form [formGroup]="formGroup" (ngSubmit)="save()">
       <div class="col-xl-12 col-12">
         <div class="row">
+
+          <!-- Section Admin -->
+          <div class="col-12 mb-2">
+            <h6 class="fw-bold">Information de l'admin</h6>
+          </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="fullName" class="form-label">Nom</label>
-              <input type="text" class="form-control" id="fullName" placeholder="Full Name" formControlName="name"/>
+              <label for="adminFirstName" class="form-label">Prénom *</label>
+              <input type="text" class="form-control" id="adminFirstName" placeholder="Prénom" formControlName="adminFirstName"/>
+              <div *ngIf="formGroup.get('adminFirstName')?.invalid && formGroup.get('adminFirstName')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
             </div>
           </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="emailID" class="form-label">Email</label>
-              <input type="email" class="form-control" id="emailID" placeholder="Email ID" formControlName="email"/>
+              <label for="adminLastName" class="form-label">Nom *</label>
+              <input type="text" class="form-control" id="adminLastName" placeholder="Nom" formControlName="adminLastName"/>
+              <div *ngIf="formGroup.get('adminLastName')?.invalid && formGroup.get('adminLastName')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
             </div>
           </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="contactNumber" class="form-label">Adresse</label>
+              <label for="adminPhone" class="form-label">Téléphone *</label>
+              <input type="text" class="form-control" id="adminPhone" placeholder="Téléphone" formControlName="adminPhone"/>
+              <div *ngIf="formGroup.get('adminPhone')?.invalid && formGroup.get('adminPhone')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="adminEmail" class="form-label">Email *</label>
+              <input type="email" class="form-control" id="adminEmail" placeholder="Email" formControlName="adminEmail"/>
+              <div *ngIf="formGroup.get('adminEmail')?.invalid && formGroup.get('adminEmail')?.touched" class="text-danger small">
+                <span *ngIf="formGroup.get('adminEmail')?.errors?.['required']">Champ obligatoire</span>
+                <span *ngIf="formGroup.get('adminEmail')?.errors?.['email']">Email invalide</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Compagnie -->
+          <div class="col-12 mt-3 mb-2">
+            <h6 class="fw-bold">Information de la compagnie</h6>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Nom *</label>
+              <input type="text" class="form-control" id="fullName" placeholder="Nom de la compagnie" formControlName="name"/>
+              <div *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="emailID" class="form-label">Email *</label>
+              <input type="email" class="form-control" id="emailID" placeholder="Email" formControlName="email"/>
+              <div *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched" class="text-danger small">
+                <span *ngIf="formGroup.get('email')?.errors?.['required']">Champ obligatoire</span>
+                <span *ngIf="formGroup.get('email')?.errors?.['email']">Email invalide</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="contactNumber" class="form-label">Adresse *</label>
               <input type="text" class="form-control" id="contactNumber" placeholder="Adresse" formControlName="address"/>
+              <div *ngIf="formGroup.get('address')?.invalid && formGroup.get('address')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
             </div>
           </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="companyName" class="form-label">Téléphone</label>
-              <input type="text" class="form-control" id="companyName" placeholder="Téléphone" formControlName="phone_number"/>
+              <label for="postalCode" class="form-label">Boîte postale *</label>
+              <input type="text" class="form-control" id="postalCode" placeholder="Boîte postale" formControlName="postalCode"/>
+              <div *ngIf="formGroup.get('postalCode')?.invalid && formGroup.get('postalCode')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="companyName" class="form-label">Téléphone *</label>
+              <input type="text" class="form-control" id="companyName" placeholder="Téléphone" formControlName="telephone"/>
+              <div *ngIf="formGroup.get('telephone')?.invalid && formGroup.get('telephone')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="city" class="form-label">Ville *</label>
+              <input type="text" class="form-control" id="city" placeholder="Ville" formControlName="city"/>
+              <div *ngIf="formGroup.get('city')?.invalid && formGroup.get('city')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="region" class="form-label">Région *</label>
+              <input type="text" class="form-control" id="region" placeholder="Région" formControlName="region"/>
+              <div *ngIf="formGroup.get('region')?.invalid && formGroup.get('region')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
             </div>
           </div>
 
         </div>
       </div>
     </form>
-
   </div>
 </div>
 <div class="modal-footer">
@@ -57,7 +142,7 @@
     data-bs-toggle="button"
     [disabled]="formGroup.invalid"
     (click)="save()"
-    *ngIf="!formGroup.value.id"
+    *ngIf="!isEditMode"
   >
     <span class="icon-on"
     ><i class="ri-save-line align-bottom"></i>
@@ -69,7 +154,8 @@
     class="btn btn-success btn-sm custom-toggle me-1"
     data-bs-toggle="button"
     [disabled]="formGroup.invalid"
-    *ngIf="formGroup.value.id"
+    (click)="save()"
+    *ngIf="isEditMode"
   >
     <span class="icon-on"
     ><i class="ri-save-line align-bottom"></i>
@@ -77,4 +163,3 @@
     >
   </button>
 </div>
-

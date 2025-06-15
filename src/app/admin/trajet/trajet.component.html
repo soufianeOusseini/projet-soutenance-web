@@ -1,8 +1,6 @@
 <div class="app-body">
-
   <!-- Container starts -->
   <div class="container-fluid">
-
     <!-- Row start -->
     <div class="row">
       <div class="col-12">
@@ -11,10 +9,62 @@
             <h4 class="card-title">Trajets</h4>
           </div>
 
+          <div class="card-body">
+            <div class="d-flex justify-content-end mb-2">
+              <button type="button" class="btn btn-primary" (click)="add()">
+                <i class="ri-add-line align-bottom"></i> Ajouter un trajet
+              </button>
+            </div>
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Nom</th>
+                    <th>Ville de départ</th>
+                    <th>Ville d'arrivée</th>
+                    <th>Kilomètres</th>
+                    <th>Heure de départ</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngIf="loading">
+                    <td colspan="6" class="text-center">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="!loading && trajets.length === 0">
+                    <td colspan="6" class="text-center">
+                      Aucun trajet disponible
+                    </td>
+                  </tr>
+                  <tr *ngFor="let trajet of trajets">
+                    <td>{{ trajet.nom }}</td>
+                    <td>{{ trajet.villeDepart }}</td>
+                    <td>{{ trajet.villeArrive }}</td>
+                    <td>{{ trajet.km }} km</td>
+                    <td>{{ trajet.heure }}</td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-info" (click)="edit(trajet)" title="Modifier">
+                          <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(trajet.id!)" title="Supprimer">
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-
 </div>

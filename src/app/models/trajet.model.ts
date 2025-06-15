@@ -4,6 +4,6 @@ export class Trajet {
   villeDepart: string | undefined;
   villeArrive: string | undefined;
   km: number | undefined;
-  heure: string | undefined;
+  heure:  Date| undefined;
   status: string | undefined;
 }

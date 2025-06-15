@@ -8,68 +8,84 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Customers</h4>
+            <h4 class="card-title">Compagnies</h4>
           </div>
           <div class="card-body">
             <div class="d-flex justify-content-end mb-2">
-              <button type="button" class="btn btn-primary"  (click)="add()">
-                Add Customer
+              <button type="button" class="btn btn-primary" (click)="add()">
+                <i class="ri-add-line align-middle me-1"></i> Ajouter une compagnie
               </button>
             </div>
+
             <div class="table-outer">
               <div class="table-responsive">
                 <table class="table align-middle custom-table m-0">
                   <thead>
                   <tr class="bg-light">
-                    <th>Name</th>
+                    <th>Nom</th>
                     <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Company</th>
-                    <th>Designation</th>
-                    <th>Location</th>
-                    <th>Social</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Ville</th>
+                    <th>Région</th>
+                    <th>Admin</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>Kristy Collins</td>
-                    <td>infotesting.com</td>
-                    <td>999-999-9999</td>
-                    <td>Bootstrap Gallery</td>
-                    <td>UX Designer</td>
-                    <td>California</td>
+                  <tr *ngFor="let company of companies">
+                    <td>{{ company.name }}</td>
+                    <td>{{ company.email }}</td>
+                    <td>{{ company.telephone }}</td>
+                    <td>{{ company.address }}</td>
+                    <td>{{ company.city }}</td>
+                    <td>{{ company.region }}</td>
+                    <td>{{ company.admin?.firstName }} {{ company.admin?.lastName }}</td>
                     <td>
-                      <div class="d-flex gap-1">
-                        <a href="javascript:void(0)">
-                          <img src="assets/images/social/facebook.svg" class="img-1x"
-                               alt="Bootstrap Gallery" />
-                        </a>
-                        <a href="javascript:void(0)">
-                          <img src="assets/images/social/twitter.svg" class="img-1x"
-                               alt="Bootstrap Gallery" />
-                        </a>
-                        <a href="javascript:void(0)">
-                          <img src="assets/images/social/linkedin.svg" class="img-1x"
-                               alt="Bootstrap Gallery" />
-                        </a>
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          [checked]="company.status === CompanyStatus.ACTIVE"
+                          (change)="changeStatus(company.id!)"
+                          [title]="company.status === CompanyStatus.ACTIVE ? 'Désactiver' : 'Activer'"
+                        />
+                        <label class="form-check-label">
+                          {{ company.status }}
+                        </label>
                       </div>
                     </td>
+
                     <td>
-                      <span class="badge border border-success text-success">Active</span>
-                    </td>
-                    <td>
-                      <button class="btn btn-success btn-sm">
-                        Activate
-                      </button>
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-info" (click)="edit(company)">
+                          <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="confirmDelete(company)">
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
-
+                  <tr *ngIf="companies.length === 0">
+                    <td colspan="9" class="text-center">
+                      Aucune compagnie trouvée
+                    </td>
+                  </tr>
                   </tbody>
                 </table>
               </div>
             </div>
+
+            <!-- Loading spinner -->
+            <div *ngIf="isLoading" class="d-flex justify-content-center mt-3">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

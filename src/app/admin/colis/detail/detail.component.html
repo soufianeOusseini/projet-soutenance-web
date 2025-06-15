@@ -1,0 +1,266 @@
+<div class="app-body">
+  <div class="container-fluid">
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="mt-3">Chargement des détails du colis...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-container">
+      <div class="alert alert-danger" role="alert">
+        <i class="ri-error-warning-line me-2"></i>
+        Erreur lors du chargement des détails du colis.
+        <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadColisDetail()">
+          <i class="ri-refresh-line me-1"></i>Réessayer
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="colis && !loading && !error" class="detail-content">
+
+      <!-- Header Section -->
+      <div class="detail-header" [class.animated]="headerAnimated">
+        <div class="row align-items-center mb-4">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center">
+              <button class="btn btn-outline-secondary me-3 back-btn" (click)="goBack()">
+                <i class="ri-arrow-left-line me-1"></i>Retour
+              </button>
+              <div>
+                <h1 class="page-title mb-1">Colis {{ colis.numero }}</h1>
+                <p class="page-subtitle mb-0">Détails complets du colis</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="action-buttons">
+              <button class="btn btn-outline-primary me-2" (click)="printColis()">
+                <i class="ri-printer-line me-1"></i>Imprimer
+              </button>
+              <button class="btn btn-primary" (click)="editColis()">
+                <i class="ri-edit-line me-1"></i>Modifier
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Progress -->
+        <div class="status-progress-card">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="status-info">
+                <span [ngClass]="getStatusBadgeClass(colis.status)" class="status-badge">
+                  <i [ngClass]="getStatusIcon(colis.status)" class="me-1"></i>
+                  {{ colis.status }}
+                </span>
+                <h5 class="status-title mt-2">Suivi du colis</h5>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="progress-circle">
+                <div class="progress-ring">
+                  <div class="progress-fill" [style.--progress]="getProgressPercentage(colis.status) + '%'"></div>
+                  <span class="progress-text">{{ getProgressPercentage(colis.status) }}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="progress-bar-container mt-3">
+            <div class="progress custom-progress">
+              <div class="progress-bar" [style.width.%]="getProgressPercentage(colis.status)"
+                   [ngClass]="'bg-' + (colis.status === 'LIVRE' ? 'success' : colis.status === 'EN_TRANSIT' ? 'info' : 'warning')">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="row">
+
+        <!-- Left Column - Colis Information -->
+        <div class="col-xl-8 col-lg-7">
+
+          <!-- General Information Card -->
+          <div class="info-card" [class.animated]="cardAnimated">
+            <div class="card-header-custom">
+              <h5 class="card-title-custom">
+                <i class="ri-information-line me-2"></i>
+                Informations générales
+              </h5>
+            </div>
+            <div class="card-body-custom">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Numéro de colis</label>
+                    <div class="info-value">{{ colis.numero }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Prix</label>
+                    <div class="info-value price-value">{{ colis.prix | currency:'XOF':'symbol':'1.0-0' }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Expéditeur</label>
+                    <div class="info-value">{{ colis.expediteur }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Destinataire</label>
+                    <div class="info-value">{{ colis.destinateur }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Lieu d'envoi</label>
+                    <div class="info-value location-value">
+                      <i class="ri-map-pin-line me-1"></i>{{ colis.lieuEnvoi }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Lieu de réception</label>
+                    <div class="info-value location-value">
+                      <i class="ri-map-pin-2-line me-1"></i>{{ colis.lieuReception }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12" *ngIf="colis.heureEnvoi">
+                  <div class="info-item">
+                    <label class="info-label">Heure d'envoi</label>
+                    <div class="info-value">
+                      <i class="ri-calendar-line me-1"></i>
+                      {{ colis.heureEnvoi | date:'dd/MM/yyyy à HH:mm' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items Card -->
+          <div class="info-card" [class.animated]="itemsAnimated">
+            <div class="card-header-custom">
+              <h5 class="card-title-custom">
+                <i class="ri-package-line me-2"></i>
+                Articles du colis ({{ colis.colisItems?.length || 0 }})
+              </h5>
+            </div>
+            <div class="card-body-custom">
+              <div *ngIf="!colis.colisItems || colis.colisItems.length === 0" class="empty-state">
+                <i class="ri-inbox-line empty-icon"></i>
+                <p class="empty-text">Aucun article dans ce colis</p>
+              </div>
+
+              <div *ngIf="colis.colisItems && colis.colisItems.length > 0" class="items-list">
+                <div *ngFor="let item of colis.colisItems; let i = index"
+                     class="item-card"
+                     [style.animation-delay]="(i * 100) + 'ms'">
+                  <div class="item-header">
+                    <div class="item-number">{{ i + 1 }}</div>
+                    <div class="item-details">
+                      <h6 class="item-description">{{ item.description }}</h6>
+                      <div class="item-meta">
+                        <span class="item-nature">
+                          <i class="ri-price-tag-3-line me-1"></i>{{ item.nature }}
+                        </span>
+                        <span class="item-quantity">
+                          <i class="ri-stack-line me-1"></i>Quantité: {{ item.nombre }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Timeline & Stats -->
+        <div class="col-xl-4 col-lg-5">
+
+          <!-- Quick Stats Card -->
+          <div class="stats-card" [class.animated]="cardAnimated">
+            <div class="card-header-custom">
+              <h5 class="card-title-custom">
+                <i class="ri-dashboard-line me-2"></i>
+                Statistiques rapides
+              </h5>
+            </div>
+            <div class="card-body-custom">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-icon bg-primary">
+                    <i class="ri-package-2-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ colis.colisItems?.length || 0 }}</div>
+                    <div class="stat-label">Articles</div>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon bg-success">
+                    <i class="ri-money-dollar-circle-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ colis.prix | currency:'XOF':'symbol':'1.0-0' }}</div>
+                    <div class="stat-label">Valeur</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status Timeline Card -->
+          <div class="timeline-card" [class.animated]="itemsAnimated">
+            <div class="card-header-custom">
+              <h5 class="card-title-custom">
+                <i class="ri-time-line me-2"></i>
+                Chronologie
+              </h5>
+            </div>
+            <div class="card-body-custom">
+              <div class="timeline">
+                <div class="timeline-item" [class.active]="colis.status === 'EN_ATTENTE' || colis.status === 'EN_TRANSIT' || colis.status === 'LIVRE'">
+                  <div class="timeline-marker bg-warning"></div>
+                  <div class="timeline-content">
+                    <h6>Colis en attente</h6>
+                    <p>Le colis a été enregistré</p>
+                  </div>
+                </div>
+                <div class="timeline-item" [class.active]="colis.status === 'EN_TRANSIT' || colis.status === 'LIVRE'">
+                  <div class="timeline-marker bg-info"></div>
+                  <div class="timeline-content">
+                    <h6>En transit</h6>
+                    <p>Le colis est en cours de livraison</p>
+                  </div>
+                </div>
+                <div class="timeline-item" [class.active]="colis.status === 'LIVRE'">
+                  <div class="timeline-marker bg-success"></div>
+                  <div class="timeline-content">
+                    <h6>Livré</h6>
+                    <p>Le colis a été livré avec succès</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

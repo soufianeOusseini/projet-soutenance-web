@@ -14,7 +14,7 @@ import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {AuthInterceptor} from "./utils/auth.interceptor";
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -25,7 +25,7 @@ import {AuthInterceptor} from "./utils/auth.interceptor";
     AppRoutingModule,
     AuthModule,
     AdminModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

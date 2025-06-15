@@ -9,6 +9,8 @@ import {ColisComponent} from "./colis/colis.component";
 import {TicketComponent} from "./ticket/ticket.component";
 import {ReservationComponent} from "./reservation/reservation.component";
 import {StaffsComponent} from "./staffs/staffs.component";
+import {DetailComponent} from "./colis/detail/detail.component";
+import {ProfilComponent} from "./profil/profil.component";
 
 
 const routes: Routes = [
@@ -37,6 +39,10 @@ const routes: Routes = [
         component: ColisComponent,
       },
       {
+        path: 'colis/detail/:id',
+        component: DetailComponent
+      },
+      {
         path: 'tickets',
         component: TicketComponent,
       },
@@ -56,6 +62,9 @@ const routes: Routes = [
         path: '',
         redirectTo: 'companies',
         pathMatch: 'full'
+      },
+      {
+        path: 'profil', component: ProfilComponent
       }
     ]
   }

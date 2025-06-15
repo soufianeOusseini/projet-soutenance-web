@@ -1,0 +1,99 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addContactLabel">{{isEditMode ? 'Modification' : 'Création'}} d'un Trajet</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="isEditMode ? update() : save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nom *</label>
+              <input type="text" class="form-control" id="name" placeholder="Nom" formControlName="nom"/>
+              <div *ngIf="nom?.invalid && (nom?.dirty || nom?.touched)" class="text-danger">
+                <small *ngIf="nom?.errors?.['required']">Le nom est obligatoire</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="villeDepart" class="form-label">Ville de départ *</label>
+              <input type="text" class="form-control" id="villeDepart" placeholder="Ville de départ" formControlName="villeDepart"/>
+              <div *ngIf="villeDepart?.invalid && (villeDepart?.dirty || villeDepart?.touched)" class="text-danger">
+                <small *ngIf="villeDepart?.errors?.['required']">La ville de départ est obligatoire</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="villeArrive" class="form-label">Ville d'arrivée *</label>
+              <input type="text" class="form-control" id="villeArrive" placeholder="Ville d'arrivée" formControlName="villeArrive"/>
+              <div *ngIf="villeArrive?.invalid && (villeArrive?.dirty || villeArrive?.touched)" class="text-danger">
+                <small *ngIf="villeArrive?.errors?.['required']">La ville d'arrivée est obligatoire</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="km" class="form-label">Nombre de kilomètres *</label>
+              <input type="number" class="form-control" id="km" placeholder="Nombre de kilomètres" formControlName="km"/>
+              <div *ngIf="km?.invalid && (km?.dirty || km?.touched)" class="text-danger">
+                <small *ngIf="km?.errors?.['required']">Le nombre de kilomètres est obligatoire</small>
+                <small *ngIf="km?.errors?.['pattern']">Veuillez entrer un nombre valide</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="heure" class="form-label">Heure de départ *</label>
+              <input type="datetime-local" class="form-control" id="heure" placeholder="Heure de départ" formControlName="heure"/>
+              <div *ngIf="heure?.invalid && (heure?.dirty || heure?.touched)" class="text-danger">
+                <small *ngIf="heure?.errors?.['required']">L'heure de départ est obligatoire</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="!isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Enregistrer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="update()"
+    *ngIf="isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Modifier
+    </span>
+  </button>
+</div>

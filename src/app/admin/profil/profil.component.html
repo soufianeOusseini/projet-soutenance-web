@@ -1,0 +1,37 @@
+<div class="container my-4">
+  <div class="row">
+    <!-- Profile picture -->
+    <div class="col-md-4 text-center">
+      <div class="position-relative d-inline-block">
+        <!-- Profile Image -->
+        <img id="profileImage"
+             src="../../../assets/images/user1.png"
+             alt="Photo de profil"
+             class="img-fluid rounded-circle img-thumbnail"
+             style="width: 150px; height: 150px; object-fit: cover;" />
+
+        <!-- Camera Icon Overlay -->
+        <label for="uploadProfile"
+               class="position-absolute bottom-0 end-0 translate-middle p-1 bg-primary rounded-circle"
+               style="cursor: pointer;">
+          <i class="bi bi-camera-fill text-white"></i>
+          <input type="file" id="uploadProfile" accept="image/*" hidden />
+        </label>
+      </div>
+    </div>
+
+
+    <!-- User information -->
+    <div class="col-md-8">
+      <div class="card p-3">
+        <h5 class="mb-3">Informations de l'utilisateur</h5>
+        <ul class="list-unstyled">
+          <li><strong>Nom :</strong> {{currentUser.lastName}}</li>
+          <li><strong>Prénom :</strong> {{currentUser.firstName}}</li>
+          <li><strong>Email :</strong> {{currentUser.email}}</li>
+          <li><strong>Compagnie :</strong> {{currentUser.company.name}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

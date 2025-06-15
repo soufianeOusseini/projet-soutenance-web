@@ -39,13 +39,14 @@
       </a>
       <div class="dropdown-menu dropdown-menu-end shadow-sm">
         <div class="p-3 border-bottom mb-2">
-          <h6 class="mb-1">Ella Lindsey</h6>
-          <p class="m-0 small opacity-50">infotesting.com</p>
+          <h6 class="mb-1">{{currentUser.lastName}} {{ currentUser.firstName }}</h6>
         </div>
-        <a class="dropdown-item d-flex align-items-center" href="profile.html"><i
-          class="bi bi-person fs-4 me-2"></i>Profile</a>
-        <a class="dropdown-item d-flex align-items-center" href="settings.html"><i
-          class="bi bi-gear fs-4 me-2"></i>Settings</a>
+        <a class="dropdown-item d-flex align-items-center" (click)="profil()">
+          <i class="bi bi-person fs-4 me-2"></i>Profile
+        </a>
+        <a class="dropdown-item d-flex align-items-center" href="settings.html">
+          <i class="bi bi-gear fs-4 me-2"></i>Settings
+        </a>
         <div class="d-grid p-3 py-2">
           <a class="btn btn-danger" href="/login">Logout</a>
         </div>

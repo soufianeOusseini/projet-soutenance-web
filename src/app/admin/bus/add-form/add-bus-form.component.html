@@ -1,0 +1,131 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addContactLabel">Création d'un bus</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="model" class="form-label">Modèle *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="model"
+                placeholder="Modèle"
+                formControlName="model"
+                [class.is-invalid]="isFieldInvalid('model')"/>
+              <div *ngIf="isFieldInvalid('model')" class="invalid-feedback">
+                Le modèle est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="plaque" class="form-label">Plaque *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="plaque"
+                placeholder="Plaque"
+                formControlName="plaque"
+                [class.is-invalid]="isFieldInvalid('plaque')"/>
+              <div *ngIf="isFieldInvalid('plaque')" class="invalid-feedback">
+                La plaque est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="number" class="form-label">Numéro *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="number"
+                placeholder="Numéro"
+                formControlName="number"
+                [class.is-invalid]="isFieldInvalid('number')"/>
+              <div *ngIf="isFieldInvalid('number')" class="invalid-feedback">
+                Le numéro est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="type" class="form-label">Type *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="type"
+                placeholder="Type"
+                formControlName="type"
+                [class.is-invalid]="isFieldInvalid('type')"/>
+              <div *ngIf="isFieldInvalid('type')" class="invalid-feedback">
+                Le type est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="capacity" class="form-label">Capacité *</label>
+              <input
+                type="number"
+                class="form-control"
+                id="capacity"
+                placeholder="Capacité"
+                formControlName="capacity"
+                [class.is-invalid]="isFieldInvalid('capacity')"/>
+              <div *ngIf="isFieldInvalid('capacity')" class="invalid-feedback">
+                La capacité est obligatoire
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+    [disabled]="isSubmitting"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid || isSubmitting"
+    (click)="save()"
+    *ngIf="!formGroup.value.id"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      <span *ngIf="!isSubmitting">Enregistrer</span>
+      <span *ngIf="isSubmitting">Enregistrement...</span>
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid || isSubmitting"
+    (click)="save()"
+    *ngIf="formGroup.value.id"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      <span *ngIf="!isSubmitting">Modifier</span>
+      <span *ngIf="isSubmitting">Modification...</span>
+    </span>
+  </button>
+</div>

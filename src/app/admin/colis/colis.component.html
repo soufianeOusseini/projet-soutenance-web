@@ -1,20 +1,93 @@
 <div class="app-body">
-
   <!-- Container starts -->
   <div class="container-fluid">
-
     <!-- Row start -->
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Colis</h4>
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="card-title">Gestion des Colis</h4>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              <i class="ri-add-line align-bottom"></i> Nouveau Colis
+            </button>
           </div>
 
+          <div class="card-body">
+            <!-- Tableau des colis -->
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0 border">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Numéro</th>
+                    <th>Expéditeur</th>
+                    <th>Destinataire</th>
+                    <th>Prix</th>
+                    <th>Lieu d'envoi</th>
+                    <th>Lieu de réception</th>
+                    <th>Statut</th>
+                    <th>Articles du Colis</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngFor="let colis of filteredColis">
+
+                    <tr>
+                      <td>{{ colis.numero }}</td>
+                      <td>{{ colis.expediteur }}</td>
+                      <td>{{ colis.destinateur }}</td>
+                      <td>{{ colis.prix | currency:'XOF':'symbol':'1.0-0' }}</td>
+                      <td>{{ colis.lieuEnvoi }}</td>
+                      <td>{{ colis.lieuReception }}</td>
+                      <td>
+                          <span [ngClass]="getStatusBadgeClass(colis.status)">
+                            {{ colis.status }}
+                          </span>
+                      </td>
+                      <td>{{colis.colisItems!.length}}</td>
+                      <td>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-sm btn-primary" (click)="edit(colis)">
+                            <i class="ri-edit-line"></i>
+                          </button>
+                          <button class="btn btn-sm btn-primary" (click)="show(colis)">
+                            <i class="ri-eye-line"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger" (click)="delete(colis)">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+
+                  <tr *ngIf="filteredColis.length === 0">
+                    <td colspan="9" class="text-center">Aucun colis trouvé</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-
 </div>
+
+<!-- Modal de confirmation de suppression -->
+<ng-template #confirmDeleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Confirmer la suppression</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>Êtes-vous sûr de vouloir supprimer le colis {{ colisToDelete?.numero }} ?</p>
+    <p class="text-danger">Cette action est irréversible.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel')">Annuler</button>
+    <button type="button" class="btn btn-danger" (click)="confirmDelete()">Supprimer</button>
+  </div>
+</ng-template>

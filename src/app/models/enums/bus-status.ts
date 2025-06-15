@@ -1,0 +1,9 @@
+export enum BusStatus {
+  ACTIVE,
+  IN_MAINTENANCE,
+  OUT_OF_SERVICE,
+  RESERVED,
+  IN_TRANSIT,
+  AVAILABLE,
+  CLEANING
+}

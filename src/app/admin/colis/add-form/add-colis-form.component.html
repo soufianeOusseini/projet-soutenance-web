@@ -1,0 +1,159 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addContactLabel">{{ formGroup.value.id ? 'Modification' : 'Création' }} d'un colis</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form [formGroup]="formGroup">
+      <div class="col-xl-12 col-12">
+        <!-- Affichage du numéro en cas de modification -->
+        <div class="row" *ngIf="formGroup.value.id">
+          <div class="col-12 mb-3">
+            <label class="form-label">Numéro du colis</label>
+            <input type="text" class="form-control" [value]="formGroup.value.numero" readonly />
+          </div>
+        </div>
+
+        <!-- Champs principaux du colis -->
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="expediteur" class="form-label">Expediteur *</label>
+              <input type="text" class="form-control" id="expediteur" placeholder="Expediteur" formControlName="expediteur" required/>
+              <div *ngIf="formGroup.get('expediteur')?.invalid && formGroup.get('expediteur')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="destinateur" class="form-label">Destinateur *</label>
+              <input type="text" class="form-control" id="destinateur" placeholder="Destinateur" formControlName="destinateur" required/>
+              <div *ngIf="formGroup.get('destinateur')?.invalid && formGroup.get('destinateur')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="prix" class="form-label">Prix *</label>
+              <input type="number" class="form-control" id="prix" placeholder="Prix" formControlName="prix" required/>
+              <div *ngIf="formGroup.get('prix')?.invalid && formGroup.get('prix')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="lieuEnvoi" class="form-label">Lieu d'envoi *</label>
+              <input type="text" class="form-control" id="lieuEnvoi" placeholder="Lieu d'envoi" formControlName="lieuEnvoi" required/>
+              <div *ngIf="formGroup.get('lieuEnvoi')?.invalid && formGroup.get('lieuEnvoi')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="lieuReception" class="form-label">Lieu de reception *</label>
+              <input type="text" class="form-control" id="lieuReception" placeholder="Lieu de reception" formControlName="lieuReception" required/>
+              <div *ngIf="formGroup.get('lieuReception')?.invalid && formGroup.get('lieuReception')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="status" class="form-label">Statut *</label>
+              <select class="form-control" id="status" formControlName="status" required>
+                <option value="">Sélectionner un statut</option>
+                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+              </select>
+              <div *ngIf="formGroup.get('status')?.invalid && formGroup.get('status')?.touched" class="text-danger small">
+                Ce champ est obligatoire
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section pour les ColisItems -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5>Articles du colis</h5>
+              <button type="button" class="btn btn-info btn-sm" (click)="addColisItem()">
+                <i class="ri-add-line"></i> Ajouter un article
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Description *</th>
+                  <th>Nombre *</th>
+                  <th>Nature *</th>
+                  <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody formArrayName="colisItems">
+                <tr *ngFor="let item of colisItemsArray.controls; let i = index" [formGroupName]="i">
+                  <td>
+                    <input type="text" class="form-control" formControlName="description" placeholder="Description" required/>
+                    <div *ngIf="item.get('description')?.invalid && item.get('description')?.touched" class="text-danger small">
+                      Obligatoire
+                    </div>
+                  </td>
+                  <td>
+                    <input type="number" class="form-control" formControlName="nombre" placeholder="Nombre" required min="1"/>
+                    <div *ngIf="item.get('nombre')?.invalid && item.get('nombre')?.touched" class="text-danger small">
+                      Minimum 1
+                    </div>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" formControlName="nature" placeholder="Nature" required/>
+                    <div *ngIf="item.get('nature')?.invalid && item.get('nature')?.touched" class="text-danger small">
+                      Obligatoire
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="removeColisItem(i)">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="colisItemsArray.length === 0">
+                  <td colspan="4" class="text-center">
+                    Aucun article ajouté. Veuillez ajouter au moins un article.
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="colisItemsArray.invalid && formSubmitted" class="text-danger small mt-2">
+              Tous les articles doivent être correctement renseignés
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <i class="ri-close-circle-line align-bottom"></i> Effacer
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid || colisItemsArray.length === 0"
+    (click)="save()"
+  >
+    <i class="ri-save-line align-bottom"></i> {{ formGroup.value.id ? 'Modifier' : 'Enregistrer' }}
+  </button>
+</div>

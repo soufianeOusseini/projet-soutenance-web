@@ -8,13 +8,74 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Bus</h4>
+            <h4 class="card-title">Liste des Bus</h4>
           </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-end mb-2">
+              <button type="button" class="btn btn-primary" (click)="add()">
+                <i class="ri-add-line align-bottom me-1"></i> Ajouter un bus
+              </button>
+            </div>
 
+            <!-- Affichage du chargement -->
+            <div *ngIf="isLoading" class="text-center my-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="mt-2">Chargement des données...</p>
+            </div>
+
+            <!-- Message si aucun bus -->
+            <div *ngIf="!isLoading && buses.length === 0" class="text-center my-5">
+              <i class="ri-bus-line" style="font-size: 3rem;"></i>
+              <p class="mt-2">Aucun bus disponible. Cliquez sur "Ajouter un bus" pour commencer.</p>
+            </div>
+
+            <!-- Tableau des bus -->
+            <div class="table-outer" *ngIf="!isLoading && buses.length > 0">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Numéro</th>
+                    <th>Modèle</th>
+                    <th>Plaque</th>
+                    <th>Type</th>
+                    <th>Capacité</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let bus of buses">
+                    <td>{{ bus.number }}</td>
+                    <td>{{ bus.model }}</td>
+                    <td>{{ bus.plaque }}</td>
+                    <td>{{ bus.type }}</td>
+                    <td>{{ bus.capacity }}</td>
+                    <td>
+                        <span [class]="getStatusBadgeClass(bus.status)">
+                          {{ getStatusText(bus.status) }}
+                        </span>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-info" (click)="edit(bus)" title="Modifier">
+                          <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(bus.id)" title="Supprimer">
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-
 </div>

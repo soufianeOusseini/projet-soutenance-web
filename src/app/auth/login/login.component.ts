@@ -36,6 +36,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.user).subscribe({
       next: (data) => {
         window.location.href = this.returnUrl;
+        console.log("Auth OK");
       },
       error: (error) => {
         if (StatusCodes.UNAUTHORIZED == error.status) {
