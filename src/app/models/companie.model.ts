@@ -16,5 +16,6 @@ export class CompanieModel {
    adminEmail: string | undefined;
    admin: UserSummary | undefined;
    status: CompanyStatus | undefined;
+  logoPath: string | undefined;
 
 }

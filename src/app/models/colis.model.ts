@@ -2,6 +2,7 @@
 // models/colis.model.ts
 
 import {ColisItems} from "./colis-items";
+import {ColisStatus} from "./enums/colis-status";
 
 export class Colis {
   id?: number;
@@ -12,6 +13,6 @@ export class Colis {
   prix?: number;
   lieuEnvoi?: string;
   lieuReception?: string;
-  status?: string;
+  status?: ColisStatus;
   colisItems?: ColisItems[] = [];
 }

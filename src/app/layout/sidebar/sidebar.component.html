@@ -7,16 +7,26 @@
 
   <div class="sidebarMenuScroll">
     <ul class="sidebar-menu">
-      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': item.active, 'treeview': hasChildren(item),'open': isMenuOpen(item)}">
-        <a [routerLink]="item.link ? [item.link] : null" [href]="!item.link && !hasChildren(item) ? '#!' : null" (click)="hasChildren(item) ? toggleMenu(item, $event) : null">
+      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': isMenuActive(item), 'treeview': hasChildren(item),'open': isMenuOpen(item)}">
+        <a [routerLink]="item.link ? [item.link] : null"
+           [href]="!item.link && !hasChildren(item) ? '#!' : null"
+           (click)="hasChildren(item) ? toggleMenu(item, $event) : null"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact: true}"
+           [class.has-arrow]="hasChildren(item)">
           <i [class]="item.icon"></i>
           <span class="menu-text">{{ item.text }}</span>
           <span *ngIf="item.badge" class="badge border border-{{ item.badge.type }} text-{{ item.badge.type }} rounded-5 ms-2">{{ item.badge.text }}</span>
+          <i *ngIf="hasChildren(item)" class="bi bi-chevron-down ms-auto transition-transform" [class.rotate-180]="isMenuOpen(item)"></i>
         </a>
 
         <ul *ngIf="hasChildren(item)" class="treeview-menu" [ngClass]="{'show': isMenuOpen(item)}">
-          <li *ngFor="let child of item.children">
-            <a *ngIf="!hasChildren(child)" [routerLink]="child.link ? [child.link] : null" [href]="!child.link ? '#!' : null">
+          <li *ngFor="let child of item.children" [ngClass]="{'active': child.active}">
+            <a *ngIf="!hasChildren(child)"
+               [routerLink]="child.link ? [child.link] : null"
+               [href]="!child.link ? '#!' : null"
+               routerLinkActive="active"
+               [routerLinkActiveOptions]="{exact: true}">
               {{ child.text }}
             </a>
 
@@ -27,7 +37,10 @@
               </a>
               <ul class="treeview-menu">
                 <li *ngFor="let subChild of child.children">
-                  <a [routerLink]="subChild.link ? [subChild.link] : null" [href]="!subChild.link ? '#!' : null">
+                  <a [routerLink]="subChild.link ? [subChild.link] : null"
+                     [href]="!subChild.link ? '#!' : null"
+                     routerLinkActive="active"
+                     [routerLinkActiveOptions]="{exact: true}">
                     {{ subChild.text }}
                   </a>
                 </li>

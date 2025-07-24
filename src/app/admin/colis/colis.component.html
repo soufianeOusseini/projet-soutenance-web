@@ -42,7 +42,7 @@
                       <td>{{ colis.lieuReception }}</td>
                       <td>
                           <span [ngClass]="getStatusBadgeClass(colis.status)">
-                            {{ colis.status }}
+                            {{ getStatusLabel(colis.status) }}
                           </span>
                       </td>
                       <td>{{colis.colisItems!.length}}</td>

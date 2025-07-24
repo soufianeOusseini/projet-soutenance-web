@@ -6,6 +6,7 @@ import {UserProfile} from "./enums/user-profile";
 export class User extends BaseEntity {
   username: string;
   password: string;
+  passwordReseted: boolean | undefined;
   name: string;
   lastname: string;
   firstName: string;
@@ -20,6 +21,7 @@ export class User extends BaseEntity {
   profiles: null | undefined;
   profile: UserProfile | undefined;
   admin: boolean = false;
+  profilePath: string | undefined;
 
   constructor() {
     super();
@@ -31,5 +33,6 @@ export class User extends BaseEntity {
     this.rtoken = '';
     this.phone = '';
     this.firstName = '';
+
   }
 }

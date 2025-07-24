@@ -1,3 +1,5 @@
+import {BusStatus} from "./enums/bus-status";
+
 export class Bus {
   id?: number;
   plaque?: string;
@@ -6,6 +8,6 @@ export class Bus {
   number?: string;
   image?: string;
   type?: string;
-  status?: string;
+  status?: BusStatus;
   spaceAvailable?: number;
 }

@@ -12,7 +12,7 @@ import { AddFormComponent } from './companies/add-form/add-form.component';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {DialogModule} from "primeng/dialog";
 import {Button} from "primeng/button";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TrajetComponent } from './trajet/trajet.component';
 import { ColisComponent } from './colis/colis.component';
 import { TicketComponent } from './ticket/ticket.component';
@@ -26,6 +26,9 @@ import { AddStaffFormComponent } from './staffs/add-staff-form/add-staff-form.co
 import {BusComponent} from "./bus/bus.component";
 import { DetailComponent } from './colis/detail/detail.component';
 import {ProfilComponent} from "./profil/profil.component";
+import { MyCompanyComponent } from './my-company/my-company.component';
+import { GeneralComponent } from './my-company/tabs/general/general.component';
+import { AccountsComponent } from './my-company/tabs/accounts/accounts.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +50,10 @@ import {ProfilComponent} from "./profil/profil.component";
     AddTicketFormComponent,
     AddStaffFormComponent,
     DetailComponent,
-    ProfilComponent
+    ProfilComponent,
+    MyCompanyComponent,
+    GeneralComponent,
+    AccountsComponent
   ],
   imports: [
     RouterModule,
@@ -58,6 +64,7 @@ import {ProfilComponent} from "./profil/profil.component";
     DialogModule,
     Button,
     ReactiveFormsModule,
+    FormsModule,
   ]
 })
 export class AdminModule { }

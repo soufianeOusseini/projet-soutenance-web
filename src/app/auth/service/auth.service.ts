@@ -1,5 +1,5 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -88,7 +88,7 @@ export class AuthService {
     return '';
   }
 
-  private isAuthenticated(): boolean {
+  isAuthenticated(): boolean {
     const token = this.getToken();
     // Vérifier si le token existe et a un format JWT valide
     if (!token || token.split('.').length !== 3) {
@@ -257,5 +257,20 @@ export class AuthService {
 
   getCurrentUser(): Observable<User> {
     return this.httpClient.get<User>(`${this.AUTH_PATH}/current-user`);
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken(); // Utilisez votre méthode getToken() existante
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+// Aussi, modifiez la méthode changePassword pour utiliser le bon endpoint
+  changePassword(passwordData: { password: string }): Observable<any> {
+    return this.httpClient.post(`${this.AUTH_PATH}/reset-password`, passwordData, {
+      headers: this.getAuthHeaders()
+    });
   }
 }

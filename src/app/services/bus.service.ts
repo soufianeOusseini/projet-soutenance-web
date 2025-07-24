@@ -12,8 +12,14 @@ export class BusService {
   constructor(private http: HttpClient) { }
 
 
-  save(bus: Bus): Observable<Bus> {
-    return this.http.post<Bus>(`${(this.url)}`, bus)
+  save(data: Bus | FormData): Observable<any> {
+    if (data instanceof FormData) {
+      // Pour les données avec fichier (FormData)
+      return this.http.post<Bus>(`${this.url}`, data);
+    } else {
+      // Pour les données JSON simples
+      return this.http.post<Bus>(`${this.url}`, data);
+    }
   }
 
   getAll(): Observable<any> {

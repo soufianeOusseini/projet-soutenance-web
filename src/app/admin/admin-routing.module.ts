@@ -11,6 +11,7 @@ import {ReservationComponent} from "./reservation/reservation.component";
 import {StaffsComponent} from "./staffs/staffs.component";
 import {DetailComponent} from "./colis/detail/detail.component";
 import {ProfilComponent} from "./profil/profil.component";
+import {MyCompanyComponent} from "./my-company/my-company.component";
 
 
 const routes: Routes = [
@@ -65,6 +66,10 @@ const routes: Routes = [
       },
       {
         path: 'profil', component: ProfilComponent
+      },
+      {
+        path: 'my-company',
+        component: MyCompanyComponent
       }
     ]
   }

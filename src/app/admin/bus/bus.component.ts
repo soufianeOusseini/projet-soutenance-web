@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AddBusFormComponent } from "./add-form/add-bus-form.component";
-import { BusService } from "../../services/bus.service";
-import { Bus } from "../../models/bus.model";
+import {Component, OnInit} from '@angular/core';
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {AddBusFormComponent} from "./add-form/add-bus-form.component";
+import {BusService} from "../../services/bus.service";
+import {Bus} from "../../models/bus.model";
+import {BusStatus} from "../../models/enums/bus-status";
 
 @Component({
   selector: 'app-bus',
@@ -118,5 +119,24 @@ export class BusComponent implements OnInit {
 
   getStatusText(status: string | undefined): string {
     return status === 'ACTIVE' ? 'Disponible' : 'Non disponible';
+  }
+
+  getStatusLabel(status: BusStatus | undefined): string {
+    switch (status) {
+      case BusStatus.ACTIVE:
+        return 'Actif';
+      case BusStatus.IN_MAINTENANCE:
+        return 'En maintenance';
+      case BusStatus.AVAILABLE:
+        return 'Disponible';
+        case BusStatus.CLEANING:
+          return 'Nettoyage'
+      case BusStatus.IN_TRANSIT:
+        return 'En transi';
+
+      default:
+
+        return 'Inconnu';
+    }
   }
 }

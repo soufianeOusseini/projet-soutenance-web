@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../auth/service/auth.service";
 import {Router} from "@angular/router";
 import {Colis} from "../../models/colis.model";
+import {FileUtility} from "../../utils/file-util";
 
 @Component({
     selector: 'app-header',
@@ -28,4 +29,6 @@ export class HeaderComponent implements OnInit{
       }
     });
   }
+
+    protected readonly FileUtility = FileUtility;
 }

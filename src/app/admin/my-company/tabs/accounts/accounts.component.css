@@ -1,0 +1,11 @@
+.company-account-view .alert {
+  border-radius: 0.5rem;
+}
+
+.card.bg-light {
+  border: 1px solid #dee2e6;
+}
+
+.fa-tools {
+  opacity: 0.5;
+}

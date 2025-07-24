@@ -32,13 +32,8 @@ export class UserService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-  // Méthodes supplémentaires qui pourraient être utiles
 
-  resetPassword(userId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${userId}/reset-password`, {});
-  }
-
-  getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/me`);
+  uploadProfile(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/upload-profile`, formData);
   }
 }

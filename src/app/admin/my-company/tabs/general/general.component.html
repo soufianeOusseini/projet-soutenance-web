@@ -1,0 +1,132 @@
+<!-- Mode Lecture -->
+<div *ngIf="!editMode" class="company-general-view">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0">Informations générales</h5>
+    <button class="btn btn-primary btn-sm" (click)="toggleEditMode()">
+      <i class="fas fa-edit me-1"></i>
+      Modifier
+    </button>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Nom de l'établissement</label>
+      <p class="form-control-plaintext">{{ company?.name || 'Non renseigné' }}</p>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Email</label>
+      <p class="form-control-plaintext">{{ company?.email || 'Non renseigné' }}</p>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Téléphone</label>
+      <p class="form-control-plaintext">{{ company?.telephone || 'Non renseigné' }}</p>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Région</label>
+      <p class="form-control-plaintext">{{ company?.region || 'Non renseignée' }}</p>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Ville</label>
+      <p class="form-control-plaintext">{{ company?.city || 'Non renseignée' }}</p>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Code postal</label>
+      <p class="form-control-plaintext">{{ company?.postalCode || 'Non renseigné' }}</p>
+    </div>
+    <div class="col-12 mb-3">
+      <label class="form-label fw-bold">Adresse complète</label>
+      <p class="form-control-plaintext">{{ company?.address || 'Non renseignée' }}</p>
+    </div>
+  </div>
+
+  <hr class="my-4">
+</div>
+
+<!-- Mode Édition -->
+<div *ngIf="editMode" class="company-general-edit">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0">Modifier les informations générales</h5>
+    <div>
+      <button class="btn btn-secondary btn-sm me-2" (click)="cancelEdit()">
+        <i class="fas fa-times me-1"></i>
+        Annuler
+      </button>
+      <button class="btn btn-primary btn-sm" (click)="saveChanges()">
+        <i class="fas fa-save me-1"></i>
+        Sauvegarder
+      </button>
+    </div>
+  </div>
+
+  <form>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Nom de l'établissement <span class="text-danger">*</span></label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="editedCompany.name"
+               name="name"
+               required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Email</label>
+        <input type="email"
+               class="form-control"
+               [(ngModel)]="editedCompany.email"
+               name="email">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+        <input type="tel"
+               class="form-control"
+               [(ngModel)]="editedCompany.telephone"
+               name="telephone"
+               required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Région</label>
+        <select class="form-select"
+                [(ngModel)]="editedCompany.region"
+                name="region">
+          <option value="">Sélectionner une région</option>
+          <option value="Centre">Centre</option>
+          <option value="Boucle du Mouhoun">Boucle du Mouhoun</option>
+          <option value="Cascades">Cascades</option>
+          <option value="Centre-Est">Centre-Est</option>
+          <option value="Centre-Nord">Centre-Nord</option>
+          <option value="Centre-Ouest">Centre-Ouest</option>
+          <option value="Centre-Sud">Centre-Sud</option>
+          <option value="Est">Est</option>
+          <option value="Hauts-Bassins">Hauts-Bassins</option>
+          <option value="Nord">Nord</option>
+          <option value="Plateau-Central">Plateau-Central</option>
+          <option value="Sahel">Sahel</option>
+          <option value="Sud-Ouest">Sud-Ouest</option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Ville <span class="text-danger">*</span></label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="editedCompany.city"
+               name="city"
+               required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Code postal</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="editedCompany.postalCode"
+               name="postalCode">
+      </div>
+      <div class="col-12 mb-4">
+        <label class="form-label">Adresse complète</label>
+        <textarea class="form-control"
+                  rows="3"
+                  [(ngModel)]="editedCompany.address"
+                  name="address"></textarea>
+      </div>
+    </div>
+
+  </form>
+</div>

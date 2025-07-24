@@ -19,6 +19,13 @@ export class CompaniesService {
     return this.http.post<CompanieModel>(`${(this.url)}/add`, companies)
   }
 
+  add(formData: FormData): Observable<any> {
+    return this.http.post<CompanieModel>(
+      `${(this.url)}`,
+      formData,
+    )
+  }
+
   getAll(): Observable<any> {
     return this.http.get<any>(`${(this.url)}/all`,)
   }

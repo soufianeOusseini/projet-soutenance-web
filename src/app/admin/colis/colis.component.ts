@@ -4,6 +4,7 @@ import { AddColisFormComponent } from "./add-form/add-colis-form.component";
 import { ColisService } from "../../services/colis.service";
 import { Colis } from "../../models/colis.model";
 import {Router} from "@angular/router";
+import {ColisStatus} from "../../models/enums/colis-status";
 
 @Component({
   selector: 'app-colis',
@@ -157,5 +158,20 @@ export class ColisComponent implements OnInit {
 
   show(colis: Colis): void {
     this.router.navigate(['colis/detail/', colis.id]);
+  }
+
+  getStatusLabel(status: ColisStatus | undefined): string {
+    switch (status) {
+      case ColisStatus.EN_ATTENTE:
+        return 'En attente';
+      case ColisStatus.EN_TRANSIT:
+        return 'En route';
+        case ColisStatus.ANNULE:
+          return 'Annulé';
+          case ColisStatus.LIVRE:
+            return 'Livré';
+      default:
+        return 'Inconnu';
+    }
   }
 }

@@ -129,6 +129,17 @@ export class CompaniesComponent implements OnInit {
       }
     })
   }
+  getStatusLabel(status: CompanyStatus | undefined): string {
+    switch (status) {
+      case CompanyStatus.ACTIVE:
+        return 'Actif';
+      case CompanyStatus.INACTIVE:
+        return 'Inactif';
+      default:
+        return 'Inconnu';
+    }
+  }
+
 
 
   protected readonly CompanyStatus = CompanyStatus;

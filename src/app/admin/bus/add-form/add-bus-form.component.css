@@ -1,0 +1,132 @@
+/* Zone de drop pour les fichiers */
+.file-drop-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.file-drop-zone:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-drop-zone.dragover {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+  transform: scale(1.02);
+}
+
+.file-drop-zone.has-file {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone-content i {
+  font-size: 3rem !important;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.drop-zone-content h5 {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.drop-zone-content p {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* Aperçu de l'image */
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-preview-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-overlay .btn {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Badges pour indiquer le type d'image */
+.existing-image-badge,
+.new-image-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.existing-image-badge .badge {
+  background-color: #0ea5e9 !important;
+}
+
+.new-image-badge .badge {
+  background-color: #10b981 !important;
+}
+
+/* États d'erreur */
+.file-drop-zone.is-invalid {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .file-drop-zone {
+    padding: 1.5rem;
+    min-height: 150px;
+  }
+
+  .drop-zone-content i {
+    font-size: 2.5rem !important;
+  }
+
+  .drop-zone-content h5 {
+    font-size: 1rem;
+  }
+}

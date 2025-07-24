@@ -17,14 +17,6 @@
               </button>
             </div>
 
-            <!-- Affichage du chargement -->
-            <div *ngIf="isLoading" class="text-center my-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Chargement...</span>
-              </div>
-              <p class="mt-2">Chargement des données...</p>
-            </div>
-
             <!-- Message si aucun bus -->
             <div *ngIf="!isLoading && buses.length === 0" class="text-center my-5">
               <i class="ri-bus-line" style="font-size: 3rem;"></i>
@@ -55,7 +47,7 @@
                     <td>{{ bus.capacity }}</td>
                     <td>
                         <span [class]="getStatusBadgeClass(bus.status)">
-                          {{ getStatusText(bus.status) }}
+                          {{ getStatusLabel(bus.status) }}
                         </span>
                     </td>
                     <td>
