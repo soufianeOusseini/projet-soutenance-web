@@ -18,8 +18,8 @@ export class TrajetService {
     return this.http.post<Trajet>(`${(this.url)}`, trajet)
   }
 
-  getAll(): Observable<any> {
-    return this.http.get<any>(`${(this.url)}/all`,)
+  getAll(): Observable<Trajet[]> {
+    return this.http.get<Trajet[]>(`${(this.url)}/all`,)
   }
 
 

@@ -8,10 +8,11 @@ import {TrajetComponent} from "./trajet/trajet.component";
 import {ColisComponent} from "./colis/colis.component";
 import {TicketComponent} from "./ticket/ticket.component";
 import {ReservationComponent} from "./reservation/reservation.component";
-import {StaffsComponent} from "./staffs/staffs.component";
 import {DetailComponent} from "./colis/detail/detail.component";
 import {ProfilComponent} from "./profil/profil.component";
 import {MyCompanyComponent} from "./my-company/my-company.component";
+import {DriverComponent} from "./driver/driver.component";
+import {PlanningComponent} from "./planning/planning.component";
 
 
 const routes: Routes = [
@@ -56,10 +57,6 @@ const routes: Routes = [
         component: DashboardComponent,
       },
       {
-        path: 'staffs',
-        component: StaffsComponent,
-      },
-      {
         path: '',
         redirectTo: 'companies',
         pathMatch: 'full'
@@ -70,6 +67,14 @@ const routes: Routes = [
       {
         path: 'my-company',
         component: MyCompanyComponent
+      },
+      {
+        path: 'drivers',
+        component: DriverComponent,
+      },
+      {
+        path: 'planning',
+        component: PlanningComponent,
       }
     ]
   }

@@ -24,7 +24,7 @@
                     <th>Ville de départ</th>
                     <th>Ville d'arrivée</th>
                     <th>Kilomètres</th>
-                    <th>Heure de départ</th>
+                    <th>Montant</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
@@ -46,7 +46,7 @@
                     <td>{{ trajet.villeDepart }}</td>
                     <td>{{ trajet.villeArrive }}</td>
                     <td>{{ trajet.km }} km</td>
-                    <td>{{ trajet.heure }}</td>
+                    <td>{{ trajet.amount }}</td>
                     <td>
                       <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-info" (click)="edit(trajet)" title="Modifier">

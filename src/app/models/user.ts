@@ -8,7 +8,7 @@ export class User extends BaseEntity {
   password: string;
   passwordReseted: boolean | undefined;
   name: string;
-  lastname: string;
+  lastName: string;
   firstName: string;
   token: string;
   rtoken: string;
@@ -22,13 +22,16 @@ export class User extends BaseEntity {
   profile: UserProfile | undefined;
   admin: boolean = false;
   profilePath: string | undefined;
+  birthDate: Date | undefined;
+
+  birthPlace: string | undefined;
 
   constructor() {
     super();
     this.username = '';
     this.password = '';
     this.name = '';
-    this.lastname = '';
+    this.lastName = '';
     this.token = '';
     this.rtoken = '';
     this.phone = '';

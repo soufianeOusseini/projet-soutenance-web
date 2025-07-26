@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddStaffFormComponent } from './add-staff-form.component';
+import { FormDriverComponent } from './form-driver.component';
 
-describe('AddStaffFormComponent', () => {
-  let component: AddStaffFormComponent;
-  let fixture: ComponentFixture<AddStaffFormComponent>;
+describe('FormDriverComponent', () => {
+  let component: FormDriverComponent;
+  let fixture: ComponentFixture<FormDriverComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddStaffFormComponent]
+      declarations: [FormDriverComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddStaffFormComponent);
+    fixture = TestBed.createComponent(FormDriverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

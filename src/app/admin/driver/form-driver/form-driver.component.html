@@ -1,0 +1,128 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addDriverLabel">{{isEditMode ? 'Modification' : 'Création'}} d'un Chauffeur</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="isEditMode ? update() : save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="firstName" class="form-label">Prénom *</label>
+              <input type="text" class="form-control" id="firstName" placeholder="Prénom" formControlName="firstName"/>
+              <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)" class="text-danger">
+                <small *ngIf="firstName?.errors?.['required']">Le prénom est obligatoire</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Nom *</label>
+              <input type="text" class="form-control" id="lastName" placeholder="Nom" formControlName="lastName"/>
+              <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)" class="text-danger">
+                <small *ngIf="lastName?.errors?.['required']">Le nom est obligatoire</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="birthPlace" class="form-label">Lieu de naissance *</label>
+              <input type="text" class="form-control" id="birthPlace" placeholder="Lieu de naissance" formControlName="birthPlace"/>
+              <div *ngIf="birthPlace?.invalid && (birthPlace?.dirty || birthPlace?.touched)" class="text-danger">
+                <small *ngIf="birthPlace?.errors?.['required']">Le nom est obligatoire</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="birthDate" class="form-label">Date de naissance *</label>
+              <input type="date" class="form-control" id="birthDate" placeholder="Date de naissance" formControlName="birthDate"/>
+              <div *ngIf="birthDate?.invalid && (birthDate?.dirty || birthDate?.touched)" class="text-danger">
+                <small *ngIf="birthDate?.errors?.['required']">La date de naissance est obligatoire</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input type="email" class="form-control" id="email" placeholder="Email" formControlName="email"/>
+              <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="text-danger">
+                <small *ngIf="email?.errors?.['required']">L'email est obligatoire</small>
+                <small *ngIf="email?.errors?.['email']">Veuillez entrer un email valide</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="phone" class="form-label">Téléphone *</label>
+              <input type="text" class="form-control" id="phone" placeholder="Téléphone" formControlName="phone"/>
+              <div *ngIf="phone?.invalid && (phone?.dirty || phone?.touched)" class="text-danger">
+                <small *ngIf="phone?.errors?.['required']">Le téléphone est obligatoire</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations chauffeur -->
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="driverLicenseNumber" class="form-label">Numéro de permis *</label>
+              <input type="text" class="form-control" id="driverLicenseNumber" placeholder="Numéro de permis" formControlName="driverLicenseNumber"/>
+              <div *ngIf="driverLicenseNumber?.invalid && (driverLicenseNumber?.dirty || driverLicenseNumber?.touched)" class="text-danger">
+                <small *ngIf="driverLicenseNumber?.errors?.['required']">Le numéro de permis est obligatoire</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="licenseExpiryDate" class="form-label">Date d'expiration du permis</label>
+              <input type="date" class="form-control" id="licenseExpiryDate" formControlName="licenseExpiryDate"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="!isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Enregistrer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="update()"
+    *ngIf="isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Modifier
+    </span>
+  </button>
+</div>

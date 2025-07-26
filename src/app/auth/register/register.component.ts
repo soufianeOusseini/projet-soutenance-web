@@ -71,7 +71,7 @@ export class RegisterComponent {
       !this.confirm ||
       this.passwordsNotMatch() ||
       !this.user.name ||
-      !this.user.lastname ||
+      !this.user.lastName ||
       this.emailNotValid()
     );
   }

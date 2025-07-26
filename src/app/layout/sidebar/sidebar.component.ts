@@ -81,6 +81,18 @@ export class SidebarComponent implements OnInit {
       },
       {
         id: 8,
+        icon: 'bi bi-truck-front',
+        text: 'Chauffeurs',
+        link: '/admin/drivers',
+      },
+      {
+        id: 9,
+        icon: 'bi bi-calendar',
+        text: 'Planning',
+        link: '/admin/planning',
+      },
+      {
+        id: 10,
         icon: 'bi bi-gear', // Paramètres / Config
         text: 'Configurations',
         children: [

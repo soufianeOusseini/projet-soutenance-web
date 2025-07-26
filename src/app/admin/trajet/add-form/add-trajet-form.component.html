@@ -46,10 +46,10 @@
           </div>
           <div class="col-6">
             <div class="mb-3">
-              <label for="heure" class="form-label">Heure de départ *</label>
-              <input type="datetime-local" class="form-control" id="heure" placeholder="Heure de départ" formControlName="heure"/>
-              <div *ngIf="heure?.invalid && (heure?.dirty || heure?.touched)" class="text-danger">
-                <small *ngIf="heure?.errors?.['required']">L'heure de départ est obligatoire</small>
+              <label for="amount" class="form-label">Montant</label>
+              <input type="number" class="form-control" id="amount" placeholder="Montant" formControlName="amount"/>
+              <div *ngIf="amount?.invalid && (amount?.dirty || amount?.touched)" class="text-danger">
+                <small *ngIf="amount?.errors?.['required']">Le montant de départ est obligatoire</small>
               </div>
             </div>
           </div>

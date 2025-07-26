@@ -1,126 +1,185 @@
 <div class="modal-header">
-  <h5 class="modal-title" id="addTicketLabel">Création d'un ticket</h5>
+  <h5 class="modal-title" id="addTicketLabel">Vente d'un ticket</h5>
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
   <div class="row">
     <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
       <div class="col-xl-12 col-12">
-        <div class="row">
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="numero" class="form-label">Numéro *</label>
-              <input
-                type="text"
-                class="form-control"
-                id="numero"
-                placeholder="Numéro du ticket"
-                formControlName="numero"
-                [class.is-invalid]="isFieldInvalid('numero')"/>
-              <div *ngIf="isFieldInvalid('numero')" class="invalid-feedback">
-                Le numéro est obligatoire
+
+        <!-- Section Trajet -->
+        <div class="card mb-3">
+          <div class="card-header bg-primary text-white">
+            <h6 class="mb-0"><i class="ri-route-line me-2"></i>Sélection du trajet</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="trajet" class="form-label">Trajet *</label>
+                  <select
+                    class="form-control"
+                    id="trajet"
+                    formControlName="trajetId"
+                    (change)="onTrajetChange()"
+                    [class.is-invalid]="isFieldInvalid('trajetId')">
+                    <option value="">Sélectionner un trajet</option>
+                    <option *ngFor="let trajet of trajets" [value]="trajet.id">
+                      {{ trajet.villeDepart }} → {{ trajet.villeArrive }}
+                      ({{ trajet.amount | currency:'XOF':'symbol':'1.0-0' }})
+                    </option>
+                  </select>
+                  <div *ngIf="isFieldInvalid('trajetId')" class="invalid-feedback">
+                    Le trajet est obligatoire
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="date" class="form-label">Date de départ *</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="date"
+                    formControlName="date"
+                    [min]="today"
+                    [class.is-invalid]="isFieldInvalid('date')"/>
+                  <div *ngIf="isFieldInvalid('date')" class="invalid-feedback">
+                    La date est obligatoire
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="prix" class="form-label">Prix *</label>
-              <input
-                type="number"
-                class="form-control"
-                id="prix"
-                placeholder="Prix"
-                formControlName="prix"
-                step="0.01"
-                min="0"
-                [class.is-invalid]="isFieldInvalid('prix')"/>
-              <div *ngIf="isFieldInvalid('prix')" class="invalid-feedback">
-                Le prix est obligatoire
+
+            <!-- Informations du trajet sélectionné -->
+            <div *ngIf="selectedTrajet" class="alert alert-info">
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Prix:</strong> {{ selectedTrajet.amount | currency:'XOF':'symbol':'1.0-0' }}
+                </div>
+                <div class="col-md-4">
+                  <strong>Heure:</strong> {{ selectedTrajet.heure }}
+                </div>
+                <div class="col-md-4">
+                  <strong>Places restantes:</strong>
+                  <span class="badge" [class]="getPlacesRestantesBadgeClass()">
+                    {{ placesRestantes }}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-6">
-
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="date" class="form-label">Date *</label>
-              <input
-                type="date"
-                class="form-control"
-                id="date"
-                formControlName="date"
-                [class.is-invalid]="isFieldInvalid('date')"/>
-              <div *ngIf="isFieldInvalid('date')" class="invalid-feedback">
-                La date est obligatoire
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="heureDepart" class="form-label">Heure de départ *</label>
-              <input
-                type="time"
-                class="form-control"
-                id="heureDepart"
-                formControlName="heureDepart"
-                [class.is-invalid]="isFieldInvalid('heureDepart')"/>
-              <div *ngIf="isFieldInvalid('heureDepart')" class="invalid-feedback">
-                L'heure de départ est obligatoire
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="modePaiement" class="form-label">Mode de paiement *</label>
-              <select
-                class="form-control"
-                id="modePaiement"
-                formControlName="modePaiement"
-                [class.is-invalid]="isFieldInvalid('modePaiement')">
-                <option value="">Sélectionner un mode de paiement</option>
-                <option value="ESPECES">Espèces</option>
-                <option value="CARTE_BANCAIRE">Carte bancaire</option>
-                <option value="PAYPAL">Paiement mobile</option>
-                <option value="VIREMENT">Virement</option>
-              </select>
-              <div *ngIf="isFieldInvalid('modePaiement')" class="invalid-feedback">
-                Le mode de paiement est obligatoire
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="userId" class="form-label">ID Utilisateur</label>
-              <input
-                type="number"
-                class="form-control"
-                id="userId"
-                placeholder="ID de l'utilisateur"
-                formControlName="userId"
-                min="1"/>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="trajet" class="form-label">Trajet</label>
-              <select
-                class="form-control"
-                id="trajet"
-                formControlName="trajetId"
-                [class.is-invalid]="isFieldInvalid('trajetId')">
-
-                <option value="">Sélectionner un trajet</option>
-
-                <option *ngFor="let trajet of trajets" [value]="trajet.id">
-                  {{ trajet.villeDepart }} → {{ trajet.villeArrive }}
-                </option>
-
-              </select>
-            </div>
-
           </div>
         </div>
+
+        <!-- Section Client -->
+        <div class="card mb-3">
+          <div class="card-header bg-success text-white">
+            <h6 class="mb-0"><i class="ri-user-line me-2"></i>Informations client</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="clientNom" class="form-label">Nom *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="clientNom"
+                    placeholder="Nom du client"
+                    formControlName="clientNom"
+                    [class.is-invalid]="isFieldInvalid('clientNom')"/>
+                  <div *ngIf="isFieldInvalid('clientNom')" class="invalid-feedback">
+                    Le nom est obligatoire
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="clientPrenom" class="form-label">Prénom *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="clientPrenom"
+                    placeholder="Prénom du client"
+                    formControlName="clientPrenom"
+                    [class.is-invalid]="isFieldInvalid('clientPrenom')"/>
+                  <div *ngIf="isFieldInvalid('clientPrenom')" class="invalid-feedback">
+                    Le prénom est obligatoire
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="clientContact" class="form-label">Contact *</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="clientContact"
+                    placeholder="Numéro de téléphone"
+                    formControlName="clientContact"
+                    [class.is-invalid]="isFieldInvalid('clientContact')"/>
+                  <div *ngIf="isFieldInvalid('clientContact')" class="invalid-feedback">
+                    Le contact est obligatoire
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Paiement -->
+        <div class="card mb-3">
+          <div class="card-header bg-warning text-dark">
+            <h6 class="mb-0"><i class="ri-money-dollar-circle-line me-2"></i>Paiement</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="modePaiement" class="form-label">Mode de paiement *</label>
+                  <select
+                    class="form-control"
+                    id="modePaiement"
+                    formControlName="modePaiement"
+                    [class.is-invalid]="isFieldInvalid('modePaiement')">
+                    <option value="">Sélectionner un mode de paiement</option>
+                    <option value="ESPECES">Espèces</option>
+                    <option value="CARTE_BANCAIRE">Carte bancaire</option>
+                    <option value="MOBILE">Paiement mobile</option>
+                  </select>
+                  <div *ngIf="isFieldInvalid('modePaiement')" class="invalid-feedback">
+                    Le mode de paiement est obligatoire
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="prix" class="form-label">Prix à payer</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="prix"
+                    formControlName="prix"
+                    readonly
+                    step="0.01"/>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="numero" class="form-label">N° de référence</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="numero"
+                    formControlName="numero"
+                    readonly
+                    placeholder="Généré automatiquement"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </form>
   </div>
@@ -128,42 +187,21 @@
 <div class="modal-footer">
   <button
     type="button"
-    class="btn btn-danger btn-sm custom-toggle me-1"
-    data-bs-toggle="button"
+    class="btn btn-secondary btn-sm me-1"
     (click)="reset()"
     [disabled]="isSubmitting"
   >
-    <span class="icon-on">
-      <i class="ri-close-circle-line align-bottom"></i>
-      Effacer
-    </span>
+    <i class="ri-refresh-line align-bottom me-1"></i>
+    Réinitialiser
   </button>
   <button
     type="button"
-    class="btn btn-success btn-sm custom-toggle me-1"
-    data-bs-toggle="button"
-    [disabled]="formGroup.invalid || isSubmitting"
+    class="btn btn-success btn-sm"
+    [disabled]="formGroup.invalid || isSubmitting || placesRestantes <= 0"
     (click)="save()"
-    *ngIf="!formGroup.value.id"
   >
-    <span class="icon-on">
-      <i class="ri-save-line align-bottom"></i>
-      <span *ngIf="!isSubmitting">Enregistrer</span>
-      <span *ngIf="isSubmitting">Enregistrement...</span>
-    </span>
-  </button>
-  <button
-    type="button"
-    class="btn btn-success btn-sm custom-toggle me-1"
-    data-bs-toggle="button"
-    [disabled]="formGroup.invalid || isSubmitting"
-    (click)="save()"
-    *ngIf="formGroup.value.id"
-  >
-    <span class="icon-on">
-      <i class="ri-save-line align-bottom"></i>
-      <span *ngIf="!isSubmitting">Modifier</span>
-      <span *ngIf="isSubmitting">Modification...</span>
-    </span>
+    <i class="ri-ticket-2-line align-bottom me-1"></i>
+    <span *ngIf="!isSubmitting">Vendre le ticket</span>
+    <span *ngIf="isSubmitting">Vente en cours...</span>
   </button>
 </div>

@@ -17,18 +17,19 @@ import { TrajetComponent } from './trajet/trajet.component';
 import { ColisComponent } from './colis/colis.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { ReservationComponent } from './reservation/reservation.component';
-import { StaffsComponent } from './staffs/staffs.component';
 import {AddBusFormComponent} from "./bus/add-form/add-bus-form.component";
 import {AddColisFormComponent} from "./colis/add-form/add-colis-form.component";
 import {AddTrajetFormComponent} from "./trajet/add-form/add-trajet-form.component";
 import { AddTicketFormComponent } from './ticket/add-ticket-form/add-ticket-form.component';
-import { AddStaffFormComponent } from './staffs/add-staff-form/add-staff-form.component';
 import {BusComponent} from "./bus/bus.component";
 import { DetailComponent } from './colis/detail/detail.component';
 import {ProfilComponent} from "./profil/profil.component";
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { GeneralComponent } from './my-company/tabs/general/general.component';
 import { AccountsComponent } from './my-company/tabs/accounts/accounts.component';
+import { DriverComponent } from './driver/driver.component';
+import { FormDriverComponent } from './driver/form-driver/form-driver.component';
+import { PlanningComponent } from './planning/planning.component';
 
 @NgModule({
   declarations: [
@@ -43,17 +44,18 @@ import { AccountsComponent } from './my-company/tabs/accounts/accounts.component
     ColisComponent,
     TicketComponent,
     ReservationComponent,
-    StaffsComponent,
     AddBusFormComponent,
     AddColisFormComponent,
     AddTrajetFormComponent,
     AddTicketFormComponent,
-    AddStaffFormComponent,
     DetailComponent,
     ProfilComponent,
     MyCompanyComponent,
     GeneralComponent,
-    AccountsComponent
+    AccountsComponent,
+    DriverComponent,
+    FormDriverComponent,
+    PlanningComponent
   ],
   imports: [
     RouterModule,

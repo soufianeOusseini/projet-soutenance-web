@@ -33,7 +33,7 @@ export class AddTrajetFormComponent implements OnInit{
         villeDepart: [this.trajet.villeDepart, [Validators.required]],
         villeArrive: [this.trajet.villeArrive, [Validators.required]],
         km: [this.trajet.km, [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]+)?$/)]],
-        heure: [this.trajet.heure, [Validators.required]],
+        amount: [this.trajet.amount, [Validators.required]],
       }
     )
   }
@@ -97,5 +97,5 @@ export class AddTrajetFormComponent implements OnInit{
   get villeDepart() { return this.formGroup.get('villeDepart'); }
   get villeArrive() { return this.formGroup.get('villeArrive'); }
   get km() { return this.formGroup.get('km'); }
-  get heure() { return this.formGroup.get('heure'); }
+  get amount() { return this.formGroup.get('amount'); }
 }

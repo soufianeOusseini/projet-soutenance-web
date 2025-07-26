@@ -6,4 +6,6 @@ export class Trajet {
   km: number | undefined;
   heure:  Date| undefined;
   status: string | undefined;
+  company_id: number | undefined;
+  amount?: number | undefined;
 }

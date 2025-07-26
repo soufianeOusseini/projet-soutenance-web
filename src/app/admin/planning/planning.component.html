@@ -1,0 +1,275 @@
+<!-- schedule-calendar.component.html -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title">Planification des Voyages</h4>
+          <button class="btn btn-primary" (click)="openModal()">
+            <i class="bi bi-plus-circle"></i> Nouveau Voyage
+          </button>
+        </div>
+        <div class="card-body">
+          <!-- Navigation du calendrier -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <button class="btn btn-outline-primary" (click)="previousMonth()">
+              <i class="bi bi-chevron-left"></i> Précédent
+            </button>
+            <h3 class="mb-0">
+              {{ monthNames[currentMonth.getMonth()] }} {{ currentMonth.getFullYear() }}
+            </h3>
+            <button class="btn btn-outline-primary" (click)="nextMonth()">
+              Suivant <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Calendrier -->
+          <div class="calendar-container">
+            <!-- En-têtes des jours -->
+            <div class="calendar-header row">
+              <div class="col calendar-day-header">Dim</div>
+              <div class="col calendar-day-header">Lun</div>
+              <div class="col calendar-day-header">Mar</div>
+              <div class="col calendar-day-header">Mer</div>
+              <div class="col calendar-day-header">Jeu</div>
+              <div class="col calendar-day-header">Ven</div>
+              <div class="col calendar-day-header">Sam</div>
+            </div>
+
+            <!-- Jours du calendrier -->
+            <div class="calendar-body">
+              <div class="row" *ngFor="let week of getCalendarWeeks(); trackBy: trackByWeek">
+                <div class="col calendar-day"
+                     *ngFor="let day of week; trackBy: trackByDay"
+                     [class.current-month]="day.isCurrentMonth"
+                     [class.today]="day.isToday"
+                     [class.has-schedules]="day.schedulesCount > 0"
+                     (click)="selectDate(day)">
+
+                  <div class="day-number">{{ day.date.getDate() }}</div>
+
+                  <!-- Indicateur de planifications -->
+                  <div class="schedules-indicator" *ngIf="day.schedulesCount > 0">
+                    <span class="badge bg-primary">{{ day.schedulesCount }}</span>
+                  </div>
+
+                  <!-- Liste des planifications (max 2 affichées) -->
+                  <div class="schedule-list" *ngIf="day.schedules.length > 0">
+                    <div class="schedule-item"
+                         *ngFor="let schedule of day.schedules.slice(0, 2)"
+                         (click)="$event.stopPropagation(); editSchedule(schedule)">
+                      <small>{{ schedule.heureDepart }} - {{ schedule.trajet.nom }}</small>
+                    </div>
+                    <div class="more-schedules" *ngIf="day.schedules.length > 2"
+                         (click)="$event.stopPropagation(); showDaySchedules(day)">
+                      <small class="text-primary">+{{ day.schedules.length - 2 }} autres</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour créer/éditer une planification -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'"
+     tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ isEditMode ? 'Modifier la planification' : 'Nouvelle planification' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #scheduleForm="ngForm">
+        <div class="modal-body">
+          <div class="row">
+            <!-- Trajet -->
+            <div class="col-md-6 mb-3">
+              <label for="trajet" class="form-label">Trajet *</label>
+              <select id="trajet" class="form-select"
+                      [(ngModel)]="currentSchedule.trajetId"
+                      name="trajetId" required>
+                <option value="0">Sélectionner un trajet</option>
+                <option *ngFor="let trajet of trajets" [value]="trajet.id">
+                  {{ trajet.nom }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Bus -->
+            <div class="col-md-6 mb-3">
+              <label for="bus" class="form-label">Bus *</label>
+              <select id="bus" class="form-select"
+                      [(ngModel)]="currentSchedule.busId"
+                      name="busId" required>
+                <option value="0">Sélectionner un bus</option>
+                <option *ngFor="let bus of buses" [value]="bus.id">
+                  {{ bus.type }} ({{ bus.plaque }})
+                </option>
+              </select>
+            </div>
+
+            <!-- Chauffeur -->
+            <div class="col-md-6 mb-3">
+              <label for="driver" class="form-label">Chauffeur *</label>
+              <select id="driver" class="form-select"
+                      [(ngModel)]="currentSchedule.driverId"
+                      name="driverId" required>
+                <option value="0">Sélectionner un chauffeur</option>
+                <option *ngFor="let driver of drivers" [value]="driver.id">
+                  {{ driver.user.lastName }} - {{ driver.user.firstName }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Date de départ -->
+            <div class="col-md-6 mb-3">
+              <label for="dateDepart" class="form-label">Date de départ *</label>
+              <input type="date" id="dateDepart" class="form-control"
+                     [(ngModel)]="currentSchedule.dateDepart"
+                     name="dateDepart" required>
+            </div>
+
+            <!-- Heure de départ -->
+            <div class="col-md-6 mb-3">
+              <label for="heureDepart" class="form-label">Heure de départ *</label>
+              <input type="time" id="heureDepart" class="form-control"
+                     [(ngModel)]="currentSchedule.heureDepart"
+                     name="heureDepart" required>
+            </div>
+
+            <!-- Nombre de places -->
+            <div class="col-md-6 mb-3">
+              <label for="nombrePlaces" class="form-label">Nombre de places *</label>
+              <input type="number" id="nombrePlaces" class="form-control"
+                     [(ngModel)]="currentSchedule.nombrePlacesTotales"
+                     name="nombrePlacesTotales"
+                     min="1" max="100" required>
+            </div>
+
+            <!-- Prix -->
+            <div class="col-md-6 mb-3">
+              <label for="prix" class="form-label">Prix (€) *</label>
+              <input type="number" id="prix" class="form-control"
+                     [(ngModel)]="currentSchedule.prix"
+                     name="prix"
+                     min="0" step="0.01" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!scheduleForm.form.valid">
+            {{ isEditMode ? 'Modifier' : 'Créer' }}
+          </button>
+          <button type="button" class="btn btn-danger"
+                  *ngIf="isEditMode && currentScheduleId"
+                  (click)="deleteSchedule(currentScheduleId!)">
+            <i class="bi bi-trash"></i> Supprimer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay du modal -->
+<div class="modal-backdrop fade" [class.show]="showModal" *ngIf="showModal"></div>
+
+<!-- Modal pour voir toutes les planifications d'un jour -->
+<div class="modal fade" [class.show]="showDayModal" [style.display]="showDayModal ? 'block' : 'none'"
+     tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Planifications du {{ selectedDayData?.date?.toLocaleDateString('fr-FR', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDayModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Bouton pour ajouter une nouvelle planification -->
+        <div class="mb-3">
+          <button class="btn btn-primary btn-sm" (click)="addScheduleToDay()">
+            <i class="bi bi-plus"></i> Ajouter une planification
+          </button>
+        </div>
+
+        <!-- Liste des planifications -->
+        <div class="row" *ngIf="selectedDayData?.schedules?.length > 0">
+          <div class="col-12" *ngFor="let schedule of selectedDayData.schedules; trackBy: trackBySchedule">
+            <div class="card mb-2">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <h6 class="card-title mb-1">
+                      <i class="bi bi-clock"></i> {{ schedule.heureDepart }} - {{ schedule.trajet.nom }}
+                    </h6>
+                    <p class="card-text mb-1">
+                      <small class="text-muted">
+                        <i class="bi bi-bus-front"></i> Bus: {{ schedule.bus.type }} ({{ schedule.bus.plaque }}) |
+                        <i class="bi bi-person"></i> Chauffeur: {{ schedule.driver.user.lastName }} {{ schedule.driver.user.firstName }}
+                      </small>
+                    </p>
+                    <p class="card-text mb-0">
+                      <small class="text-muted">
+                        <i class="bi bi-people"></i> Places: {{ schedule.nombrePlacesDisponibles || schedule.nombrePlacesTotales }}/{{ schedule.nombrePlacesTotales }} |
+                        <i class="bi bi-currency-euro"></i> Prix: {{ schedule.prix }}€
+                      </small>
+                    </p>
+                  </div>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary"
+                            (click)="editSchedule(schedule)"
+                            title="Modifier">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-outline-danger"
+                            (click)="confirmDeleteSchedule(schedule.id!)"
+                            title="Supprimer">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message si aucune planification -->
+        <div class="text-center py-4" *ngIf="!selectedDayData?.schedules?.length">
+          <i class="bi bi-calendar-x text-muted" style="font-size: 48px;"></i>
+          <p class="text-muted mt-2">Aucune planification pour cette journée</p>
+          <button class="btn btn-primary" (click)="addScheduleToDay()">
+            <i class="bi bi-plus"></i> Créer la première planification
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDayModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay du modal jour -->
+<div class="modal-backdrop fade" [class.show]="showDayModal" *ngIf="showDayModal"></div>
