@@ -4,6 +4,8 @@ import {AddBusFormComponent} from "./add-form/add-bus-form.component";
 import {BusService} from "../../services/bus.service";
 import {Bus} from "../../models/bus.model";
 import {BusStatus} from "../../models/enums/bus-status";
+import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
 
 @Component({
   selector: 'app-bus',
@@ -82,33 +84,34 @@ export class BusComponent implements OnInit {
     );
   }
 
-  toggleStatus(bus: Bus): void {
-    // Inverser le statut du bus
-    // const newStatus = bus.status === 'AVAILABLE' ? 'NOT_AVAILABLE' : BusStatus.AVAILABLE;
-    //
-    // this.busService.updateStatus(id, newStatus).subscribe({
-    //   next: () => {
-    //     this.toastr.success(`Statut du bus modifié avec succès`, 'Succès');
-    //     this.loadBuses(); // Recharger la liste pour obtenir les données à jour
-    //   },
-    //   error: (error) => {
-    //     console.error('Erreur lors de la modification du statut', error);
-    //     this.toastr.error('Impossible de modifier le statut du bus', 'Erreur');
-    //   }
-    // });
-  }
 
-  delete(id: number| undefined): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce bus?')) {
-      this.busService.delete(id!).subscribe({
-        next: () => {
-          this.loadBuses(); // Recharger la liste après suppression
+  delete(value: any): void {
+    this.busService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadBuses()
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression', error);
-        }
-      });
-    }
+          showHttpError(error)
+          console.error(error)
+        },
+      })
+  }
+
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
   }
 
   getStatusBadgeClass(status: string | undefined): string {

@@ -174,7 +174,7 @@
           </button>
           <button type="button" class="btn btn-danger"
                   *ngIf="isEditMode && currentScheduleId"
-                  (click)="deleteSchedule(currentScheduleId!)">
+                  (click)="confirmDelete(currentScheduleId!)">
             <i class="bi bi-trash"></i> Supprimer
           </button>
         </div>
@@ -241,7 +241,7 @@
                       <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn btn-outline-danger"
-                            (click)="confirmDeleteSchedule(schedule.id!)"
+                            (click)="confirmDelete(schedule.id!)"
                             title="Supprimer">
                       <i class="bi bi-trash"></i>
                     </button>

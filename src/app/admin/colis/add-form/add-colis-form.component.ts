@@ -4,6 +4,7 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { Colis } from "../../../models/colis.model";
 import { ColisService } from "../../../services/colis.service";
 import {ColisItems} from "../../../models/colis-items";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-add-colis-form',
@@ -27,7 +28,6 @@ export class AddColisFormComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this.createForm();
 
-    // Ajouter au moins un colisItem par défaut si c'est une nouvelle création et qu'il n'existe pas encore d'items
     if (!this.colis.colisItems || this.colis.colisItems.length === 0) {
       this.addColisItem();
     }
@@ -95,7 +95,6 @@ export class AddColisFormComponent implements OnInit {
 
     const formData = this.formGroup.value;
 
-    // Si c'est une création, générer un numéro unique
     if (!formData.id) {
       formData.numero = this.generateUniqueNumber();
     }
@@ -103,17 +102,17 @@ export class AddColisFormComponent implements OnInit {
     this.colisService.save(formData)
       .subscribe({
         next: (data) => {
+          showSuccess()
           this.activeModal.close(data);
         },
         error: (error) => {
+          showHttpError(error)
           console.error(error);
-          alert('Erreur lors de l\'enregistrement: ' + (error.message || 'Une erreur est survenue'));
         },
       });
   }
 
   generateUniqueNumber(): string {
-    // Génération d'un numéro unique basé sur la date
     const date = new Date();
     return 'COL-' + date.getFullYear() +
       ('0' + (date.getMonth() + 1)).slice(-2) +
@@ -122,14 +121,11 @@ export class AddColisFormComponent implements OnInit {
   }
 
   reset(): void {
-    // Réinitialiser les colisItems
     while (this.colisItemsArray.length) {
       this.colisItemsArray.removeAt(0);
     }
 
-    // Réinitialisation du formulaire
     if (this.colis.id) {
-      // Mode édition: Revenir à l'état initial
       this.formGroup.patchValue({
         id: this.colis.id,
         numero: this.colis.numero,
@@ -142,7 +138,6 @@ export class AddColisFormComponent implements OnInit {
         status: this.colis.status || 'EN_ATTENTE'
       });
 
-      // Reconstruire les items
       if (this.colis.colisItems && this.colis.colisItems.length > 0) {
         this.colis.colisItems.forEach(item => {
           this.colisItemsArray.push(this.createColisItemFormGroup(item));
@@ -151,7 +146,6 @@ export class AddColisFormComponent implements OnInit {
         this.addColisItem();
       }
     } else {
-      // Mode création: Tout effacer
       this.formGroup.reset({
         status: 'EN_ATTENTE'
       });
@@ -165,7 +159,6 @@ export class AddColisFormComponent implements OnInit {
     this.activeModal.close();
   }
 
-  // Marquer tous les champs comme touchés pour afficher les erreurs de validation
   private markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();

@@ -5,6 +5,8 @@ import {CompaniesService} from "../../services/companies.service";
 import {CompanieModel} from "../../models/companie.model";
 import {ConfirmationDialogComponent} from "../../utils/confirm-dialog";
 import {CompanyStatus} from "../../models/enums/company-status";
+import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
 
 @Component({
   selector: 'app-companies',
@@ -86,36 +88,34 @@ export class CompaniesComponent implements OnInit {
     );
   }
 
-  confirmDelete(company: CompanieModel): void {
-    const modalRef = this.modalService.open(ConfirmationDialogComponent, {
-      centered: true,
-      backdrop: 'static'
-    });
 
-    modalRef.componentInstance.title = 'Confirmation de suppression';
-    modalRef.componentInstance.message = `Êtes-vous sûr de vouloir supprimer la compagnie "${company.name}" ?`;
-
-    modalRef.result.then(
-      (result) => {
-        if (result === 'Confirm') {
-          this.delete(company.id!);
-        }
-      },
-      () => {}
-    );
+  delete(value: any): void {
+    this.companiesService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadCompanies();
+        },
+        error: (error) => {
+          showHttpError(error)
+          console.error(error)
+        },
+      })
   }
 
-  delete(id: number): void {
-    this.isLoading = true;
-    this.companiesService.delete(id).subscribe({
-      next: () => {
-        this.loadCompanies();
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
       },
-      error: (error) => {
-        console.error('Erreur lors de la suppression de la compagnie', error);
-        this.isLoading = false;
-      }
-    });
+      (error) => {
+        console.error(error)
+      },
+    )
   }
 
   changeStatus(id: number): void {
@@ -139,8 +139,6 @@ export class CompaniesComponent implements OnInit {
         return 'Inconnu';
     }
   }
-
-
 
   protected readonly CompanyStatus = CompanyStatus;
 }

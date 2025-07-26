@@ -1,1 +1,123 @@
+
+
+<!-- Toast de base pour les messages standards -->
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"
+  key="message"
+  [position]="'top-right'"
+></p-toast>
+
+<!-- Toast personnalisé pour les messages de succès -->
+<p-toast
+  [baseZIndex]="5000"
+  styleClass="custom-success-alert"
+  [breakpoints]="{ '920px': { width: '100%' } }"
+  [position]="'top-center'"
+  key="success-custom"
+>
+  <ng-template let-message pTemplate="headless">
+    <div
+      class="alert pt-3 pb-3 text-white d-flex align-items-center mb-2 justify-content-between bg-success"
+      style="border-radius: 12px; box-shadow: 0 8px 32px rgba(40, 167, 69, 0.3);"
+      role="alert"
+    >
+      <div class="d-flex align-items-center">
+        <i class="ri-checkbox-circle-fill me-3 align-middle fs-20"></i>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 16px;">{{ message.summary }}</div>
+          <div style="font-size: 14px; opacity: 0.9;">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div>
+        <i class="ri-checkbox-circle-line fs-24 align-middle"></i>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Toast personnalisé pour les messages d'erreur -->
+<p-toast
+  [baseZIndex]="5000"
+  styleClass="custom-error-alert"
+  [breakpoints]="{ '920px': { width: '100%' } }"
+  [position]="'top-center'"
+  key="error-custom"
+>
+  <ng-template let-message pTemplate="headless">
+    <div
+      class="alert pt-3 pb-3 text-white d-flex align-items-center mb-2 justify-content-between bg-danger"
+      style="border-radius: 12px; box-shadow: 0 8px 32px rgba(220, 53, 69, 0.3);"
+      role="alert"
+    >
+      <div class="d-flex align-items-center">
+        <i class="ri-close-circle-fill me-3 align-middle fs-20"></i>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 16px;">{{ message.summary }}</div>
+          <div style="font-size: 14px; opacity: 0.9;">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div>
+        <i class="ri-close-circle-line fs-24 align-middle"></i>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Toast personnalisé pour les avertissements -->
+<p-toast
+  [baseZIndex]="5000"
+  styleClass="custom-warning-alert"
+  [breakpoints]="{ '920px': { width: '100%' } }"
+  [position]="'top-center'"
+  key="warning-custom"
+>
+  <ng-template let-message pTemplate="headless">
+    <div
+      class="alert pt-3 pb-3 text-white d-flex align-items-center mb-2 justify-content-between bg-warning"
+      style="border-radius: 12px; box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);"
+      role="alert"
+    >
+      <div class="d-flex align-items-center">
+        <i class="ri-error-warning-fill me-3 align-middle fs-20"></i>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 16px;">{{ message.summary }}</div>
+          <div style="font-size: 14px; opacity: 0.9;">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div>
+        <span class="spinner-grow spinner-grow-sm"></span>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- Toast personnalisé pour les informations -->
+<p-toast
+  [baseZIndex]="5000"
+  styleClass="custom-info-alert"
+  [breakpoints]="{ '920px': { width: '100%' } }"
+  [position]="'top-center'"
+  key="info-custom"
+>
+  <ng-template let-message pTemplate="headless">
+    <div
+      class="alert pt-3 pb-3 text-white d-flex align-items-center mb-2 justify-content-between bg-info"
+      style="border-radius: 12px; box-shadow: 0 8px 32px rgba(13, 202, 240, 0.3);"
+      role="alert"
+    >
+      <div class="d-flex align-items-center">
+        <i class="ri-information-fill me-3 align-middle fs-20"></i>
+        <div>
+          <div class="fw-bold mb-1" style="font-size: 16px;">{{ message.summary }}</div>
+          <div style="font-size: 14px; opacity: 0.9;">{{ message.detail }}</div>
+        </div>
+      </div>
+      <div>
+        <i class="ri-information-line fs-24 align-middle"></i>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+
 <router-outlet></router-outlet>

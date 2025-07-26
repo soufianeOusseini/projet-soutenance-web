@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {Injector, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,6 +12,10 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from "@ang
 import {AdminModule} from "./admin/admin.module";
 import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {AuthInterceptor} from "./utils/auth.interceptor";
+import {MessageService} from "primeng/api";
+import {Toast, ToastModule} from "primeng/toast";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+export let StaticInjector: Injector
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,8 +30,12 @@ import {AuthInterceptor} from "./utils/auth.interceptor";
     AuthModule,
     AdminModule,
     NgbModule,
+    Toast,
+    BrowserAnimationsModule, // IMPORTANT pour les animations PrimeNG
+    ToastModule,
   ],
   providers: [
+    MessageService,
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ]

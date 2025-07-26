@@ -54,7 +54,7 @@
                           <button class="btn btn-sm btn-primary" (click)="show(colis)">
                             <i class="ri-eye-line"></i>
                           </button>
-                          <button class="btn btn-sm btn-danger" (click)="delete(colis)">
+                          <button class="btn btn-sm btn-danger" (click)="confirmDelete(colis.id)">
                             <i class="ri-delete-bin-line"></i>
                           </button>
                         </div>
@@ -76,18 +76,3 @@
   </div>
 </div>
 
-<!-- Modal de confirmation de suppression -->
-<ng-template #confirmDeleteModal let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">Confirmer la suppression</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <p>Êtes-vous sûr de vouloir supprimer le colis {{ colisToDelete?.numero }} ?</p>
-    <p class="text-danger">Cette action est irréversible.</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel')">Annuler</button>
-    <button type="button" class="btn btn-danger" (click)="confirmDelete()">Supprimer</button>
-  </div>
-</ng-template>

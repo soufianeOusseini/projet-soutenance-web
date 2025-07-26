@@ -5,6 +5,8 @@ import { ColisService } from "../../services/colis.service";
 import { Colis } from "../../models/colis.model";
 import {Router} from "@angular/router";
 import {ColisStatus} from "../../models/enums/colis-status";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
+import {showHttpError, showSuccess} from "../../utils/message.util";
 
 @Component({
   selector: 'app-colis',
@@ -15,14 +17,11 @@ import {ColisStatus} from "../../models/enums/colis-status";
 export class ColisComponent implements OnInit {
   @ViewChild('confirmDeleteModal') confirmDeleteModal!: TemplateRef<any>;
 
-  // Liste des colis
   allColis: Colis[] = [];
   filteredColis: Colis[] = [];
 
-  // Gestion de la suppression
   colisToDelete: Colis | null = null;
 
-  // Filtres
   searchTerm: string = '';
   statusFilter: string = '';
   statusOptions: string[] = ['EN_ATTENTE', 'EN_TRANSIT', 'LIVRE', 'ANNULE'];
@@ -52,7 +51,6 @@ export class ColisComponent implements OnInit {
   applyFilter(): void {
     let result = [...this.allColis];
 
-    // Appliquer le filtre de recherche
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
       result = result.filter(colis =>
@@ -64,7 +62,6 @@ export class ColisComponent implements OnInit {
       );
     }
 
-    // Appliquer le filtre de statut
     if (this.statusFilter) {
       result = result.filter(colis => colis.status === this.statusFilter);
     }
@@ -100,10 +97,9 @@ export class ColisComponent implements OnInit {
 
     modalRef.result.then(
       () => {
-        this.loadColis(); // Recharger la liste après ajout
+        this.loadColis();
       },
       () => {
-        // Modal fermé sans action
       }
     );
   }
@@ -123,10 +119,9 @@ export class ColisComponent implements OnInit {
 
         modalRef.result.then(
           () => {
-            this.loadColis(); // Recharger la liste après modification
+            this.loadColis();
           },
           () => {
-            // Modal fermé sans action
           }
         );
       },
@@ -136,24 +131,33 @@ export class ColisComponent implements OnInit {
     });
   }
 
-  delete(colis: Colis): void {
-    this.colisToDelete = colis;
-    this.modalService.open(this.confirmDeleteModal, { centered: true });
-  }
-
-  confirmDelete(): void {
-    if (this.colisToDelete) {
-      this.colisService.delete(this.colisToDelete.id!).subscribe({
-        next: () => {
-          this.loadColis(); // Recharger la liste après suppression
-          this.modalService.dismissAll();
+  delete(value: any): void {
+    this.colisService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadColis()
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          this.modalService.dismissAll();
-        }
-      });
-    }
+          showHttpError(error)
+          console.error(error)
+        },
+      })
+  }
+
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
   }
 
   show(colis: Colis): void {

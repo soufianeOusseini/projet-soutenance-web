@@ -3,6 +3,8 @@ import { AddTrajetFormComponent } from "./add-form/add-trajet-form.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TrajetService } from "../../services/trajet.service";
 import { Trajet } from "../../models/trajet.model";
+import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
 
 @Component({
   selector: 'app-trajet',
@@ -50,7 +52,7 @@ export class TrajetComponent implements OnInit {
       (result) => {
         console.log(`Fermé avec: ${result}`);
         if (result === 'saved' || result === 'updated') {
-          this.loadTrajets(); // Recharger les trajets après ajout/modification
+          this.loadTrajets(); 
         }
       },
       (reason) => {
@@ -68,7 +70,6 @@ export class TrajetComponent implements OnInit {
       ariaLabelledBy: 'addContactLabel'
     });
 
-    // Passer les données du trajet au composant modal
     modalRef.componentInstance.trajet = { ...trajet };
     modalRef.componentInstance.isEditMode = true;
 
@@ -76,7 +77,7 @@ export class TrajetComponent implements OnInit {
       (result) => {
         console.log(`Fermé avec: ${result}`);
         if (result === 'saved' || result === 'updated') {
-          this.loadTrajets(); // Recharger les trajets après modification
+          this.loadTrajets();
         }
       },
       (reason) => {
@@ -85,20 +86,35 @@ export class TrajetComponent implements OnInit {
     );
   }
 
-  delete(id: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce trajet?')) {
-      this.trajetService.delete(id).subscribe({
-        next: () => {
-          this.loadTrajets(); // Recharger les trajets après suppression
+  delete(value: any): void {
+    this.trajetService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadTrajets()
         },
         error: (error) => {
-          console.error('Error deleting trajet', error);
-        }
-      });
-    }
+          showHttpError(error)
+          console.error(error)
+        },
+      })
   }
 
-  // Formater la date pour l'affichage
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
+  }
+
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);

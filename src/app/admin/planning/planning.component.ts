@@ -4,6 +4,9 @@ import {TripScheduleService} from "../../services/trip-schedule.service";
 import {BusService} from "../../services/bus.service";
 import {TrajetService} from "../../services/trajet.service";
 import {DriverService} from "../../services/driver.service";
+import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-planning',
@@ -21,13 +24,11 @@ export class PlanningComponent implements OnInit{
   currentSchedule: TripScheduleDTO = this.initializeSchedule();
   currentScheduleId: number | null = null;
 
-  // Options pour les formulaires
   trajets: any[] = [];
   buses: any[] = [];
   drivers: any[] = [];
   companies: any[] = [];
 
-  // Calendrier
   currentMonth: Date = new Date();
   calendarDays: any[] = [];
   monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
@@ -37,7 +38,8 @@ export class PlanningComponent implements OnInit{
     private tripScheduleService: TripScheduleService,
     private driverService: DriverService,
     private busService: BusService,
-    private trajetService: TrajetService
+    private trajetService: TrajetService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
@@ -80,7 +82,7 @@ export class PlanningComponent implements OnInit{
         isCurrentMonth: currentDate.getMonth() === month,
         isToday: this.isToday(currentDate),
         schedules: daySchedules
-          .filter(s => s.heureDepart) // Filtrer les éléments sans heureDepart
+          .filter(s => s.heureDepart)
           .sort((a, b) => a.heureDepart!.localeCompare(b.heureDepart!)),
         schedulesCount: daySchedules.length
       });
@@ -89,7 +91,6 @@ export class PlanningComponent implements OnInit{
     }
   }
 
-  // Méthode pour organiser les jours en semaines
   getCalendarWeeks(): any[][] {
     const weeks = [];
     for (let i = 0; i < this.calendarDays.length; i += 7) {
@@ -116,7 +117,8 @@ export class PlanningComponent implements OnInit{
         this.generateCalendar();
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des planifications', error);
+        showHttpError(error)
+        console.error(error);
       }
     });
   }
@@ -127,7 +129,8 @@ export class PlanningComponent implements OnInit{
         this.buses = data;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des bus', error);
+        showHttpError(error)
+        console.error(error);
       }
     });
 
@@ -136,7 +139,8 @@ export class PlanningComponent implements OnInit{
         this.trajets = data;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des trajets', error);
+        showHttpError(error)
+        console.error( error);
       }
     });
 
@@ -145,7 +149,8 @@ export class PlanningComponent implements OnInit{
         this.drivers = data;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des chauffeurs', error);
+        showHttpError(error)
+        console.error(error);
       }
     });
   }
@@ -160,22 +165,18 @@ export class PlanningComponent implements OnInit{
     this.loadSchedules();
   }
 
-  // Méthode corrigée pour la sélection de date
   selectDate(day: any): void {
     if (day.isCurrentMonth) {
       this.selectedDate = day.date.toISOString().split('T')[0];
 
-      // Si le jour a des planifications, afficher le modal du jour
       if (day.schedulesCount > 0) {
         this.showDaySchedules(day);
       } else {
-        // Sinon, ouvrir directement le modal de création
         this.openModal();
       }
     }
   }
 
-  // Ouvrir le modal de création/édition
   openModal(schedule?: TripSchedule): void {
     if (schedule) {
       // Mode édition
@@ -192,7 +193,6 @@ export class PlanningComponent implements OnInit{
         prix: schedule.prix
       };
     } else {
-      // Mode création
       this.isEditMode = false;
       this.currentSchedule = this.initializeSchedule();
       if (this.selectedDate) {
@@ -202,9 +202,8 @@ export class PlanningComponent implements OnInit{
     this.showModal = true;
   }
 
-  // Méthode séparée pour éditer une planification
   editSchedule(schedule: TripSchedule): void {
-    this.closeDayModal(); // Fermer le modal du jour si ouvert
+    this.closeDayModal();
     this.openModal(schedule);
   }
 
@@ -220,70 +219,80 @@ export class PlanningComponent implements OnInit{
       this.tripScheduleService.updateSchedule(this.currentScheduleId, this.currentSchedule)
         .subscribe({
           next: () => {
+            showSuccess()
             this.loadSchedules();
             this.closeModal();
-            console.log('Planification mise à jour avec succès');
           },
           error: (error) => {
-            console.error('Erreur lors de la mise à jour', error);
+            showHttpError(error)
+            console.error(error);
           }
         });
     } else {
       this.tripScheduleService.createSchedule(this.currentSchedule)
         .subscribe({
           next: () => {
+            showSuccess()
             this.loadSchedules();
             this.closeModal();
-            console.log('Planification créée avec succès');
           },
           error: (error) => {
-            console.error('Erreur lors de la création', error);
+            showHttpError(error)
+            console.error(error);
           }
         });
     }
   }
 
-  // Méthode pour confirmer la suppression
-  confirmDeleteSchedule(scheduleId: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette planification ?')) {
-      this.deleteSchedule(scheduleId);
-    }
-  }
 
   deleteSchedule(scheduleId: number): void {
     this.tripScheduleService.deleteSchedule(scheduleId)
       .subscribe({
         next: () => {
+          showSuccess()
           this.loadSchedules();
           this.closeDayModal(); // Fermer le modal si ouvert
           console.log('Planification supprimée avec succès');
         },
         error: (error) => {
+          showHttpError(error)
           console.error('Erreur lors de la suppression', error);
         }
       });
   }
 
-  // Afficher toutes les planifications d'un jour spécifique
+
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.deleteSchedule(id)
+        this.closeModal()
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
+  }
+
   showDaySchedules(day: any): void {
-    this.selectedDayData = { ...day }; // Copie pour éviter les références
+    this.selectedDayData = { ...day };
     this.selectedDate = day.date.toISOString().split('T')[0];
     this.showDayModal = true;
   }
 
-  // Fermer le modal des planifications du jour
   closeDayModal(): void {
     this.showDayModal = false;
     this.selectedDayData = null;
   }
 
-  // Ajouter une planification au jour sélectionné
   addScheduleToDay(): void {
     this.closeDayModal();
-    this.openModal(); // Ouvrir le modal de création avec la date pré-remplie
+    this.openModal();
   }
 
-  // Méthodes de tracking pour optimiser les performances
   trackByWeek(index: number, week: any[]): number {
     return index;
   }

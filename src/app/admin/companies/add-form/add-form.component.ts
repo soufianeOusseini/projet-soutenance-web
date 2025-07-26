@@ -3,6 +3,7 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {CompanieModel} from "../../../models/companie.model";
 import {CompaniesService} from "../../../services/companies.service";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-add-form',
@@ -42,9 +43,11 @@ export class AddFormComponent implements OnInit {
 
     operation.subscribe({
       next: (data) => {
+        showSuccess();
         this.activeModal.close('success');
       },
       error: (error) => {
+        showHttpError(error);
         console.error(error);
         this.activeModal.close('error');
       },
@@ -69,7 +72,6 @@ export class AddFormComponent implements OnInit {
     });
   }
 
-  // Marquer tous les champs comme touchés pour afficher les erreurs
   markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();

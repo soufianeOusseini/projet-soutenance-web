@@ -4,6 +4,8 @@ import { FormDriverComponent } from './form-driver/form-driver.component';
 import {Driver} from "../../models/driver.model";
 import {DriverService} from "../../services/driver.service";
 import {DriverStatus} from "../../models/enums/driver-status";
+import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
 
 @Component({
   selector: 'app-driver',
@@ -32,7 +34,8 @@ export class DriverComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading drivers', error);
+        showHttpError(error)
+        console.error(error);
         this.loading = false;
       }
     });
@@ -51,7 +54,7 @@ export class DriverComponent implements OnInit {
       (result) => {
         console.log(`Fermé avec: ${result}`);
         if (result === 'saved' || result === 'updated') {
-          this.loadDrivers(); // Recharger les chauffeurs après ajout/modification
+          this.loadDrivers();
         }
       },
       (reason) => {
@@ -69,7 +72,6 @@ export class DriverComponent implements OnInit {
       ariaLabelledBy: 'addDriverLabel'
     });
 
-    // Passer les données du chauffeur au composant modal
     modalRef.componentInstance.driver = { ...driver };
     modalRef.componentInstance.isEditMode = true;
 
@@ -77,7 +79,7 @@ export class DriverComponent implements OnInit {
       (result) => {
         console.log(`Fermé avec: ${result}`);
         if (result === 'saved' || result === 'updated') {
-          this.loadDrivers(); // Recharger les chauffeurs après modification
+          this.loadDrivers();
         }
       },
       (reason) => {
@@ -86,20 +88,35 @@ export class DriverComponent implements OnInit {
     );
   }
 
-  delete(id: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur?')) {
-      this.driverService.delete(id).subscribe({
-        next: () => {
-          this.loadDrivers(); // Recharger les chauffeurs après suppression
+  delete(value: any): void {
+    this.driverService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadDrivers()
         },
         error: (error) => {
-          console.error('Error deleting driver', error);
-        }
-      });
-    }
+          showHttpError(error)
+          console.error(error)
+        },
+      })
   }
 
-  // Méthodes utilitaires pour l'affichage
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
+  }
+
   getFullName(driver: Driver): string {
     if (!driver.user) return '';
     return `${driver.user.firstName || ''} ${driver.user.lastName || ''}`;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {Colis} from "../../../models/colis.model";
 import {ColisService} from "../../../services/colis.service";
+import {showHttpError} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-detail',
@@ -15,7 +16,6 @@ export class DetailComponent implements OnInit {
   error = false;
   colisId: number = 0;
 
-  // Animation states
   headerAnimated = false;
   cardAnimated = false;
   itemsAnimated = false;
@@ -32,7 +32,6 @@ export class DetailComponent implements OnInit {
       this.loadColisDetail();
     });
 
-    // Trigger animations with delays
     setTimeout(() => this.headerAnimated = true, 100);
     setTimeout(() => this.cardAnimated = true, 300);
     setTimeout(() => this.itemsAnimated = true, 500);
@@ -45,6 +44,7 @@ export class DetailComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        showHttpError(error)
         console.error('Erreur lors du chargement du colis:', error);
         this.error = true;
         this.loading = false;
@@ -104,7 +104,6 @@ export class DetailComponent implements OnInit {
   }
 
   editColis(): void {
-    // Logique pour éditer le colis
     console.log('Edit colis:', this.colis);
   }
 

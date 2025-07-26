@@ -1,0 +1,336 @@
+
+/* Styles premium pour les toasts */
+
+/* Toast de succès principal */
+.custom-success-toast.p-toast-message {
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 10px 40px rgba(76, 175, 80, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  color: white !important;
+  padding: 24px !important;
+  margin: 12px !important;
+  min-width: 380px !important;
+  backdrop-filter: blur(10px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Effet de brillance */
+.custom-success-toast.p-toast-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Toast premium avec animation */
+.premium-success-toast.p-toast-message {
+  background: linear-gradient(135deg, #00C851 0%, #007E33 50%, #00C851 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow:
+    0 15px 50px rgba(0, 200, 81, 0.4),
+    0 0 30px rgba(0, 200, 81, 0.2) inset !important;
+  color: white !important;
+  padding: 28px !important;
+  margin: 15px !important;
+  min-width: 400px !important;
+  position: relative !important;
+  animation: slideInBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+}
+
+@keyframes slideInBounce {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-10%) scale(1.05);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Toast centré */
+.center-success-toast.p-toast-message {
+  background: radial-gradient(circle at center, #4CAF50 0%, #2E7D32 100%) !important;
+  border: none !important;
+  border-radius: 24px !important;
+  box-shadow:
+    0 20px 60px rgba(76, 175, 80, 0.5),
+    0 0 0 2px rgba(255, 255, 255, 0.1) inset !important;
+  color: white !important;
+  padding: 32px !important;
+  min-width: 450px !important;
+  text-align: center !important;
+  animation: zoomInPulse 0.6s ease-out !important;
+}
+
+@keyframes zoomInPulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Styles pour les icônes */
+.custom-success-toast .p-toast-message-icon,
+.premium-success-toast .p-toast-message-icon,
+.center-success-toast .p-toast-message-icon {
+  color: white !important;
+  font-size: 28px !important;
+  margin-right: 20px !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+/* Titres des messages */
+.custom-success-toast .p-toast-summary,
+.premium-success-toast .p-toast-summary,
+.center-success-toast .p-toast-summary {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  margin-bottom: 8px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Détails des messages */
+.custom-success-toast .p-toast-detail,
+.premium-success-toast .p-toast-detail,
+.center-success-toast .p-toast-detail {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  font-weight: 400 !important;
+}
+
+/* Bouton de fermeture stylisé */
+.custom-success-toast .p-toast-icon-close,
+.premium-success-toast .p-toast-icon-close,
+.center-success-toast .p-toast-icon-close {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 20px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.custom-success-toast .p-toast-icon-close:hover,
+.premium-success-toast .p-toast-icon-close:hover,
+.center-success-toast .p-toast-icon-close:hover {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.1) rotate(90deg) !important;
+}
+
+/* Styles pour les autres types de messages */
+.custom-error-toast.p-toast-message {
+  background: linear-gradient(135deg, #f44336 0%, #c62828 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(244, 67, 54, 0.3) !important;
+  color: white !important;
+  padding: 24px !important;
+  margin: 12px !important;
+  min-width: 380px !important;
+}
+
+.custom-warn-toast.p-toast-message {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(255, 152, 0, 0.3) !important;
+  color: white !important;
+  padding: 24px !important;
+  margin: 12px !important;
+  min-width: 380px !important;
+}
+
+.custom-info-toast.p-toast-message {
+  background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(33, 150, 243, 0.3) !important;
+  color: white !important;
+  padding: 24px !important;
+  margin: 12px !important;
+  min-width: 380px !important;
+}
+
+/* Toast container personnalisé */
+.p-toast.custom-toast {
+  z-index: 9999 !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .custom-success-toast.p-toast-message,
+  .premium-success-toast.p-toast-message,
+  .custom-error-toast.p-toast-message,
+  .custom-warn-toast.p-toast-message,
+  .custom-info-toast.p-toast-message {
+    min-width: 320px !important;
+    margin: 8px !important;
+    padding: 20px !important;
+  }
+
+  .center-success-toast.p-toast-message {
+    min-width: 300px !important;
+    padding: 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-success-toast.p-toast-message,
+  .premium-success-toast.p-toast-message,
+  .center-success-toast.p-toast-message {
+    min-width: 280px !important;
+    padding: 16px !important;
+  }
+}
+/* Styles pour vos toasts personnalisés */
+
+.custom-success-alert .p-toast-message,
+.custom-error-alert .p-toast-message,
+.custom-warning-alert .p-toast-message,
+.custom-info-alert .p-toast-message {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 8px !important;
+}
+
+/* Animation d'entrée pour les toasts */
+.custom-success-alert .p-toast-message,
+.custom-error-alert .p-toast-message,
+.custom-warning-alert .p-toast-message,
+.custom-info-alert .p-toast-message {
+  animation: slideInFromTop 0.5s ease-out forwards;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animation de sortie */
+.custom-success-alert .p-toast-message.p-toast-message-leave,
+.custom-error-alert .p-toast-message.p-toast-message-leave,
+.custom-warning-alert .p-toast-message.p-toast-message-leave,
+.custom-info-alert .p-toast-message.p-toast-message-leave {
+  animation: slideOutToTop 0.3s ease-in forwards;
+}
+
+@keyframes slideOutToTop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Styles spécifiques pour les couleurs Bootstrap si nécessaire */
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important; /* Texte sombre pour meilleure lisibilité */
+}
+
+.bg-info {
+  background-color: #17a2b8 !important;
+}
+
+/* Hover effects pour les toasts */
+.custom-success-alert .alert:hover,
+.custom-error-alert .alert:hover,
+.custom-warning-alert .alert:hover,
+.custom-info-alert .alert:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .custom-success-alert .alert,
+  .custom-error-alert .alert,
+  .custom-warning-alert .alert,
+  .custom-info-alert .alert {
+    margin: 4px !important;
+    padding: 16px !important;
+    font-size: 14px;
+  }
+
+  .custom-success-alert .alert .fs-20,
+  .custom-error-alert .alert .fs-20,
+  .custom-warning-alert .alert .fs-20,
+  .custom-info-alert .alert .fs-20 {
+    font-size: 18px !important;
+  }
+
+  .custom-success-alert .alert .fs-24,
+  .custom-error-alert .alert .fs-24,
+  .custom-warning-alert .alert .fs-24,
+  .custom-info-alert .alert .fs-24 {
+    font-size: 20px !important;
+  }
+}
+
+/* Amélioration de l'accessibilité */
+.custom-success-alert .alert,
+.custom-error-alert .alert,
+.custom-warning-alert .alert,
+.custom-info-alert .alert {
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-success-alert .alert:focus,
+.custom-error-alert .alert:focus,
+.custom-warning-alert .alert:focus,
+.custom-info-alert .alert:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}

@@ -5,6 +5,7 @@ import {Driver} from "../../../models/driver.model";
 import {DriverService} from "../../../services/driver.service";
 import {DriverStatus} from "../../../models/enums/driver-status";
 import {UserProfile} from "../../../models/enums/user-profile";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-form-driver',
@@ -25,7 +26,6 @@ export class FormDriverComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.createForm();
-    // Détecter si on est en mode édition
     this.isEditMode = !!this.driver.id;
   }
 
@@ -47,7 +47,6 @@ export class FormDriverComponent implements OnInit {
 
   save(): void {
     if (this.formGroup.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.formGroup.controls).forEach(key => {
         const control = this.formGroup.get(key);
         control?.markAsTouched();
@@ -61,9 +60,11 @@ export class FormDriverComponent implements OnInit {
       .save(formData)
       .subscribe({
         next: (data) => {
+          showSuccess()
           this.activeModal.close('saved');
         },
         error: (error) => {
+          showHttpError(error)
           console.error(error);
           this.activeModal.close('error');
         },
@@ -72,7 +73,6 @@ export class FormDriverComponent implements OnInit {
 
   update(): void {
     if (this.formGroup.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.formGroup.controls).forEach(key => {
         const control = this.formGroup.get(key);
         control?.markAsTouched();
@@ -86,9 +86,11 @@ export class FormDriverComponent implements OnInit {
       .save(formData)
       .subscribe({
         next: (data) => {
+          showSuccess()
           this.activeModal.close('updated');
         },
         error: (error) => {
+          showHttpError(error)
           console.error(error);
           this.activeModal.close('error');
         },
@@ -121,7 +123,6 @@ export class FormDriverComponent implements OnInit {
 
   reset() {
     this.formGroup.reset();
-    // Remettre les valeurs par défaut
     this.formGroup.patchValue({
       status: 'ACTIVE',
       isAvailable: true
@@ -132,7 +133,6 @@ export class FormDriverComponent implements OnInit {
     this.activeModal.close('closed');
   }
 
-  // Getters pour faciliter la vérification des erreurs dans le template
   get firstName() { return this.formGroup.get('firstName'); }
   get lastName() { return this.formGroup.get('lastName'); }
   get email() { return this.formGroup.get('email'); }

@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Colis} from "../../../models/colis.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {Trajet} from "../../../models/trajet.model";
 import {TrajetService} from "../../../services/trajet.service";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-add-form',
@@ -21,7 +21,6 @@ export class AddTrajetFormComponent implements OnInit{
 
   ngOnInit(): void {
     this.formGroup = this.createForm();
-    // Détecter si on est en mode édition
     this.isEditMode = !!this.trajet.id;
   }
 
@@ -40,7 +39,6 @@ export class AddTrajetFormComponent implements OnInit{
 
   save(): void {
     if (this.formGroup.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.formGroup.controls).forEach(key => {
         const control = this.formGroup.get(key);
         control?.markAsTouched();
@@ -52,9 +50,11 @@ export class AddTrajetFormComponent implements OnInit{
       .save(this.formGroup.value)
       .subscribe({
         next: (data) => {
+          showSuccess()
           this.activeModal.close('saved');
         },
         error: (error) => {
+          showHttpError(error)
           console.error(error);
           this.activeModal.close('error');
         },
@@ -63,7 +63,6 @@ export class AddTrajetFormComponent implements OnInit{
 
   update(): void {
     if (this.formGroup.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.formGroup.controls).forEach(key => {
         const control = this.formGroup.get(key);
         control?.markAsTouched();
@@ -92,7 +91,6 @@ export class AddTrajetFormComponent implements OnInit{
     this.activeModal.close('closed');
   }
 
-  // Getters pour faciliter la vérification des erreurs dans le template
   get nom() { return this.formGroup.get('nom'); }
   get villeDepart() { return this.formGroup.get('villeDepart'); }
   get villeArrive() { return this.formGroup.get('villeArrive'); }

@@ -3,7 +3,8 @@ import {Ticket} from "../../models/ticket.model";
 import {TicketService} from "../../services/ticket.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AddTicketFormComponent} from "./add-ticket-form/add-ticket-form.component";
-import {ToastrService} from "ngx-toastr";
+import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
+import {showHttpError, showSuccess} from "../../utils/message.util";
 declare var bootstrap: any;
 
 @Component({
@@ -12,7 +13,7 @@ declare var bootstrap: any;
   templateUrl: './ticket.component.html',
   styleUrl: './ticket.component.css'
 })
-export class TicketComponent {
+export class TicketComponent implements OnInit{
 
   tickets: Ticket[] = [];
   isLoading: boolean = true;
@@ -50,11 +51,10 @@ export class TicketComponent {
     modalRef.result.then(
       (result) => {
         if (result) {
-          this.loadTickets(); // Recharger la liste après ajout
+          this.loadTickets();
         }
       },
       (dismissed) => {
-        // Modal fermé sans validation
       }
     );
   }
@@ -66,39 +66,48 @@ export class TicketComponent {
       keyboard: false
     });
 
-    // Passer le ticket à modifier au composant modal
     modalRef.componentInstance.setTicket(ticket);
 
     modalRef.result.then(
       (result) => {
         if (result) {
-          this.loadTickets(); // Recharger la liste après modification
+          this.loadTickets();
         }
       },
       (dismissed) => {
-        // Modal fermé sans validation
       }
     );
   }
 
-  delete(id: number | undefined): void {
-    if (!id) {
-      return;
-    }
-
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?')) {
-      this.ticketService.delete(id).subscribe({
-        next: () => {
-          this.loadTickets(); // Recharger la liste
+  delete(value: any): void {
+    this.ticketService
+      .delete(value)
+      .subscribe({
+        next: (data) => {
+          showSuccess()
+          this.loadTickets()
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-        }
-      });
-    }
+          showHttpError(error)
+          console.error(error)
+        },
+      })
   }
 
-  // Méthodes utilitaires pour l'affichage
+  confirmDelete(id: any) {
+    const modalRef = this.modalService.open(ConfirmDeleteComponent, {
+      centered: true,
+    })
+    modalRef.result.then(
+      (result) => {
+        this.delete(id)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
+  }
+
   getStatusBadgeClass(status: string | undefined): string {
     const baseClass = 'badge';
     switch (status) {

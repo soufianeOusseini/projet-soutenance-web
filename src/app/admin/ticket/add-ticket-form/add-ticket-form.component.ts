@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Ticket} from "../../../models/ticket.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {TicketService} from "../../../services/ticket.service";
-import {ToastrService} from "ngx-toastr";
 import {Trajet} from "../../../models/trajet.model";
 import {TrajetService} from "../../../services/trajet.service";
 import {TicketStatus} from "../../../models/enums/ticket-status";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-add-ticket-form',
@@ -29,7 +28,6 @@ export class AddTicketFormComponent implements OnInit {
     private ticketService: TicketService,
     private trajetService: TrajetService,
   ) {
-    // Définir la date d'aujourd'hui pour la validation
     this.today = new Date().toISOString().split('T')[0];
   }
 
@@ -52,22 +50,18 @@ export class AddTicketFormComponent implements OnInit {
 
   createForm(): FormGroup {
     return this.fb.group({
-      // Informations du trajet
       trajetId: ['', [Validators.required]],
       date: [this.today, [Validators.required]],
 
-      // Informations client
       clientNom: ['', [Validators.required, Validators.minLength(2)]],
       clientPrenom: ['', [Validators.required, Validators.minLength(2)]],
       clientContact: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{8,15}$/)]],
 
-      // Informations ticket
       numero: [''],
       prix: [0],
       modePaiement: ['', [Validators.required]],
 
-      // Champs cachés
-      status: [TicketStatus.PAYE], // Status automatiquement défini à PAYÉ
+      status: [TicketStatus.PAYE],
       heureDepart: ['']
     });
   }
@@ -77,13 +71,11 @@ export class AddTicketFormComponent implements OnInit {
     if (trajetId) {
       this.selectedTrajet = this.trajets.find(t => t.id == trajetId) || null;
       if (this.selectedTrajet) {
-        // Mettre à jour le prix et l'heure
         this.formGroup.patchValue({
           prix: this.selectedTrajet.amount,
           heureDepart: this.selectedTrajet.heure
         });
 
-        // Calculer les places restantes
         this.calculatePlacesRestantes();
       }
     } else {
@@ -130,7 +122,6 @@ export class AddTicketFormComponent implements OnInit {
 
   save(): void {
     if (this.formGroup.invalid) {
-      // Marquer tous les champs comme touchés pour déclencher l'affichage des erreurs
       Object.keys(this.formGroup.controls).forEach(key => {
         const control = this.formGroup.get(key);
         control?.markAsTouched();
@@ -144,15 +135,12 @@ export class AddTicketFormComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    // Préparer les données pour l'envoi
     const formValue = { ...this.formGroup.value };
 
-    // Convertir la date string en Date
     if (formValue.date) {
       formValue.date = new Date(formValue.date);
     }
 
-    // Ajouter les informations client comme métadonnées (ou créer un client temporaire)
     const ticketData = {
       ...formValue,
       clientInfo: {
@@ -164,6 +152,7 @@ export class AddTicketFormComponent implements OnInit {
 
     this.ticketService.save(ticketData).subscribe({
       next: (data) => {
+        showSuccess()
         this.isSubmitting = false;
 
         // Proposer l'impression du ticket
@@ -174,6 +163,7 @@ export class AddTicketFormComponent implements OnInit {
         this.activeModal.close(data);
       },
       error: (error) => {
+        showHttpError(error)
         this.isSubmitting = false;
         console.error('Erreur lors de la vente:', error);
       }
@@ -181,7 +171,6 @@ export class AddTicketFormComponent implements OnInit {
   }
 
   imprimerTicket(ticket: any): void {
-    // Logique d'impression du ticket
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const ticketHtml = this.generateTicketHtml(ticket);
@@ -243,7 +232,6 @@ export class AddTicketFormComponent implements OnInit {
     this.activeModal.dismiss('close');
   }
 
-  // Méthodes utilitaires
   isFieldInvalid(fieldName: string): boolean {
     const control = this.formGroup.get(fieldName);
     return !!(control && control.invalid && (control.dirty || control.touched));
