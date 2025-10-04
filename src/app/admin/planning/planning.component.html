@@ -104,14 +104,17 @@
             </div>
 
             <!-- Bus -->
+            <!-- Bus -->
             <div class="col-md-6 mb-3">
               <label for="bus" class="form-label">Bus *</label>
               <select id="bus" class="form-select"
                       [(ngModel)]="currentSchedule.busId"
-                      name="busId" required>
+                      name="busId"
+                      (change)="onBusChange()"
+                      required>
                 <option value="0">Sélectionner un bus</option>
                 <option *ngFor="let bus of buses" [value]="bus.id">
-                  {{ bus.type }} ({{ bus.plaque }})
+                  {{ bus.type }} ({{ bus.plaque }}) - {{ bus.capacity || bus.nombrePlaces }} places
                 </option>
               </select>
             </div>
@@ -147,11 +150,12 @@
 
             <!-- Nombre de places -->
             <div class="col-md-6 mb-3">
-              <label for="nombrePlaces" class="form-label">Nombre de places *</label>
+              <label for="nombrePlaces" class="form-label">Nombre de places</label>
               <input type="number" id="nombrePlaces" class="form-control"
                      [(ngModel)]="currentSchedule.nombrePlacesTotales"
                      name="nombrePlacesTotales"
-                     min="1" max="100" required>
+                     readonly>
+              <small class="text-muted">Déterminé automatiquement par le bus sélectionné</small>
             </div>
 
             <!-- Prix -->

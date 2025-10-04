@@ -12,8 +12,9 @@ import {MenuItem} from "../../utils/menu-item";
 export class SidebarComponent implements OnInit {
   menuItems: MenuItem[] = [];
   openMenuIds: Set<number> = new Set();
+  openChildMenuIds: Set<number> = new Set();
   currentUrl: string = '';
-  accordionMode: boolean = true; // Activer/désactiver le mode accordion
+  accordionMode: boolean = true;
 
   constructor(private router: Router) { }
 
@@ -35,82 +36,76 @@ export class SidebarComponent implements OnInit {
     this.menuItems = [
       {
         id: 1,
-        icon: 'bi bi-speedometer2', // Dashboard
+        icon: 'bi bi-speedometer2',
         text: 'Dashboard',
         link: '/admin/dashboard'
       },
       {
         id: 2,
-        icon: 'bi bi-signpost-split', // Trajets
+        icon: 'bi bi-signpost-split',
         text: 'Trajets',
-        link: '/trips',
-        badge: {
-          text: 'New',
-          type: 'danger'
-        }
+        link: '/admin/trips',
       },
       {
         id: 3,
-        icon: 'bi bi-buildings', // Compagnies
+        icon: 'bi bi-buildings',
         text: 'Compagnies',
         link: '/admin/companies',
       },
       {
         id: 4,
-        icon: 'bi bi-truck-front', // Bus
+        icon: 'bi bi-truck-front',
         text: 'Bus',
         link: '/admin/bus',
       },
       {
         id: 5,
-        icon: 'bi bi-box-seam', // Colis
+        icon: 'bi bi-box-seam',
         text: 'Colis',
         link: '/admin/colis',
       },
       {
         id: 6,
-        icon: 'bi bi-ticket-perforated', // Tickets
+        icon: 'bi bi-ticket-perforated',
         text: 'Tickets',
         link: '/admin/tickets',
       },
       {
         id: 7,
-        icon: 'bi bi-calendar-check', // Réservations
-        text: 'Reservations',
-        link: '/admin/reservations',
-      },
-      {
-        id: 8,
         icon: 'bi bi-truck-front',
         text: 'Chauffeurs',
         link: '/admin/drivers',
       },
       {
-        id: 9,
+        id: 8,
         icon: 'bi bi-calendar',
         text: 'Planning',
         link: '/admin/planning',
       },
       {
-        id: 10,
-        icon: 'bi bi-gear', // Paramètres / Config
+        id: 9,
+        icon: 'bi bi-gear',
         text: 'Configurations',
         children: [
           {
+            id: 101,
             text: 'Ma Compagnie',
-            link: '/admin/my-company', // Correction du typo
+            link: '/admin/my-company',
             icon: 'bi bi-building'
           },
+          {
+            id: 102,
+            text: 'Utilisateurs',
+            link: '/admin/users',
+            icon: 'bi bi-users'
+          }
         ]
-      },
+      }
     ];
   }
 
   updateActiveMenuItem(): void {
-    // Réinitialiser tous les menus comme inactifs
     this.resetActiveState(this.menuItems);
-
-    // Marquer le menu actuel comme actif
     this.setActiveMenuItem(this.menuItems, this.currentUrl);
   }
 
@@ -125,19 +120,15 @@ export class SidebarComponent implements OnInit {
 
   private setActiveMenuItem(items: MenuItem[], currentUrl: string): boolean {
     for (const item of items) {
-      // Vérifier si c'est un lien direct
       if (item.link && this.isActiveRoute(item.link, currentUrl)) {
         item.active = true;
-        // Si c'est un sous-menu, ouvrir le parent automatiquement
         if (item.id) {
           this.openMenu(item.id);
         }
         return true;
       }
 
-      // Vérifier les enfants
       if (item.children && this.setActiveMenuItem(item.children, currentUrl)) {
-        // Si un enfant est actif, marquer le parent comme actif aussi et l'ouvrir
         item.active = true;
         if (item.id) {
           this.openMenu(item.id);
@@ -149,16 +140,12 @@ export class SidebarComponent implements OnInit {
   }
 
   private isActiveRoute(menuLink: string, currentUrl: string): boolean {
-    // Comparaison exacte
     if (currentUrl === menuLink) {
       return true;
     }
-
-    // Comparaison avec préfixe (pour les routes avec paramètres)
     if (currentUrl.startsWith(menuLink + '/')) {
       return true;
     }
-
     return false;
   }
 
@@ -177,11 +164,28 @@ export class SidebarComponent implements OnInit {
     if (this.openMenuIds.has(item.id)) {
       this.closeMenu(item.id);
     } else {
-      // Si le mode accordion est activé, fermer les autres menus
       if (this.accordionMode) {
         this.closeAllMenusExcept(item.id);
       }
       this.openMenu(item.id);
+    }
+  }
+
+  toggleChildMenu(child: MenuItem, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!child.id) {
+      return;
+    }
+
+    if (this.openChildMenuIds.has(child.id)) {
+      this.closeChildMenu(child.id);
+    } else {
+      if (this.accordionMode) {
+        this.closeAllChildMenusExcept(child.id);
+      }
+      this.openChildMenu(child.id);
     }
   }
 
@@ -193,8 +197,17 @@ export class SidebarComponent implements OnInit {
     this.openMenuIds.delete(menuId);
   }
 
+  openChildMenu(menuId: number): void {
+    this.openChildMenuIds.add(menuId);
+  }
+
+  closeChildMenu(menuId: number): void {
+    this.openChildMenuIds.delete(menuId);
+  }
+
   closeAllMenus(): void {
     this.openMenuIds.clear();
+    this.openChildMenuIds.clear();
   }
 
   closeAllMenusExcept(exceptId: number): void {
@@ -202,19 +215,21 @@ export class SidebarComponent implements OnInit {
     menusToClose.forEach(id => this.closeMenu(id));
   }
 
-  openMenuWithChildren(item: MenuItem): void {
-    if (item.id && this.hasChildren(item)) {
-      this.openMenuIds.add(item.id);
-    }
+  closeAllChildMenusExcept(exceptId: number): void {
+    const menusToClose = Array.from(this.openChildMenuIds).filter(id => id !== exceptId);
+    menusToClose.forEach(id => this.closeChildMenu(id));
   }
 
-  // Méthode pour activer/désactiver le mode accordion
   toggleAccordionMode(): void {
     this.accordionMode = !this.accordionMode;
   }
 
   isMenuOpen(item: MenuItem): boolean {
     return !!item.id && this.openMenuIds.has(item.id);
+  }
+
+  isChildMenuOpen(item: MenuItem): boolean {
+    return !!item.id && this.openChildMenuIds.has(item.id);
   }
 
   isMenuActive(item: MenuItem): boolean {

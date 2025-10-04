@@ -5,7 +5,21 @@ export class Ticket {
   status: string | undefined;
   date: Date | undefined;
   heureDepart: string | undefined;
-  userId: number | undefined;
   trajetId: number | undefined;
   modePaiement: string | undefined;
+
+  // Nouvelles propriétés client
+  clientNom?: string;
+  clientPrenom?: string;
+  clientContact?: string;
+
+  // Type de transaction et réservation
+  typeTransaction?: string; // 'ACHAT' | 'RESERVATION'
+  dateLimitePaiement?: string;
+
+  // Informations supplémentaires
+  trajetInfo?: string;
+  companyName?: string;
+  userId?: number;
+  reservationId?: number;
 }

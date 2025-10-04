@@ -28,11 +28,23 @@ export class ColisService {
   }
 
 
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/delete/${id}`);
+  }
+
+  /**
+   * Nouvelle méthode pour mettre à jour le statut d'un colis
+   */
   updateStatus(id: number, status: string): Observable<Colis> {
     return this.http.patch<Colis>(`${this.url}/${id}/status`, { status });
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/delete/${id}`);
+  /**
+   * Méthode pour obtenir les transitions de statut possibles
+   */
+  getAvailableStatusTransitions(id: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.url}/${id}/available-status-transitions`);
   }
 }
+
+

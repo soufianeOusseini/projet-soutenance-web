@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Reservation} from "../models/reservation.model";
 import {Observable} from "rxjs";
 import {Ticket} from "../models/ticket.model";
@@ -102,6 +102,29 @@ export class TicketService {
 
     return this.http.get(`${this.apiUrl}/rapport`, {
       params,
+      responseType: 'blob'
+    });
+  }
+
+  cancelTicket(ticketId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${ticketId}/cancel`, {});
+  }
+
+  confirmReservation(id: number, modePaiement: string): Observable<Ticket> {
+    return this.http.put<Ticket>(`${this.apiUrl}/${id}/confirm`, { modePaiement });
+  }
+
+  useTicket(id: number): Observable<Ticket> {
+    return this.http.put<Ticket>(`${this.apiUrl}/${id}/use`, {});
+  }
+
+  downloadTicketPdf(id: number): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Accept': 'application/pdf'
+    });
+
+    return this.http.get(`${this.apiUrl}/${id}/pdf`, {
+      headers: headers,
       responseType: 'blob'
     });
   }

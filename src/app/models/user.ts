@@ -18,13 +18,15 @@ export class User extends BaseEntity {
   credentialsNonExpired: boolean = true;
   accountNonExpired: boolean = true;
   roles: Role[] = [];
-  profiles: null | undefined;
+  profiles: any[] | undefined;
   profile: UserProfile | undefined;
   admin: boolean = false;
   profilePath: string | undefined;
   birthDate: Date | undefined;
+  email?: string;
 
   birthPlace: string | undefined;
+  lastConnectionAt: any;
 
   constructor() {
     super();

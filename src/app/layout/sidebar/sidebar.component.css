@@ -1,9 +1,28 @@
-/* Dans votre fichier sidebar.component.scss */
+/* Masquer les flèches automatiques du framework */
+.sidebar-menu a::after,
+.sidebar-menu a.has-arrow::after {
+  display: none !important;
+}
+
+/* Sidebar wrapper avec scroll */
+.sidebar-wrapper {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarMenuScroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
 /* État par défaut du sous-menu */
 .treeview-menu {
   display: none;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 /* Afficher le sous-menu quand parent ouvert */
@@ -11,12 +30,46 @@
   display: block;
 }
 
-/* Animation pour la flèche */
-.rotate-chevron {
+/* Animation pour la flèche principale (chevron-down) */
+.bi-chevron-down {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Animation pour les flèches des sous-menus (chevron-right) */
+.bi-chevron-right {
+  transition: transform 0.3s ease;
+}
+
+.rotate-90 {
   transform: rotate(90deg);
 }
 
-/* Transition pour la flèche */
-.bi-chevron-right {
-  transition: transform 0.3s ease;
+/* Styles pour les menus à plusieurs niveaux */
+.treeview-menu .treeview-menu {
+  padding-left: 20px;
+}
+
+/* Curseur pointer pour les menus avec sous-menus */
+.treeview > a {
+  cursor: pointer;
+}
+
+.treeview-menu .treeview > a {
+  cursor: pointer;
+}
+
+/* Amélioration de l'apparence des liens actifs */
+.sidebar-menu li.active > a {
+  background-color: var(--bs-primary);
+  color: white;
+}
+
+.treeview-menu li.active > a {
+  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  color: var(--bs-primary);
+  border-left: 3px solid var(--bs-primary);
 }

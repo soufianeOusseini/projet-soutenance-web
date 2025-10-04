@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit{
   }
 
   profil(): void {
-    this.router.navigate(['profil']);
+    this.router.navigate(['admin/profil']);
   }
 
   ngOnInit(): void {

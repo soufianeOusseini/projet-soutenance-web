@@ -1,27 +1,27 @@
 <nav id="sidebar" class="sidebar-wrapper">
   <div class="app-brand px-3 py-2 d-flex align-items-center">
     <a routerLink="/">
-      <img src="assets/images/logo.svg" class="logo" alt="Application Logo" />
+      <img src="assets/logo/logo.png" class="logo" alt="Application Logo" />
     </a>
   </div>
 
   <div class="sidebarMenuScroll">
     <ul class="sidebar-menu">
-      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': isMenuActive(item), 'treeview': hasChildren(item),'open': isMenuOpen(item)}">
+      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': isMenuActive(item), 'treeview': hasChildren(item), 'open': isMenuOpen(item)}">
         <a [routerLink]="item.link ? [item.link] : null"
            [href]="!item.link && !hasChildren(item) ? '#!' : null"
            (click)="hasChildren(item) ? toggleMenu(item, $event) : null"
            routerLinkActive="active"
-           [routerLinkActiveOptions]="{exact: true}"
-           [class.has-arrow]="hasChildren(item)">
+           [routerLinkActiveOptions]="{exact: true}">
           <i [class]="item.icon"></i>
           <span class="menu-text">{{ item.text }}</span>
           <span *ngIf="item.badge" class="badge border border-{{ item.badge.type }} text-{{ item.badge.type }} rounded-5 ms-2">{{ item.badge.text }}</span>
-          <i *ngIf="hasChildren(item)" class="bi bi-chevron-down ms-auto transition-transform" [class.rotate-180]="isMenuOpen(item)"></i>
+          <!-- Utiliser seulement chevron-down pour les menus parents -->
         </a>
 
         <ul *ngIf="hasChildren(item)" class="treeview-menu" [ngClass]="{'show': isMenuOpen(item)}">
-          <li *ngFor="let child of item.children" [ngClass]="{'active': child.active}">
+          <li *ngFor="let child of item.children" [ngClass]="{'active': child.active, 'treeview': hasChildren(child), 'open': isChildMenuOpen(child)}">
+            <!-- Enfant simple sans sous-menu -->
             <a *ngIf="!hasChildren(child)"
                [routerLink]="child.link ? [child.link] : null"
                [href]="!child.link ? '#!' : null"
@@ -30,12 +30,13 @@
               {{ child.text }}
             </a>
 
+            <!-- Enfant avec sous-menu -->
             <ng-container *ngIf="hasChildren(child)">
-              <a href="#!">
+              <a href="#!" (click)="toggleChildMenu(child, $event)">
                 {{ child.text }}
-                <i class="bi bi-chevron-right"></i>
+                <i class="bi bi-chevron-right ms-auto" [class.rotate-90]="isChildMenuOpen(child)"></i>
               </a>
-              <ul class="treeview-menu">
+              <ul class="treeview-menu" [ngClass]="{'show': isChildMenuOpen(child)}">
                 <li *ngFor="let subChild of child.children">
                   <a [routerLink]="subChild.link ? [subChild.link] : null"
                      [href]="!subChild.link ? '#!' : null"

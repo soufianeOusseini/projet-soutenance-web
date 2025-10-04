@@ -161,7 +161,7 @@ export class ColisComponent implements OnInit {
   }
 
   show(colis: Colis): void {
-    this.router.navigate(['colis/detail/', colis.id]);
+    this.router.navigate(['admin/colis/detail/', colis.id]);
   }
 
   getStatusLabel(status: ColisStatus | undefined): string {

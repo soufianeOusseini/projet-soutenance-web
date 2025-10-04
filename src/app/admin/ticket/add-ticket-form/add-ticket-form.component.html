@@ -1,5 +1,9 @@
 <div class="modal-header">
-  <h5 class="modal-title" id="addTicketLabel">Vente d'un ticket</h5>
+  <h5 class="modal-title" id="addTicketLabel">
+    <span *ngIf="selectedTransactionType === 'ACHAT'">Vente d'un ticket</span>
+    <span *ngIf="selectedTransactionType === 'RESERVATION'">Réservation d'un ticket</span>
+    <span *ngIf="!selectedTransactionType">Nouvelle transaction</span>
+  </h5>
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
@@ -7,72 +11,112 @@
     <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
       <div class="col-xl-12 col-12">
 
-        <!-- Section Trajet -->
+        <!-- Section Type de Transaction -->
         <div class="card mb-3">
-          <div class="card-header bg-primary text-white">
-            <h6 class="mb-0"><i class="ri-route-line me-2"></i>Sélection du trajet</h6>
+          <div class="card-header bg-info text-white">
+            <h6 class="mb-0"><i class="ri-shopping-cart-line me-2"></i>Type de transaction</h6>
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="trajet" class="form-label">Trajet *</label>
-                  <select
-                    class="form-control"
-                    id="trajet"
-                    formControlName="trajetId"
-                    (change)="onTrajetChange()"
-                    [class.is-invalid]="isFieldInvalid('trajetId')">
-                    <option value="">Sélectionner un trajet</option>
-                    <option *ngFor="let trajet of trajets" [value]="trajet.id">
-                      {{ trajet.villeDepart }} → {{ trajet.villeArrive }}
-                      ({{ trajet.amount | currency:'XOF':'symbol':'1.0-0' }})
-                    </option>
-                  </select>
-                  <div *ngIf="isFieldInvalid('trajetId')" class="invalid-feedback">
-                    Le trajet est obligatoire
-                  </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="transactionType" id="achatRadio"
+                         value="ACHAT" (change)="onTransactionTypeChange('ACHAT')"
+                         [checked]="selectedTransactionType === 'ACHAT'">
+                  <label class="form-check-label" for="achatRadio">
+                    <i class="ri-money-dollar-circle-line text-success me-1"></i>
+                    <strong>Achat immédiat</strong>
+                    <small class="d-block text-muted">Paiement immédiat, ticket confirmé</small>
+                  </label>
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="date" class="form-label">Date de départ *</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    id="date"
-                    formControlName="date"
-                    [min]="today"
-                    [class.is-invalid]="isFieldInvalid('date')"/>
-                  <div *ngIf="isFieldInvalid('date')" class="invalid-feedback">
-                    La date est obligatoire
-                  </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="transactionType" id="reservationRadio"
+                         value="RESERVATION" (change)="onTransactionTypeChange('RESERVATION')"
+                         [checked]="selectedTransactionType === 'RESERVATION'">
+                  <label class="form-check-label" for="reservationRadio">
+                    <i class="ri-bookmark-line text-warning me-1"></i>
+                    <strong>Réservation</strong>
+                    <small class="d-block text-muted">Réserver une place, paiement ultérieur</small>
+                  </label>
                 </div>
               </div>
             </div>
 
-            <!-- Informations du trajet sélectionné -->
-            <div *ngIf="selectedTrajet" class="alert alert-info">
-              <div class="row">
-                <div class="col-md-4">
-                  <strong>Prix:</strong> {{ selectedTrajet.amount | currency:'XOF':'symbol':'1.0-0' }}
-                </div>
-                <div class="col-md-4">
-                  <strong>Heure:</strong> {{ selectedTrajet.heure }}
-                </div>
-                <div class="col-md-4">
-                  <strong>Places restantes:</strong>
-                  <span class="badge" [class]="getPlacesRestantesBadgeClass()">
-                    {{ placesRestantes }}
-                  </span>
-                </div>
-              </div>
+            <!-- Alerte pour les réservations -->
+            <div *ngIf="selectedTransactionType === 'RESERVATION'" class="alert alert-warning mt-3">
+              <i class="ri-information-line me-2"></i>
+              <strong>Information:</strong> Cette réservation devra être confirmée par paiement dans les 24 heures, sinon elle sera automatiquement annulée.
             </div>
           </div>
         </div>
 
+        <!-- Section Voyage Programmé -->
+        <div class="card mb-3" *ngIf="selectedTransactionType">
+          <div class="card-header bg-primary text-white">
+            <h6 class="mb-0"><i class="ri-route-line me-2"></i>Sélection du voyage programmé</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="schedule" class="form-label">Voyage programmé *</label>
+                  <select
+                    class="form-control"
+                    id="schedule"
+                    formControlName="scheduleId"
+                    (change)="onTrajetChange()"
+                    [class.is-invalid]="isFieldInvalid('scheduleId')">
+                    <option value="">Sélectionner un voyage programmé</option>
+                    <option *ngFor="let schedule of tripSchedules" [value]="schedule.id">
+                      {{ schedule.trajet.villeDepart }} → {{ schedule.trajet.villeArrive }}
+                      - {{ schedule.dateDepart | date:'dd/MM/yyyy' }} à {{ schedule.heureDepart }}
+                      ({{ schedule.prix | currency:'XOF':'symbol':'1.0-0' }})
+                      - {{ schedule.nombrePlacesDisponibles }} places restantes
+                    </option>
+                  </select>
+                  <div *ngIf="isFieldInvalid('scheduleId')" class="invalid-feedback">
+                    La sélection du voyage est obligatoire
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations du voyage sélectionné -->
+            <div *ngIf="selectedSchedule" class="alert alert-info">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong>Trajet:</strong> {{ selectedSchedule.trajet.villeDepart }} → {{ selectedSchedule.trajet.villeArrive }}
+                </div>
+                <div class="col-md-2">
+                  <strong>Prix:</strong> {{ selectedSchedule.prix | currency:'XOF':'symbol':'1.0-0' }}
+                </div>
+                <div class="col-md-2">
+                  <strong>Date:</strong> {{ selectedSchedule.dateDepart | date:'dd/MM/yyyy' }}
+                </div>
+                <div class="col-md-2">
+                  <strong>Heure:</strong> {{ selectedSchedule.heureDepart }}
+                </div>
+                <div class="col-md-3">
+                  <strong>Places restantes:</strong>
+                  <span class="badge" [class]="getPlacesRestantesBadgeClass()">
+                    {{ selectedSchedule.nombrePlacesDisponibles }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Champs cachés pour les données automatiquement remplies -->
+            <input type="hidden" formControlName="date">
+            <input type="hidden" formControlName="heureDepart">
+            <input type="hidden" formControlName="trajetId">
+            <input type="hidden" formControlName="typeTransaction">
+          </div>
+        </div>
+
         <!-- Section Client -->
-        <div class="card mb-3">
+        <div class="card mb-3" *ngIf="selectedTransactionType">
           <div class="card-header bg-success text-white">
             <h6 class="mb-0"><i class="ri-user-line me-2"></i>Informations client</h6>
           </div>
@@ -127,8 +171,8 @@
           </div>
         </div>
 
-        <!-- Section Paiement -->
-        <div class="card mb-3">
+        <!-- Section Paiement - Seulement pour les achats immédiats -->
+        <div class="card mb-3" *ngIf="selectedTransactionType === 'ACHAT'">
           <div class="card-header bg-warning text-dark">
             <h6 class="mb-0"><i class="ri-money-dollar-circle-line me-2"></i>Paiement</h6>
           </div>
@@ -157,11 +201,12 @@
                   <label for="prix" class="form-label">Prix à payer</label>
                   <input
                     type="number"
-                    class="form-control"
+                    class="form-control bg-light"
                     id="prix"
                     formControlName="prix"
                     readonly
                     step="0.01"/>
+                  <small class="text-muted">Prix automatiquement défini par le voyage sélectionné</small>
                 </div>
               </div>
               <div class="col-md-4">
@@ -169,13 +214,52 @@
                   <label for="numero" class="form-label">N° de référence</label>
                   <input
                     type="text"
-                    class="form-control"
+                    class="form-control bg-light"
                     id="numero"
                     formControlName="numero"
                     readonly
                     placeholder="Généré automatiquement"/>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Résumé pour les réservations -->
+        <div class="card mb-3" *ngIf="selectedTransactionType === 'RESERVATION' && selectedSchedule">
+          <div class="card-header bg-secondary text-white">
+            <h6 class="mb-0"><i class="ri-bookmark-line me-2"></i>Résumé de la réservation</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="prixReservation" class="form-label">Prix du trajet</label>
+                  <input
+                    type="number"
+                    class="form-control bg-light"
+                    id="prixReservation"
+                    formControlName="prix"
+                    readonly
+                    step="0.01"/>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="numeroReservation" class="form-label">N° de réservation</label>
+                  <input
+                    type="text"
+                    class="form-control bg-light"
+                    id="numeroReservation"
+                    formControlName="numero"
+                    readonly
+                    placeholder="Généré automatiquement"/>
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-info">
+              <i class="ri-information-line me-2"></i>
+              Le client aura <strong>24 heures</strong> pour confirmer cette réservation par un paiement.
             </div>
           </div>
         </div>
@@ -196,12 +280,16 @@
   </button>
   <button
     type="button"
-    class="btn btn-success btn-sm"
-    [disabled]="formGroup.invalid || isSubmitting || placesRestantes <= 0"
+    class="btn btn-sm"
+    [ngClass]="selectedTransactionType === 'ACHAT' ? 'btn-success' : 'btn-warning'"
+    [disabled]="!canSubmit()"
     (click)="save()"
   >
-    <i class="ri-ticket-2-line align-bottom me-1"></i>
-    <span *ngIf="!isSubmitting">Vendre le ticket</span>
-    <span *ngIf="isSubmitting">Vente en cours...</span>
+    <i class="align-bottom me-1"
+       [ngClass]="selectedTransactionType === 'ACHAT' ? 'ri-ticket-2-line' : 'ri-bookmark-line'"></i>
+    <span *ngIf="!isSubmitting && selectedTransactionType === 'ACHAT'">Vendre le ticket</span>
+    <span *ngIf="!isSubmitting && selectedTransactionType === 'RESERVATION'">Créer la réservation</span>
+    <span *ngIf="!isSubmitting && !selectedTransactionType">Continuer</span>
+    <span *ngIf="isSubmitting">Traitement en cours...</span>
   </button>
 </div>

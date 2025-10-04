@@ -6,6 +6,8 @@ import {Trajet} from "../../../models/trajet.model";
 import {TrajetService} from "../../../services/trajet.service";
 import {TicketStatus} from "../../../models/enums/ticket-status";
 import {showHttpError, showSuccess} from "../../../utils/message.util";
+import {TripScheduleService} from "../../../services/trip-schedule.service";
+import {TripSchedule} from "../../../models/trip-schedule";
 
 @Component({
   selector: 'app-add-ticket-form',
@@ -17,16 +19,21 @@ export class AddTicketFormComponent implements OnInit {
 
   formGroup: FormGroup = new FormGroup({});
   trajets: Trajet[] = [];
+  tripSchedules: TripSchedule[] = []
   selectedTrajet: Trajet | null = null;
-  placesRestantes: number = 3;
+  placesRestantes: number | undefined ;
   isSubmitting = false;
   today: string = '';
+  currentMonth: Date = new Date();
+  selectedSchedule: TripSchedule | null = null;
+  selectedTransactionType: string = '';
 
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private ticketService: TicketService,
     private trajetService: TrajetService,
+    private planningService: TripScheduleService
   ) {
     this.today = new Date().toISOString().split('T')[0];
   }
@@ -38,9 +45,13 @@ export class AddTicketFormComponent implements OnInit {
   }
 
   getAllTrajets(){
-    this.trajetService.getAll().subscribe({
+    const startOfMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
+    const endOfMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);
+
+    this.planningService.getSchedulesByDateRange( startOfMonth.toISOString().split('T')[0],
+      endOfMonth.toISOString().split('T')[0]).subscribe({
       next: data => {
-        this.trajets = data;
+        this.tripSchedules = data;
       },
       error: error => {
         console.error('Erreur lors du chargement des trajets:', error);
@@ -48,72 +59,75 @@ export class AddTicketFormComponent implements OnInit {
     });
   }
 
+  onTransactionTypeChange(type: string): void {
+    this.selectedTransactionType = type;
+    this.formGroup.patchValue({ typeTransaction: type });
+
+    // Réinitialiser les validateurs selon le type
+    this.updateFormValidators();
+  }
+
+  updateFormValidators(): void {
+    const modePaiementControl = this.formGroup.get('modePaiement');
+
+    if (this.selectedTransactionType === 'ACHAT') {
+      // Pour les achats, le mode de paiement est obligatoire
+      modePaiementControl?.setValidators([Validators.required]);
+    } else {
+      // Pour les réservations, pas de mode de paiement requis
+      modePaiementControl?.clearValidators();
+    }
+
+    modePaiementControl?.updateValueAndValidity();
+  }
+
+  onTrajetChange(): void {
+    const scheduleId = this.formGroup.get('scheduleId')?.value;
+    if (scheduleId) {
+      this.selectedSchedule = this.tripSchedules.find(s => s.id == scheduleId) || null;
+      if (this.selectedSchedule) {
+        this.formGroup.patchValue({
+          prix: this.selectedSchedule.prix,
+          date: this.selectedSchedule.dateDepart,
+          heureDepart: this.selectedSchedule.heureDepart,
+          trajetId: this.selectedSchedule.trajet.id
+        });
+
+        this.placesRestantes = this.selectedSchedule.nombrePlacesDisponibles;
+      }
+    } else {
+      this.selectedSchedule = null;
+      this.placesRestantes = 0;
+      this.formGroup.patchValue({
+        prix: 0,
+        date: '',
+        heureDepart: '',
+        trajetId: null
+      });
+    }
+  }
+
   createForm(): FormGroup {
     return this.fb.group({
-      trajetId: ['', [Validators.required]],
-      date: [this.today, [Validators.required]],
+      scheduleId: ['', [Validators.required]],
+      trajetId: [''],
+      date: [''],
+      typeTransaction: [''],
 
       clientNom: ['', [Validators.required, Validators.minLength(2)]],
       clientPrenom: ['', [Validators.required, Validators.minLength(2)]],
       clientContact: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{8,15}$/)]],
 
       numero: [''],
-      prix: [0],
-      modePaiement: ['', [Validators.required]],
+      prix: [{ value: 0, disabled: true }],
+      modePaiement: [''], // Validateurs ajoutés dynamiquement
 
-      status: [TicketStatus.PAYE],
-      heureDepart: ['']
+      status: [''],
+      heureDepart: [{ value: '', disabled: true }]
     });
   }
 
-  onTrajetChange(): void {
-    const trajetId = this.formGroup.get('trajetId')?.value;
-    if (trajetId) {
-      this.selectedTrajet = this.trajets.find(t => t.id == trajetId) || null;
-      if (this.selectedTrajet) {
-        this.formGroup.patchValue({
-          prix: this.selectedTrajet.amount,
-          heureDepart: this.selectedTrajet.heure
-        });
-
-        this.calculatePlacesRestantes();
-      }
-    } else {
-      this.selectedTrajet = null;
-      this.placesRestantes = 0;
-      this.formGroup.patchValue({
-        prix: 0,
-        heureDepart: ''
-      });
-    }
-  }
-
-  calculatePlacesRestantes(): void {
-    if (!this.selectedTrajet) {
-      this.placesRestantes = 0;
-      return;
-    }
-
-    const date = this.formGroup.get('date')?.value;
-    if (!date) {
-      this.placesRestantes = 0;
-      return;
-    }
-
-    // Appeler le service pour obtenir le nombre de places restantes
-    // this.ticketService.getPlacesRestantes(this.selectedTrajet.id, date).subscribe({
-    //   next: (places) => {
-    //     this.placesRestantes = places;
-    //   },
-    //   error: (error) => {
-    //     console.error('Erreur lors du calcul des places:', error);
-    //     this.placesRestantes = 0;
-    //   }
-    // });
-  }
-
   generateTicketNumber(): void {
-    // Générer un numéro de ticket unique
     const timestamp = Date.now().toString();
     const random = Math.random().toString(36).substring(2, 5).toUpperCase();
     const ticketNumber = `TK${timestamp.slice(-6)}${random}`;
@@ -129,103 +143,97 @@ export class AddTicketFormComponent implements OnInit {
       return;
     }
 
-    if (this.placesRestantes <= 0) {
+    if (!this.selectedSchedule || this.selectedSchedule?.nombrePlacesDisponibles! <= 0) {
       return;
     }
 
     this.isSubmitting = true;
 
-    const formValue = { ...this.formGroup.value };
+    // Récupérer les valeurs en incluant les champs disabled
+    const formValue = { ...this.formGroup.getRawValue() };
 
-    if (formValue.date) {
-      formValue.date = new Date(formValue.date);
-    }
+    // Créer l'objet TicketDTO
+    const ticketData: any = {
+      trajetId: formValue.trajetId,
+      date: formValue.date,
+      heureDepart: formValue.heureDepart,
+      prix: formValue.prix,
+      numero: formValue.numero,
+      typeTransaction: this.selectedTransactionType,
 
-    const ticketData = {
-      ...formValue,
-      clientInfo: {
-        nom: formValue.clientNom,
-        prenom: formValue.clientPrenom,
-        contact: formValue.clientContact
-      }
+      // Informations client
+      clientNom: formValue.clientNom,
+      clientPrenom: formValue.clientPrenom,
+      clientContact: formValue.clientContact,
+
+      // Paiement (seulement pour les achats)
+      modePaiement: this.selectedTransactionType === 'ACHAT' ? formValue.modePaiement : null,
+
+      // Autres champs
+      userId: null,
+      reservationId: null
     };
 
     this.ticketService.save(ticketData).subscribe({
       next: (data) => {
-        showSuccess()
-        this.isSubmitting = false;
+        if (this.selectedTransactionType === 'ACHAT') {
+          showSuccess('Ticket vendu avec succès !');
 
-        // Proposer l'impression du ticket
-        if (confirm('Voulez-vous imprimer le ticket maintenant ?')) {
-          this.imprimerTicket(data);
+          if (confirm('Voulez-vous télécharger le reçu PDF maintenant ?')) {
+            this.downloadTicketPdf(data.id!);
+          }
+        } else {
+          showSuccess('Réservation créée avec succès !');
         }
 
+        this.isSubmitting = false;
         this.activeModal.close(data);
       },
       error: (error) => {
-        showHttpError(error)
+        showHttpError(error);
         this.isSubmitting = false;
-        console.error('Erreur lors de la vente:', error);
+        console.error('Erreur lors de la transaction:', error);
       }
     });
   }
 
-  imprimerTicket(ticket: any): void {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      const ticketHtml = this.generateTicketHtml(ticket);
-      printWindow.document.write(ticketHtml);
-      printWindow.document.close();
-      printWindow.print();
-    }
+  downloadTicketPdf(ticketId: number): void {
+    this.ticketService.downloadTicketPdf(ticketId).subscribe({
+      next: (pdfBlob) => {
+        const url = window.URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ticket-${ticketId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Erreur lors du téléchargement du PDF:', error);
+        showHttpError(error);
+      }
+    });
   }
 
-  generateTicketHtml(ticket: any): string {
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Ticket de Transport</title>
-        <style>
-          body { font-family: Arial, sans-serif; max-width: 300px; margin: 0 auto; }
-          .ticket { border: 2px solid #000; padding: 15px; text-align: center; }
-          .header { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-          .info { margin: 5px 0; }
-          .barcode { font-family: 'Courier New', monospace; font-size: 12px; margin: 10px 0; }
-        </style>
-      </head>
-      <body>
-        <div class="ticket">
-          <div class="header">TICKET DE TRANSPORT</div>
-          <div class="info"><strong>N°:</strong> ${ticket.numero}</div>
-          <div class="info"><strong>Client:</strong> ${ticket.clientInfo?.prenom} ${ticket.clientInfo?.nom}</div>
-          <div class="info"><strong>Contact:</strong> ${ticket.clientInfo?.contact}</div>
-          <div class="info"><strong>Trajet:</strong> ${this.selectedTrajet?.villeDepart} → ${this.selectedTrajet?.villeArrive}</div>
-          <div class="info"><strong>Date:</strong> ${new Date(ticket.date).toLocaleDateString()}</div>
-          <div class="info"><strong>Heure:</strong> ${ticket.heureDepart}</div>
-          <div class="info"><strong>Prix:</strong> ${ticket.prix} XOF</div>
-          <div class="info"><strong>Statut:</strong> PAYÉ</div>
-          <div class="barcode">${ticket.numero}</div>
-          <div style="font-size: 10px; margin-top: 10px;">
-            Merci pour votre voyage !<br>
-            Conservez ce ticket jusqu'à destination
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  canSubmit(): boolean {
+    if (!this.selectedTransactionType) return false;
+    if (this.isSubmitting) return false;
+    if (this.formGroup.invalid) return false;
+    if (!this.selectedSchedule) return false;
+    if (this.selectedSchedule.nombrePlacesDisponibles! <= 0) return false;
+
+    return true;
   }
 
   reset(): void {
     this.formGroup.reset();
-    this.formGroup.patchValue({
-      date: this.today,
-      status: 'PAYE',
-      prix: 0
-    });
+    this.selectedTransactionType = '';
     this.selectedTrajet = null;
+    this.selectedSchedule = null;
     this.placesRestantes = 0;
     this.generateTicketNumber();
+    this.updateFormValidators();
   }
 
   close(): void {
@@ -238,8 +246,8 @@ export class AddTicketFormComponent implements OnInit {
   }
 
   getPlacesRestantesBadgeClass(): string {
-    if (this.placesRestantes > 10) return 'bg-success';
-    if (this.placesRestantes > 3) return 'bg-warning';
+    if (this.placesRestantes! > 10) return 'bg-success';
+    if (this.placesRestantes! > 3) return 'bg-warning';
     return 'bg-danger';
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {Colis} from "../../../models/colis.model";
 import {ColisService} from "../../../services/colis.service";
-import {showHttpError} from "../../../utils/message.util";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 
 @Component({
   selector: 'app-detail',
@@ -15,10 +15,19 @@ export class DetailComponent implements OnInit {
   loading = true;
   error = false;
   colisId: number = 0;
+  updatingStatus = false;
 
   headerAnimated = false;
   cardAnimated = false;
   itemsAnimated = false;
+
+  // Options de statut disponibles
+  statusOptions = [
+    { value: 'EN_ATTENTE', label: 'En attente', icon: 'ri-time-line' },
+    { value: 'EN_TRANSIT', label: 'En transit', icon: 'ri-truck-line' },
+    { value: 'LIVRE', label: 'Livré', icon: 'ri-checkbox-circle-line' },
+    { value: 'ANNULE', label: 'Annulé', icon: 'ri-close-circle-line' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +59,47 @@ export class DetailComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  // Nouvelle méthode pour changer le statut
+  updateStatus(newStatus: string): void {
+    if (!this.colis || this.updatingStatus) return;
+
+    this.updatingStatus = true;
+
+    this.colisService.updateStatus(this.colisId, newStatus).subscribe({
+      next: (updatedColis) => {
+        this.colis = updatedColis;
+        this.updatingStatus = false;
+        showSuccess('Statut mis à jour avec succès');
+      },
+      error: (error) => {
+        showHttpError(error);
+        this.updatingStatus = false;
+        console.error('Erreur lors de la mise à jour du statut:', error);
+      }
+    });
+  }
+
+  // Méthode pour obtenir les statuts suivants possibles
+  getAvailableStatusTransitions(): any[] {
+    if (!this.colis?.status) return this.statusOptions;
+
+    const currentStatus = this.colis.status;
+
+    // Définir les transitions possibles selon la logique métier
+    switch (currentStatus) {
+      case 'EN_ATTENTE':
+        return this.statusOptions.filter(s => ['EN_TRANSIT', 'ANNULE'].includes(s.value));
+      case 'EN_TRANSIT':
+        return this.statusOptions.filter(s => ['LIVRE', 'ANNULE'].includes(s.value));
+      case 'LIVRE':
+        return []; // Aucune transition possible depuis LIVRE
+      case 'ANNULE':
+        return this.statusOptions.filter(s => ['EN_ATTENTE'].includes(s.value));
+      default:
+        return this.statusOptions;
+    }
   }
 
   getStatusBadgeClass(status: string | undefined): string {
@@ -84,6 +134,11 @@ export class DetailComponent implements OnInit {
     }
   }
 
+  getStatusLabel(status: string | undefined): string {
+    const statusOption = this.statusOptions.find(s => s.value === status);
+    return statusOption?.label || status || 'Inconnu';
+  }
+
   getProgressPercentage(status: string | undefined): number {
     switch (status) {
       case 'EN_ATTENTE':
@@ -99,12 +154,65 @@ export class DetailComponent implements OnInit {
     }
   }
 
+  // Méthode pour calculer les statistiques
+  getStatistics() {
+    if (!this.colis || !this.colis.colisItems) {
+      return {
+        totalItems: 0,
+        totalValue: 0
+      };
+    }
+
+    const totalItems = this.colis.colisItems.length;
+    const totalValue = this.colis.prix || 0;
+
+    return {
+      totalItems,
+      totalValue
+    };
+  }
+
+  // Méthodes pour la timeline
+  isStatusActive(status: string): boolean {
+    if (!this.colis?.status) return false;
+
+    const statusOrder = ['EN_ATTENTE', 'EN_TRANSIT', 'LIVRE'];
+    const currentIndex = statusOrder.indexOf(this.colis.status);
+    const checkIndex = statusOrder.indexOf(status);
+
+    // Si le colis est annulé, seul ANNULE est actif
+    if (this.colis.status === 'ANNULE') {
+      return status === 'ANNULE';
+    }
+
+    // Sinon, les statuts sont actifs s'ils sont <= au statut actuel
+    return checkIndex <= currentIndex;
+  }
+
+  shouldShowTimelineStep(status: string): boolean {
+    if (!this.colis?.status) return true;
+
+    // Toujours montrer le statut annulé s'il est actuel
+    if (this.colis.status === 'ANNULE' && status === 'ANNULE') {
+      return true;
+    }
+
+    // Ne pas montrer annulé si le colis n'est pas annulé
+    if (status === 'ANNULE' && this.colis.status !== 'ANNULE') {
+      return false;
+    }
+
+    return true;
+  }
+
   goBack(): void {
-    this.router.navigate(['/colis']);
+    this.router.navigate(['admin/colis']);
   }
 
   editColis(): void {
     console.log('Edit colis:', this.colis);
+    // Naviguer vers la page d'édition
+    this.router.navigate(['admin/colis/edit', this.colisId]);
   }
 
   printColis(): void {

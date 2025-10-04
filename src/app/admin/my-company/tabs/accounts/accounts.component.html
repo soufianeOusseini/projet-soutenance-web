@@ -1,25 +1,157 @@
 <div class="company-account-view">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="mb-0">Gestion du compte</h5>
+    <h5 class="mb-0">Gestion des comptes</h5>
+    <button class="btn btn-primary btn-sm" (click)="showAddAccountForm()" *ngIf="!showAddForm">
+      <i class="fas fa-plus me-1"></i>
+      Nouveau compte
+    </button>
   </div>
 
-  <div class="alert alert-info" role="alert">
-    <i class="fas fa-info-circle me-2"></i>
-    Cette section sera développée ultérieurement.
-    Elle contiendra les fonctionnalités de gestion du compte de la compagnie.
+  <!-- Formulaire d'ajout/modification -->
+  <div *ngIf="showAddForm" class="card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0">{{ editingAccount ? 'Modifier le compte' : 'Nouveau compte' }}</h6>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="accountForm" (ngSubmit)="saveAccount()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Nom du compte <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="accountName">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Type de compte</label>
+            <select class="form-select" formControlName="type">
+              <option value="PRINCIPAL">Principal</option>
+              <option value="SECONDARY">Secondaire</option>
+              <option value="SAVINGS">Épargne</option>
+              <option value="CREDIT">Crédit</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Solde initial</label>
+            <input type="number" class="form-control" formControlName="balance" step="0.01">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Limite de crédit</label>
+            <input type="number" class="form-control" formControlName="creditLimit" step="0.01">
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary btn-sm me-2" (click)="cancelAccountForm()">
+            <i class="fas fa-times me-1"></i>
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="accountForm.invalid">
+            <i class="fas fa-save me-1"></i>
+            {{ editingAccount ? 'Modifier' : 'Créer' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- Placeholder pour les futures fonctionnalités -->
+  <!-- Résumé financier -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center">
+          <h4>{{ totalBalance | currency:'XOF':'symbol':'1.0-0' }}</h4>
+          <small>Solde total</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <h4>{{ activeAccounts }}</h4>
+          <small>Comptes actifs</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-info text-white">
+        <div class="card-body text-center">
+          <h4>{{ totalCreditLimit | currency:'XOF':'symbol':'1.0-0' }}</h4>
+          <small>Limite totale</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body text-center">
+          <h4>{{ accounts.length }}</h4>
+          <small>Total comptes</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des comptes -->
   <div class="row">
     <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-body text-center py-5">
-          <i class="fas fa-tools fa-3x text-muted mb-3"></i>
-          <h6 class="text-muted">Fonctionnalités à venir</h6>
-          <p class="text-muted mb-0">
-            Gestion des paramètres de compte, sécurité, permissions, etc.
-          </p>
-        </div>
+      <div *ngIf="accounts.length === 0" class="text-center py-5">
+        <i class="fas fa-wallet fa-3x text-muted mb-3"></i>
+        <h6 class="text-muted">Aucun compte configuré</h6>
+        <p class="text-muted">Créez votre premier compte pour commencer.</p>
+      </div>
+
+      <div *ngIf="accounts.length > 0" class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>Compte</th>
+            <th>Numéro</th>
+            <th>Type</th>
+            <th>Solde</th>
+            <th>Limite</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let account of accounts">
+            <td>
+              <strong>{{ account.accountName }}</strong>
+            </td>
+            <td>
+              <code>{{ account.accountNumber }}</code>
+            </td>
+            <td>
+              <span class="badge bg-secondary">{{ getAccountTypeLabel(account.type) }}</span>
+            </td>
+            <td>
+                <span [class]="account.balance >= 0 ? 'text-success' : 'text-danger'">
+                  {{ account.balance | currency:'XOF':'symbol':'1.0-0' }}
+                </span>
+            </td>
+            <td>{{ account.creditLimit | currency:'XOF':'symbol':'1.0-0' }}</td>
+            <td>
+                <span class="badge bg-{{ getStatusClass(account.status) }}">
+                  {{ getAccountStatusLabel(account.status) }}
+                </span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-outline-primary btn-sm" (click)="editAccount(account)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-outline-info btn-sm" (click)="viewTransactions(account)">
+                  <i class="fas fa-list"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" (click)="toggleAccountStatus(account)">
+                  <i class="fas" [class.fa-lock]="account.status === 'ACTIVE'" [class.fa-unlock]="account.status !== 'ACTIVE'"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

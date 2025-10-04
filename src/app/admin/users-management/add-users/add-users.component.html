@@ -1,0 +1,135 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addUserLabel">Création d'un utilisateur</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="firstName" class="form-label">Prénom *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="firstName"
+                placeholder="Prénom"
+                formControlName="firstName"
+                [class.is-invalid]="isFieldInvalid('firstName')"/>
+              <div *ngIf="isFieldInvalid('firstName')" class="invalid-feedback">
+                Le prénom est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Nom *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="lastName"
+                placeholder="Nom"
+                formControlName="lastName"
+                [class.is-invalid]="isFieldInvalid('lastName')"/>
+              <div *ngIf="isFieldInvalid('lastName')" class="invalid-feedback">
+                Le nom est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                placeholder="Email"
+                formControlName="email"
+                [class.is-invalid]="isFieldInvalid('email')"/>
+              <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
+                L'email est obligatoire et doit être valide
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="phone" class="form-label">Téléphone *</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phone"
+                placeholder="Téléphone"
+                formControlName="phone"
+                [class.is-invalid]="isFieldInvalid('phone')"/>
+              <div *ngIf="isFieldInvalid('phone')" class="invalid-feedback">
+                Le téléphone est obligatoire
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="profile" class="form-label">Profil *</label>
+              <select
+                class="form-select"
+                id="profile"
+                formControlName="profile"
+                [class.is-invalid]="isFieldInvalid('profile')">
+                <option value="">Sélectionner un profil</option>
+                <option value="ADMIN">Administrateur</option>
+                <option value="USER">Utilisateur</option>
+                <option value="COMPANY">Entreprise</option>
+                <option value="DRIVER">Chauffeur</option>
+              </select>
+              <div *ngIf="isFieldInvalid('profile')" class="invalid-feedback">
+                Le profil est obligatoire
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+    [disabled]="isSubmitting"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid || isSubmitting"
+    (click)="save()"
+    *ngIf="!formGroup.value.id"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      <span *ngIf="!isSubmitting">Enregistrer</span>
+      <span *ngIf="isSubmitting">Enregistrement...</span>
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid || isSubmitting"
+    (click)="save()"
+    *ngIf="formGroup.value.id"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      <span *ngIf="!isSubmitting">Modifier</span>
+      <span *ngIf="isSubmitting">Modification...</span>
+    </span>
+  </button>
+</div>

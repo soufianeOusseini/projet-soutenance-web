@@ -56,17 +56,45 @@
           <div class="row">
             <div class="col-md-8">
               <div class="status-info">
-                <span [ngClass]="getStatusBadgeClass(colis.status)" class="status-badge">
-                  <i [ngClass]="getStatusIcon(colis.status)" class="me-1"></i>
-                  {{ colis.status }}
-                </span>
+                <div class="d-flex align-items-center">
+                  <span [ngClass]="getStatusBadgeClass(colis.status)" class="status-badge me-3">
+                    <i [ngClass]="getStatusIcon(colis.status)" class="me-1"></i>
+                    {{ getStatusLabel(colis.status) }}
+                  </span>
+
+                  <!-- Dropdown pour changer le statut -->
+                  <div class="dropdown" *ngIf="getAvailableStatusTransitions().length > 0">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                            type="button"
+                            id="statusDropdown"
+                            data-bs-toggle="dropdown"
+                            [disabled]="updatingStatus">
+                      <i class="ri-exchange-line me-1"></i>
+                      <span *ngIf="!updatingStatus">Changer</span>
+                      <span *ngIf="updatingStatus">
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        Mise à jour...
+                      </span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                      <li *ngFor="let statusOption of getAvailableStatusTransitions()">
+                        <a class="dropdown-item"
+                           href="#"
+                           (click)="$event.preventDefault(); updateStatus(statusOption.value)">
+                          <i [class]="statusOption.icon" class="me-2"></i>
+                          {{ statusOption.label }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
                 <h5 class="status-title mt-2">Suivi du colis</h5>
               </div>
             </div>
             <div class="col-md-4">
               <div class="progress-circle">
-                <div class="progress-ring">
-                  <div class="progress-fill" [style.--progress]="getProgressPercentage(colis.status) + '%'"></div>
+                <div class="progress-ring" [style.--progress]="getProgressPercentage(colis.status) + '%'">
+                  <div class="progress-fill"></div>
                   <span class="progress-text">{{ getProgressPercentage(colis.status) }}%</span>
                 </div>
               </div>
@@ -156,7 +184,7 @@
             <div class="card-header-custom">
               <h5 class="card-title-custom">
                 <i class="ri-package-line me-2"></i>
-                Articles du colis ({{ colis.colisItems?.length || 0 }})
+                Articles du colis ({{ getStatistics().totalItems }})
               </h5>
             </div>
             <div class="card-body-custom">
@@ -207,7 +235,7 @@
                     <i class="ri-package-2-line"></i>
                   </div>
                   <div class="stat-content">
-                    <div class="stat-number">{{ colis.colisItems?.length || 0 }}</div>
+                    <div class="stat-number">{{ getStatistics().totalItems }}</div>
                     <div class="stat-label">Articles</div>
                   </div>
                 </div>
@@ -216,8 +244,26 @@
                     <i class="ri-money-dollar-circle-line"></i>
                   </div>
                   <div class="stat-content">
-                    <div class="stat-number">{{ colis.prix | currency:'XOF':'symbol':'1.0-0' }}</div>
+                    <div class="stat-number">{{ getStatistics().totalValue | currency:'XOF':'symbol':'1.0-0' }}</div>
                     <div class="stat-label">Valeur</div>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon bg-info">
+                    <i class="ri-truck-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ getProgressPercentage(colis.status) }}%</div>
+                    <div class="stat-label">Progression</div>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-icon bg-warning">
+                    <i class="ri-time-line"></i>
+                  </div>
+                  <div class="stat-content">
+                    <div class="stat-number">{{ getStatusLabel(colis.status) }}</div>
+                    <div class="stat-label">Statut</div>
                   </div>
                 </div>
               </div>
@@ -234,25 +280,32 @@
             </div>
             <div class="card-body-custom">
               <div class="timeline">
-                <div class="timeline-item" [class.active]="colis.status === 'EN_ATTENTE' || colis.status === 'EN_TRANSIT' || colis.status === 'LIVRE'">
+                <div class="timeline-item" [class.active]="isStatusActive('EN_ATTENTE')">
                   <div class="timeline-marker bg-warning"></div>
                   <div class="timeline-content">
                     <h6>Colis en attente</h6>
                     <p>Le colis a été enregistré</p>
                   </div>
                 </div>
-                <div class="timeline-item" [class.active]="colis.status === 'EN_TRANSIT' || colis.status === 'LIVRE'">
+                <div class="timeline-item" [class.active]="isStatusActive('EN_TRANSIT')">
                   <div class="timeline-marker bg-info"></div>
                   <div class="timeline-content">
                     <h6>En transit</h6>
                     <p>Le colis est en cours de livraison</p>
                   </div>
                 </div>
-                <div class="timeline-item" [class.active]="colis.status === 'LIVRE'">
+                <div class="timeline-item" [class.active]="isStatusActive('LIVRE')">
                   <div class="timeline-marker bg-success"></div>
                   <div class="timeline-content">
                     <h6>Livré</h6>
                     <p>Le colis a été livré avec succès</p>
+                  </div>
+                </div>
+                <div class="timeline-item" [class.active]="isStatusActive('ANNULE')" *ngIf="colis.status === 'ANNULE'">
+                  <div class="timeline-marker bg-danger"></div>
+                  <div class="timeline-content">
+                    <h6>Annulé</h6>
+                    <p>La livraison a été annulée</p>
                   </div>
                 </div>
               </div>

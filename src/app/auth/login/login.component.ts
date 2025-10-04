@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   returnUrl = '/';
   loading = false;
   error = '';
-
+  message = '';
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log("loginn....")
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     this.authService.logout();
@@ -31,6 +32,11 @@ export class LoginComponent implements OnInit {
     if (this.router.url.indexOf('/auth/logout') > -1) {
       window.location.href = '/';
     }
+    this.route.queryParams.subscribe(params => {
+      if (params['expired'] === 'true') {
+        this.message = 'Votre session a expiré. Veuillez vous reconnecter.';
+      }
+    });
   }
 
   login() {

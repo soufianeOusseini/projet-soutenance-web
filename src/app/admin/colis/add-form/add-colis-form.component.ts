@@ -5,6 +5,7 @@ import { Colis } from "../../../models/colis.model";
 import { ColisService } from "../../../services/colis.service";
 import {ColisItems} from "../../../models/colis-items";
 import {showHttpError, showSuccess} from "../../../utils/message.util";
+import {ColisStatus} from "../../../models/enums/colis-status";
 
 @Component({
   selector: 'app-add-colis-form',
@@ -43,7 +44,7 @@ export class AddColisFormComponent implements OnInit {
       prix: [this.colis.prix, [Validators.required, Validators.min(0)]],
       lieuEnvoi: [this.colis.lieuEnvoi, Validators.required],
       lieuReception: [this.colis.lieuReception, Validators.required],
-      status: [this.colis.status,Validators.required],
+      status: [ColisStatus.EN_TRANSIT],
       colisItems: this.fb.array(this.initColisItems())
     });
   }

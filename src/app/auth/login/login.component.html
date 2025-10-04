@@ -1,15 +1,16 @@
 <div class="row justify-content-center">
   <div *ngIf="error" style="color: red">
     {{ error }}
+    {{message}}
   </div>
   <div class="col-xl-4 col-lg-5 col-sm-6 col-12">
     <form class="my-5">
       <div class="border rounded-2 p-4 mt-5">
         <div class="login-form">
           <a href="index.html" class="mb-4 d-flex">
-            <img src="assets/images/logo.svg" class="img-fluid login-logo" alt="Cab Admin Dashboard" />
+            <img src="assets/logo/logo.png" class="img-fluid login-logo" alt="Cab Admin Dashboard"  />
           </a>
-          <h5 class="fw-bold mb-5">Sign in to access dashboard.</h5>
+          <h5 class="fw-bold mb-5">Sign in</h5>
           <div class="mb-3">
             <label class="form-label">Your Email</label>
             <input type="text" class="form-control" placeholder="Enter your email" name="username"  [(ngModel)]="user.username" />
@@ -29,12 +30,6 @@
             <button type="submit" class="btn btn-lg btn-primary" (click)="login()">
               LOGIN
             </button>
-          </div>
-          <div class="text-center py-3">or Login with</div>
-          <div class="text-center pt-4">
-            <span>Not registered?</span>
-            <a href="signup.html" class="text-blue text-decoration-underline ms-2">
-              SignUp</a>
           </div>
         </div>
       </div>

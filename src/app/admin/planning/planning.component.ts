@@ -56,7 +56,7 @@ export class PlanningComponent implements OnInit{
       companyId: 0,
       dateDepart: '',
       heureDepart: '08:00',
-      nombrePlacesTotales: 50,
+      nombrePlacesTotales: 0,
       prix: 0
     };
   }
@@ -192,6 +192,7 @@ export class PlanningComponent implements OnInit{
         nombrePlacesTotales: schedule.nombrePlacesTotales,
         prix: schedule.prix
       };
+      setTimeout(() => this.onBusChange(), 0);
     } else {
       this.isEditMode = false;
       this.currentSchedule = this.initializeSchedule();
@@ -212,6 +213,18 @@ export class PlanningComponent implements OnInit{
     this.currentSchedule = this.initializeSchedule();
     this.currentScheduleId = null;
     this.isEditMode = false;
+  }
+
+  onBusChange(): void {
+    const busId = this.currentSchedule.busId;
+    if (busId && busId !== 0) {
+      const selectedBus = this.buses.find(bus => bus.id == busId);
+      if (selectedBus) {
+        this.currentSchedule.nombrePlacesTotales = selectedBus.capacity || selectedBus.nombrePlaces || 50;
+      }
+    } else {
+      this.currentSchedule.nombrePlacesTotales = 0;
+    }
   }
 
   onSubmit(): void {

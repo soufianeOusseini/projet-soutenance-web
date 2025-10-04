@@ -61,18 +61,6 @@
               </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-3">
-              <label for="status" class="form-label">Statut *</label>
-              <select class="form-control" id="status" formControlName="status" required>
-                <option value="">Sélectionner un statut</option>
-                <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-              </select>
-              <div *ngIf="formGroup.get('status')?.invalid && formGroup.get('status')?.touched" class="text-danger small">
-                Ce champ est obligatoire
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Section pour les ColisItems -->

@@ -52,7 +52,8 @@
 
     <!-- COLONNE DROITE : Tabs -->
     <div class="col-md-8">
-      <div class="card">
+      <div class="card h-100 d-flex flex-column">
+        <!-- Navigation tabs -->
         <div class="border-bottom px-3 pt-3">
           <ul
             ngbNav
@@ -70,7 +71,15 @@
             </li>
             <li [ngbNavItem]="2">
               <a ngbNavLink>
-                <i class="fas fa-user-cog me-1"></i> Compte
+                <i class="fas fa-map-marked-alt me-1"></i> Agences
+              </a>
+              <ng-template ngbNavContent>
+                <app-agency [company]="company" [user]="user" [formGroup]="formGroup"></app-agency>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+              <a ngbNavLink>
+                <i class="fas fa-wallet me-1"></i> Comptes
               </a>
               <ng-template ngbNavContent>
                 <app-accounts [company]="company" [user]="user" [formGroup]="formGroup"></app-accounts>
@@ -79,48 +88,47 @@
           </ul>
         </div>
 
-        <div class="card-body" data-simplebar style="max-height: 60vh;">
-          <div [ngbNavOutlet]="companyTabs"></div>
+        <!-- Contenu des tabs avec scroll -->
+        <div class="card-body flex-grow-1 p-0">
+          <div class="tab-content-wrapper" style="height: 50vh; overflow-y: auto; padding: 1.5rem;">
+            <div [ngbNavOutlet]="companyTabs"></div>
+          </div>
         </div>
 
-        <!-- Footer avec boutons d'action - Style identique au school component -->
-        <div class="card-footer d-flex justify-content-end align-items-end">
-          <button
-            type="button"
-            class="btn btn-danger btn-sm custom-toggle me-1"
-            (click)="reset()"
-          >
-            <span class="icon-on">
-              <i class="ri-close-circle-line align-bottom"></i>
+        <!-- Footer avec boutons d'action - TOUJOURS VISIBLE -->
+        <div class="card-footer bg-light border-top">
+          <div class="d-flex justify-content-end gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm"
+              (click)="reset()"
+            >
+              <i class="ri-close-circle-line me-1"></i>
               Annuler
-            </span>
-          </button>
+            </button>
 
-          <button
-            type="button"
-            class="btn btn-primary btn-sm custom-toggle me-1"
-            [disabled]="formGroup.invalid"
-            (click)="save()"
-            *ngIf="!formGroup.value?.id"
-          >
-            <span class="icon-on">
-              <i class="ri-add-line align-bottom"></i>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              [disabled]="formGroup.invalid"
+              (click)="save()"
+              *ngIf="!formGroup.value?.id"
+            >
+              <i class="ri-add-line me-1"></i>
               Ajouter
-            </span>
-          </button>
+            </button>
 
-          <button
-            type="button"
-            class="btn btn-primary btn-sm custom-toggle me-1"
-            [disabled]="formGroup.invalid"
-            (click)="update()"
-            *ngIf="formGroup.value?.id"
-          >
-            <span class="icon-on">
-              <i class="ri-edit-line align-bottom"></i>
+            <button
+              type="button"
+              class="btn btn-success btn-sm"
+              [disabled]="formGroup.invalid"
+              (click)="update()"
+              *ngIf="formGroup.value?.id"
+            >
+              <i class="ri-edit-line me-1"></i>
               Mettre à jour
-            </span>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     </div>

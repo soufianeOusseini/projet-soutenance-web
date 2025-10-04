@@ -30,6 +30,9 @@ import { AccountsComponent } from './my-company/tabs/accounts/accounts.component
 import { DriverComponent } from './driver/driver.component';
 import { FormDriverComponent } from './driver/form-driver/form-driver.component';
 import { PlanningComponent } from './planning/planning.component';
+import { AgencyComponent } from './my-company/tabs/agency/agency.component';
+import { UsersManagementComponent } from './users-management/users-management.component';
+import { AddUsersComponent } from './users-management/add-users/add-users.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,10 @@ import { PlanningComponent } from './planning/planning.component';
     AccountsComponent,
     DriverComponent,
     FormDriverComponent,
-    PlanningComponent
+    PlanningComponent,
+    AgencyComponent,
+    UsersManagementComponent,
+    AddUsersComponent
   ],
   imports: [
     RouterModule,

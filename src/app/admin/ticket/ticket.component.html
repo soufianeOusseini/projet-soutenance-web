@@ -8,12 +8,30 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title">Liste des Tickets</h4>
+            <h4 class="card-title">Liste des Tickets & Réservations</h4>
           </div>
           <div class="card-body">
-            <div class="d-flex justify-content-end mb-2">
+            <div class="d-flex justify-content-between mb-2">
+              <div class="d-flex gap-2">
+                <!-- Filtres par statut -->
+                <select class="form-select form-select-sm" style="width: auto;" (change)="filterByStatus($event)">
+                  <option value="">Tous les statuts</option>
+                  <option value="PAYE">Payés</option>
+                  <option value="RESERVE">Réservations</option>
+                  <option value="ANNULE">Annulés</option>
+                  <option value="UTILISE">Utilisés</option>
+                  <option value="EXPIRE">Expirés</option>
+                </select>
+
+                <select class="form-select form-select-sm" style="width: auto;" (change)="filterByType($event)">
+                  <option value="">Tous les types</option>
+                  <option value="ACHAT">Achats</option>
+                  <option value="RESERVATION">Réservations</option>
+                </select>
+              </div>
+
               <button type="button" class="btn btn-primary" (click)="add()">
-                <i class="ri-add-line align-bottom me-1"></i> Ajouter un ticket
+                <i class="ri-add-line align-bottom me-1"></i> Nouvelle transaction
               </button>
             </div>
 
@@ -26,51 +44,167 @@
             </div>
 
             <!-- Message si aucun ticket -->
-            <div *ngIf="!isLoading && tickets.length === 0" class="text-center my-5">
+            <div *ngIf="!isLoading && filteredTickets.length === 0" class="text-center my-5">
               <i class="ri-ticket-line" style="font-size: 3rem;"></i>
-              <p class="mt-2">Aucun ticket disponible. Cliquez sur "Ajouter un ticket" pour commencer.</p>
+              <p class="mt-2">Aucun ticket disponible. Cliquez sur "Nouvelle transaction" pour commencer.</p>
             </div>
 
             <!-- Tableau des tickets -->
-            <div class="table-outer" *ngIf="!isLoading && tickets.length > 0">
+            <div class="table-outer" *ngIf="!isLoading && filteredTickets.length > 0">
               <div class="table-responsive">
                 <table class="table align-middle custom-table m-0">
                   <thead>
                   <tr class="bg-light">
                     <th>Numéro</th>
+                    <th>Client</th>
+                    <th>Trajet</th>
+                    <th>Date/Heure</th>
                     <th>Prix</th>
+                    <th>Type</th>
                     <th>Statut</th>
-                    <th>Date</th>
-                    <th>Heure départ</th>
-                    <th>Mode paiement</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let ticket of tickets">
-                    <td>{{ ticket.numero }}</td>
-                    <td>{{ ticket.prix | currency:'XOF':'symbol':'1.2-2' }}</td>
+                  <tr *ngFor="let ticket of filteredTickets">
                     <td>
-                        <span [class]="getStatusBadgeClass(ticket.status)">
-                          {{ getStatusText(ticket.status) }}
-                        </span>
+                      <strong>{{ ticket.numero }}</strong>
+                      <small class="d-block text-muted" *ngIf="ticket.typeTransaction === 'RESERVATION' && ticket.dateLimitePaiement">
+                        Expire: {{ ticket.dateLimitePaiement | date:'dd/MM/yyyy HH:mm' }}
+                      </small>
                     </td>
-                    <td>{{ ticket.date | date:'dd/MM/yyyy' }}</td>
-                    <td>{{ ticket.heureDepart }}</td>
-                    <td>{{ getPaymentModeText(ticket.modePaiement) }}</td>
                     <td>
-                      <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-info" (click)="edit(ticket)" title="Modifier">
+                      <div>
+                        <strong>{{ ticket.clientPrenom }} {{ ticket.clientNom }}</strong>
+                        <small class="d-block text-muted">{{ ticket.clientContact }}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-info text-dark">
+                        {{ ticket.trajetInfo || 'N/A' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div>
+                        {{ ticket.date | date:'dd/MM/yyyy' }}
+                        <small class="d-block text-muted">{{ ticket.heureDepart }}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <strong>{{ ticket.prix | currency:'XOF':'symbol':'1.2-2' }}</strong>
+                      <small class="d-block text-muted" *ngIf="ticket.modePaiement">
+                        {{ getPaymentModeText(ticket.modePaiement) }}
+                      </small>
+                    </td>
+                    <td>
+                      <span class="badge" [class]="getTypeBadgeClass(ticket.typeTransaction)">
+                        {{ ticket.typeTransaction || 'ACHAT' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span [class]="getStatusBadgeClass(ticket.status)">
+                        {{ getStatusText(ticket.status) }}
+                      </span>
+                      <div *ngIf="isReservationExpiringSoon(ticket)" class="text-warning mt-1">
+                        <small><i class="ri-time-line"></i> Expire bientôt</small>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-1 flex-wrap">
+
+                        <!-- Bouton Confirmer (pour réservations) -->
+                        <button
+                          *ngIf="ticket.status === 'RESERVE' && !isTicketExpired(ticket)"
+                          class="btn btn-sm btn-success"
+                          (click)="confirmReservation(ticket.id!)"
+                          title="Confirmer la réservation">
+                          <i class="ri-check-line"></i>
+                        </button>
+
+                        <!-- Bouton Modifier (seulement si pas utilisé/annulé) -->
+                        <button
+                          *ngIf="canEdit(ticket)"
+                          class="btn btn-sm btn-info"
+                          (click)="edit(ticket)"
+                          title="Modifier">
                           <i class="ri-edit-line"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger" (click)="confirmDelete(ticket.id)" title="Supprimer">
-                          <i class="ri-delete-bin-line"></i>
+
+                        <!-- Bouton Utiliser (marquer comme utilisé) -->
+                        <button
+                          *ngIf="canUse(ticket)"
+                          class="btn btn-sm btn-secondary"
+                          (click)="useTicket(ticket.id!)"
+                          title="Marquer comme utilisé">
+                          <i class="ri-check-double-line"></i>
                         </button>
+
+                        <!-- Bouton Télécharger PDF -->
+                        <button
+                          *ngIf="canDownloadPdf(ticket)"
+                          class="btn btn-sm btn-primary"
+                          (click)="downloadPdf(ticket.id!)"
+                          title="Télécharger le reçu PDF">
+                          <i class="ri-download-line"></i>
+                        </button>
+
+                        <!-- Bouton Annuler -->
+                        <button
+                          *ngIf="canCancel(ticket)"
+                          class="btn btn-sm btn-warning"
+                          (click)="confirmCancelTicket(ticket)"
+                          title="Annuler">
+                          <i class="ri-close-line"></i>
+                        </button>
+
+                        <!-- Badge Expiré (pour les réservations expirées) -->
+                        <span
+                          *ngIf="isTicketExpired(ticket)"
+                          class="badge bg-danger"
+                          title="Réservation expirée">
+                          <i class="ri-time-line"></i>
+                        </span>
                       </div>
                     </td>
                   </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="row mt-4" *ngIf="!isLoading && tickets.length > 0">
+              <div class="col-md-12">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <div class="row text-center">
+                      <div class="col-md-2">
+                        <h6 class="text-success">{{ getStatistics().paye }}</h6>
+                        <small>Payés</small>
+                      </div>
+                      <div class="col-md-2">
+                        <h6 class="text-warning">{{ getStatistics().reserve }}</h6>
+                        <small>Réservations</small>
+                      </div>
+                      <div class="col-md-2">
+                        <h6 class="text-danger">{{ getStatistics().annule }}</h6>
+                        <small>Annulés</small>
+                      </div>
+                      <div class="col-md-2">
+                        <h6 class="text-secondary">{{ getStatistics().utilise }}</h6>
+                        <small>Utilisés</small>
+                      </div>
+                      <div class="col-md-2">
+                        <h6 class="text-info">{{ getStatistics().expire }}</h6>
+                        <small>Expirés</small>
+                      </div>
+                      <div class="col-md-2">
+                        <h6 class="text-primary">{{ getStatistics().total | currency:'XOF':'symbol':'1.0-0' }}</h6>
+                        <small>Chiffre d'affaires</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -79,4 +213,3 @@
     </div>
   </div>
 </div>
-

@@ -15,6 +15,7 @@ import {
 } from '@angular/router'
 import { MessageService } from 'primeng/api'
 import { fromEvent, map, merge, of, Subscription } from 'rxjs'
+import {AuthService} from "./auth/service/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
     private changeDetector: ChangeDetectorRef,
     private messageService: MessageService,
     private router: Router,
+    private authService: AuthService
   ) {
     this.router.events.subscribe((e: any) => {
       this.navigationInterceptor(e)
@@ -42,6 +44,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
 
   ngOnInit(): void {
     this.onNetworkStatusChange()
+    if (!this.authService.isAuthenticated()) {
+      this.authService.logout();
+      this.router.navigate(['/auth/login']);
+    }
   }
 
   ngOnDestroy(): void {

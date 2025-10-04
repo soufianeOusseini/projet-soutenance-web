@@ -13,6 +13,7 @@ import {ProfilComponent} from "./profil/profil.component";
 import {MyCompanyComponent} from "./my-company/my-company.component";
 import {DriverComponent} from "./driver/driver.component";
 import {PlanningComponent} from "./planning/planning.component";
+import {UsersManagementComponent} from "./users-management/users-management.component";
 
 
 const routes: Routes = [
@@ -75,6 +76,10 @@ const routes: Routes = [
       {
         path: 'planning',
         component: PlanningComponent,
+      },
+      {
+        path :'users',
+        component: UsersManagementComponent
       }
     ]
   }

@@ -207,7 +207,7 @@ export class AuthService {
   private handleSessionExpired(): void {
     this.logout();
     // Rediriger vers la page de login
-    this.router.navigate(['/login'], {
+    this.router.navigate(['/auth/login'], {
       queryParams: { expired: 'true' }
     });
   }
@@ -273,4 +273,6 @@ export class AuthService {
       headers: this.getAuthHeaders()
     });
   }
+
+
 }

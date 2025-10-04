@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddColisFormComponent } from './add-colis-form.component';
+import { AddUsersComponent } from './add-users.component';
 
-describe('AddFormComponent', () => {
-  let component: AddColisFormComponent;
-  let fixture: ComponentFixture<AddColisFormComponent>;
+describe('AddUsersComponent', () => {
+  let component: AddUsersComponent;
+  let fixture: ComponentFixture<AddUsersComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddColisFormComponent]
+      declarations: [AddUsersComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddColisFormComponent);
+    fixture = TestBed.createComponent(AddUsersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
