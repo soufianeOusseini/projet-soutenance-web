@@ -7,7 +7,10 @@
 
   <div class="sidebarMenuScroll">
     <ul class="sidebar-menu">
-      <li *ngFor="let item of menuItems" [ngClass]="{'active current-page': isMenuActive(item), 'treeview': hasChildren(item), 'open': isMenuOpen(item)}">
+      <li *ngFor="let item of menuItems"
+          secured [permission]="item.permission"
+          [ngClass]="{'active current-page': isMenuActive(item), 'treeview': hasChildren(item), 'open': isMenuOpen(item)}">
+
         <a [routerLink]="item.link ? [item.link] : null"
            [href]="!item.link && !hasChildren(item) ? '#!' : null"
            (click)="hasChildren(item) ? toggleMenu(item, $event) : null"
@@ -16,11 +19,13 @@
           <i [class]="item.icon"></i>
           <span class="menu-text">{{ item.text }}</span>
           <span *ngIf="item.badge" class="badge border border-{{ item.badge.type }} text-{{ item.badge.type }} rounded-5 ms-2">{{ item.badge.text }}</span>
-          <!-- Utiliser seulement chevron-down pour les menus parents -->
         </a>
 
         <ul *ngIf="hasChildren(item)" class="treeview-menu" [ngClass]="{'show': isMenuOpen(item)}">
-          <li *ngFor="let child of item.children" [ngClass]="{'active': child.active, 'treeview': hasChildren(child), 'open': isChildMenuOpen(child)}">
+          <li *ngFor="let child of item.children"
+              secured [permission]="child.permission"
+              [ngClass]="{'active': child.active, 'treeview': hasChildren(child), 'open': isChildMenuOpen(child)}">
+
             <!-- Enfant simple sans sous-menu -->
             <a *ngIf="!hasChildren(child)"
                [routerLink]="child.link ? [child.link] : null"
@@ -37,7 +42,8 @@
                 <i class="bi bi-chevron-right ms-auto" [class.rotate-90]="isChildMenuOpen(child)"></i>
               </a>
               <ul class="treeview-menu" [ngClass]="{'show': isChildMenuOpen(child)}">
-                <li *ngFor="let subChild of child.children">
+                <li *ngFor="let subChild of child.children"
+                    secured [permission]="subChild.permission">
                   <a [routerLink]="subChild.link ? [subChild.link] : null"
                      [href]="!subChild.link ? '#!' : null"
                      routerLinkActive="active"

@@ -1,0 +1,62 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addRoleLabel">{{isEditMode ? 'Modification' : 'Création'}} d'un Rôle</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form action="" [formGroup]="formGroup" (ngSubmit)="isEditMode ? update() : save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nom du rôle *</label>
+              <input type="text" class="form-control" id="name" placeholder="Nom du rôle" formControlName="name"/>
+              <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="text-danger">
+                <small *ngIf="name?.errors?.['required']">Le nom du rôle est obligatoire</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="!isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Enregistrer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="update()"
+    *ngIf="isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Modifier
+    </span>
+  </button>
+</div>

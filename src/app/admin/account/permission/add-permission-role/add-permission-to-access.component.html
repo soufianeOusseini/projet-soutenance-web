@@ -1,0 +1,123 @@
+<div class="modal-header">
+  <h5 class="modal-title text-primary">
+    {{ menu.text }}
+  </h5>
+  <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <div class="row mb-3">
+    <div class="col-12">
+      <label class="form-label">Sélectionner un rôle</label>
+      <select
+        class="form-select"
+        [(ngModel)]="selectedRole"
+        (change)="onRoleChange()"
+      >
+        <option [ngValue]="undefined">Sélectionner un rôle</option>
+        <option *ngFor="let role of roles" [ngValue]="role">
+          {{ role.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive" *ngIf="selectedRole && !loading">
+    <table class="table table-bordered table-sm align-middle mb-0">
+      <thead class="table-light">
+      <tr>
+        <th style="width: 40%">Fonctionnalités</th>
+        <th class="text-center" style="width: 15%">
+          <i class="ri-eye-line"></i> Voir
+        </th>
+        <th class="text-center" style="width: 15%">
+          <i class="ri-add-line"></i> Ajouter
+        </th>
+        <th class="text-center" style="width: 15%">
+          <i class="ri-edit-line"></i> Modifier
+        </th>
+        <th class="text-center" style="width: 15%">
+          <i class="ri-delete-bin-line"></i> Supprimer
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let action of menu?.actions">
+        <td>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              [id]="'all_' + action.permission"
+              [checked]="checkAllAccess(action.permission)"
+              (change)="addAllPermissionToRole($event, action.permission)"
+            />
+            <label
+              class="form-check-label ms-2"
+              [for]="'all_' + action.permission"
+              [class.fw-bold]="action.isMenu"
+            >
+              {{ action.label }}
+            </label>
+          </div>
+        </td>
+        <td class="text-center">
+          <input
+            *ngIf="!action.isNotReadable"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="checkAccess(action.permission, 'READ')"
+            (change)="updatePermission($event, action.permission, 'READ')"
+          />
+        </td>
+        <td class="text-center">
+          <input
+            *ngIf="!action.isNotCreatable"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="checkAccess(action.permission, 'ADD')"
+            (change)="updatePermission($event, action.permission, 'ADD')"
+          />
+        </td>
+        <td class="text-center">
+          <input
+            *ngIf="!action.isNotEditable"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="checkAccess(action.permission, 'EDIT')"
+            (change)="updatePermission($event, action.permission, 'EDIT')"
+          />
+        </td>
+        <td class="text-center">
+          <input
+            *ngIf="!action.isNotDeletable"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="checkAccess(action.permission, 'DELETE')"
+            (change)="updatePermission($event, action.permission, 'DELETE')"
+          />
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center py-4" *ngIf="!selectedRole && !loading">
+    <i class="ri-shield-user-line display-4 text-muted"></i>
+    <p class="text-muted mt-2">
+      Veuillez sélectionner un rôle pour gérer les permissions
+    </p>
+  </div>
+
+  <div class="text-center py-4" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="close()">
+    Fermer
+  </button>
+</div>

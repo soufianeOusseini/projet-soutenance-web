@@ -5,7 +5,6 @@ import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from "../../models/user";
 import { Router } from '@angular/router';
-import {Colis} from "../../models/colis.model";
 
 interface TokenResponse {
   accessToken: string;
@@ -19,12 +18,10 @@ export class AuthService {
   readonly AUTH_PATH = 'http://localhost:8080/api/authentication';
   jwtHelper = new JwtHelperService();
 
-  // Signaux pour la réactivité
   public isConnected: WritableSignal<boolean> = signal(false);
   public username: WritableSignal<string> = signal('');
   public hasAdminRole: WritableSignal<boolean> = signal(false);
 
-  // Pour la gestion du refresh token
   private refreshTokenInProgress = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private tokenExpirationTimer: any;
@@ -33,21 +30,17 @@ export class AuthService {
     private httpClient: HttpClient,
     private router: Router
   ) {
-    // Initialiser les signaux après la construction
     this.initializeSignals();
-    // Configurer le timer d'expiration si un token est présent
     this.setupTokenExpirationTimer();
   }
 
   private initializeSignals(): void {
-    // Initialiser les signaux en toute sécurité
     try {
       this.isConnected.set(this.isAuthenticated());
       this.username.set(this.getUsername());
       this.hasAdminRole.set(this.isAdmin());
     } catch (error) {
       console.error('Erreur lors de l\'initialisation des signaux:', error);
-      // En cas d'erreur, s'assurer que les signaux ont des valeurs valides
       this.isConnected.set(false);
       this.username.set('');
       this.hasAdminRole.set(false);
@@ -64,17 +57,9 @@ export class AuthService {
     return null;
   }
 
-  public isAdmin() {
-    if (this.isAuthenticated()) {
-      const token = this.getToken();
-      if (token) {
-        const payload = this.jwtHelper.decodeToken(token);
-        if (payload && payload.prv) {
-          return payload.prv.indexOf('ROLE_ADMIN') > -1;
-        }
-      }
-    }
-    return false;
+  public isAdmin(): boolean {
+    const userPermissions = this.getUserPermissions();
+    return userPermissions.includes('ROLE_ADMIN') || userPermissions.includes('ROLE_SUPER_ADMIN');
   }
 
   getUsername() {
@@ -90,7 +75,6 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = this.getToken();
-    // Vérifier si le token existe et a un format JWT valide
     if (!token || token.split('.').length !== 3) {
       return false;
     }
@@ -125,7 +109,6 @@ export class AuthService {
     return null;
   }
 
-  // Configuration du timer d'expiration
   private setupTokenExpirationTimer(): void {
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
@@ -137,11 +120,9 @@ export class AuthService {
         const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
         if (expirationDate) {
           const timeUntilExpiry = expirationDate.getTime() - new Date().getTime();
-          // Déclencher le refresh 30 secondes avant l'expiration
           const refreshTime = Math.max(timeUntilExpiry - 30000, 0);
 
           this.tokenExpirationTimer = setTimeout(() => {
-            // Si le token est encore valide, tenter de le rafraîchir
             if (this.isAuthenticated()) {
               this.refreshToken().subscribe({
                 next: () => console.log('Token rafraîchi avec succès'),
@@ -158,7 +139,6 @@ export class AuthService {
     }
   }
 
-  // Refresh token lorsque le token d'accès expire
   public refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
 
@@ -203,10 +183,8 @@ export class AuthService {
     );
   }
 
-  // Gérer l'expiration de la session
   private handleSessionExpired(): void {
     this.logout();
-    // Rediriger vers la page de login
     this.router.navigate(['/auth/login'], {
       queryParams: { expired: 'true' }
     });
@@ -244,14 +222,13 @@ export class AuthService {
   }
 
   logout() {
-    // Annuler le timer d'expiration
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
       this.tokenExpirationTimer = null;
     }
 
-    // Supprimer le token du stockage local
     localStorage.removeItem('token');
+    localStorage.removeItem('roles');
     this.resetSignals();
   }
 
@@ -260,19 +237,42 @@ export class AuthService {
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = this.getToken(); // Utilisez votre méthode getToken() existante
+    const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
   }
 
-// Aussi, modifiez la méthode changePassword pour utiliser le bon endpoint
   changePassword(passwordData: { password: string }): Observable<any> {
     return this.httpClient.post(`${this.AUTH_PATH}/reset-password`, passwordData, {
       headers: this.getAuthHeaders()
     });
   }
 
+  hasPermission(permission?: string): boolean {
+    if (!permission) {
+      return true;
+    }
 
+    if (this.isAdmin()) {
+      return true;
+    }
+
+    const userPermissions = this.getUserPermissions();
+    return userPermissions.includes(permission);
+  }
+
+  getUserPermissions(): string[] {
+    const roles = localStorage.getItem('roles');
+    if (roles) {
+      try {
+        return JSON.parse(roles);
+      } catch (e) {
+        console.error('Erreur de parsing des permissions:', e);
+        return [];
+      }
+    }
+    return [];
+  }
 }

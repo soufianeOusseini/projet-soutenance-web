@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../service/auth.service";
+import {PermissionService} from "../../services/permission.service";
 import {User} from "../../models/user";
 import {StatusCodes} from "http-status-codes";
 
@@ -17,15 +18,15 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
   message = '';
+
   constructor(
     private authService: AuthService,
+    private permissionService: PermissionService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
-    console.log("loginn....")
-    // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     this.authService.logout();
 
@@ -45,26 +46,30 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(this.user).subscribe({
       next: (tokens) => {
-        console.log("Auth OK");
-
-        // Après la connexion réussie, récupérer les informations de l'utilisateur
         this.authService.getCurrentUser().subscribe({
           next: (userData) => {
-            // Vérifier si l'utilisateur doit changer son mot de passe
-            if (userData && userData.passwordReseted === false) {
-              // Rediriger vers la page de changement de mot de passe
-              this.router.navigate(['/change-password'], {
-                queryParams: { returnUrl: this.returnUrl }
-              });
-            } else {
-              // Connexion normale - rediriger vers la page de destination
-              window.location.href = this.returnUrl;
-            }
-            this.loading = false;
+            this.permissionService.getUserPermissions().subscribe({
+              next: (permissions) => {
+                localStorage.setItem('roles', JSON.stringify(permissions));
+
+                if (userData && userData.passwordReseted === false) {
+                  this.router.navigate(['/change-password'], {
+                    queryParams: { returnUrl: this.returnUrl }
+                  });
+                } else {
+                  window.location.href = this.returnUrl;
+                }
+                this.loading = false;
+              },
+              error: (permError) => {
+                console.error('Erreur lors de la récupération des permissions:', permError);
+                window.location.href = this.returnUrl;
+                this.loading = false;
+              }
+            });
           },
           error: (userError) => {
             console.error('Erreur lors de la récupération des données utilisateur:', userError);
-            // En cas d'erreur, rediriger quand même mais afficher un message
             window.location.href = this.returnUrl;
             this.loading = false;
           }

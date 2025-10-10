@@ -14,6 +14,8 @@ import {MyCompanyComponent} from "./my-company/my-company.component";
 import {DriverComponent} from "./driver/driver.component";
 import {PlanningComponent} from "./planning/planning.component";
 import {UsersManagementComponent} from "./users-management/users-management.component";
+import {RoleComponent} from "./account/role/role.component";
+import {PermissionComponent} from "./account/permission/permission.component";
 
 
 const routes: Routes = [
@@ -80,6 +82,14 @@ const routes: Routes = [
       {
         path :'users',
         component: UsersManagementComponent
+      },
+      {
+        path:"roles",
+        component: RoleComponent,
+      },
+      {
+        path:"permissions",
+        component:PermissionComponent
       }
     ]
   }

@@ -31,7 +31,7 @@ export let StaticInjector: Injector
     AdminModule,
     NgbModule,
     Toast,
-    BrowserAnimationsModule, // IMPORTANT pour les animations PrimeNG
+    BrowserAnimationsModule,
     ToastModule,
   ],
   providers: [

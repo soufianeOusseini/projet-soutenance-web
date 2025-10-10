@@ -33,6 +33,11 @@ import { PlanningComponent } from './planning/planning.component';
 import { AgencyComponent } from './my-company/tabs/agency/agency.component';
 import { UsersManagementComponent } from './users-management/users-management.component';
 import { AddUsersComponent } from './users-management/add-users/add-users.component';
+import { RoleComponent } from './account/role/role.component';
+import {SecuredDirective} from "../utils/secured.directive";
+import { AddRoleFormComponent } from './account/role/add-form/add-role-form.component';
+import { PermissionComponent } from './account/permission/permission.component';
+import { AddPermissionToAccessComponent } from './account/permission/add-permission-role/add-permission-to-access.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +66,11 @@ import { AddUsersComponent } from './users-management/add-users/add-users.compon
     PlanningComponent,
     AgencyComponent,
     UsersManagementComponent,
-    AddUsersComponent
+    AddUsersComponent,
+    RoleComponent,
+    AddRoleFormComponent,
+    PermissionComponent,
+    AddPermissionToAccessComponent
   ],
   imports: [
     RouterModule,
@@ -73,6 +82,7 @@ import { AddUsersComponent } from './users-management/add-users/add-users.compon
     Button,
     ReactiveFormsModule,
     FormsModule,
+    SecuredDirective,
   ]
 })
 export class AdminModule { }

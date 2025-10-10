@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Role} from "../models/role.model";
+import {Role} from "../models/role";
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +24,8 @@ export class RoleService {
   }
 
   updateRole(role: Role): Observable<Role> {
-    return this.http.put<Role>(`${this.apiUrl}/${role.id}`, role);
+    return this.http.put<Role>(`${this.apiUrl}/update`, role);
   }
-
   deleteRole(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }

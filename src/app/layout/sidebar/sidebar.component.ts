@@ -2,6 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {filter} from 'rxjs/operators';
 import {MenuItem} from "../../utils/menu-item";
+import {
+  DASHBOARD_ACTIONS,
+  TRIPS_ACTIONS,
+  COMPANIES_ACTIONS,
+  BUS_ACTIONS,
+  COLIS_ACTIONS,
+  TICKETS_ACTIONS,
+  DRIVERS_ACTIONS,
+  PLANNING_ACTIONS,
+  COMPTES_ACTIONS,
+  CONFIGURATIONS_ACTIONS
+} from "./menu-actions";
 
 @Component({
   selector: 'app-sidebar',
@@ -23,7 +35,6 @@ export class SidebarComponent implements OnInit {
     this.currentUrl = this.router.url;
     this.updateActiveMenuItem();
 
-    // Écouter les changements de route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -38,66 +49,116 @@ export class SidebarComponent implements OnInit {
         id: 1,
         icon: 'bi bi-speedometer2',
         text: 'Dashboard',
-        link: '/admin/dashboard'
+        link: '/admin/dashboard',
+        permission: 'DASHBOARD_READ',
+        actions: DASHBOARD_ACTIONS
       },
       {
         id: 2,
         icon: 'bi bi-signpost-split',
         text: 'Trajets',
         link: '/admin/trips',
+        permission: 'TRIPS_READ',
+        actions: TRIPS_ACTIONS
       },
       {
         id: 3,
         icon: 'bi bi-buildings',
         text: 'Compagnies',
         link: '/admin/companies',
+        permission: 'COMPANIES_READ',
+        actions: COMPANIES_ACTIONS
       },
       {
         id: 4,
         icon: 'bi bi-truck-front',
         text: 'Bus',
         link: '/admin/bus',
+        permission: 'BUS_READ',
+        actions: BUS_ACTIONS
       },
       {
         id: 5,
         icon: 'bi bi-box-seam',
         text: 'Colis',
         link: '/admin/colis',
+        permission: 'COLIS_READ',
+        actions: COLIS_ACTIONS
       },
       {
         id: 6,
         icon: 'bi bi-ticket-perforated',
         text: 'Tickets',
         link: '/admin/tickets',
+        permission: 'TICKETS_READ',
+        actions: TICKETS_ACTIONS
       },
       {
         id: 7,
         icon: 'bi bi-truck-front',
         text: 'Chauffeurs',
         link: '/admin/drivers',
+        permission: 'DRIVERS_READ',
+        actions: DRIVERS_ACTIONS
       },
       {
         id: 8,
         icon: 'bi bi-calendar',
         text: 'Planning',
         link: '/admin/planning',
+        permission: 'PLANNING_READ',
+        actions: PLANNING_ACTIONS
+      },
+      {
+        id: 11,
+        icon: 'bi bi-people',
+        text: 'Comptes',
+        permission: 'COMPTES_READ',
+        actions: COMPTES_ACTIONS,
+        children: [
+          {
+            id: 111,
+            text: 'Rôles',
+            link: '/admin/roles',
+            icon: 'bi bi-shield-check',
+            permission: 'ROLES_READ'
+          },
+          {
+            id: 112,
+            text: 'Permissions',
+            link: '/admin/permissions',
+            icon: 'bi bi-key',
+            permission: 'PERMISSIONS_READ'
+          },
+          {
+            id: 113,
+            text: 'Utilisateurs',
+            link: '/admin/users',
+            icon: 'bi bi-person-gear',
+            permission: 'USERS_READ'
+          }
+        ]
       },
       {
         id: 9,
         icon: 'bi bi-gear',
         text: 'Configurations',
+        permission: 'CONFIGURATIONS_READ',
+        actions: CONFIGURATIONS_ACTIONS,
         children: [
           {
             id: 101,
             text: 'Ma Compagnie',
             link: '/admin/my-company',
-            icon: 'bi bi-building'
+            icon: 'bi bi-building',
+            permission: 'MY_COMPANY_READ'
           },
           {
             id: 102,
             text: 'Utilisateurs',
             link: '/admin/users',
-            icon: 'bi bi-users'
+            icon: 'bi bi-users',
+            permission: 'USERS_READ'
           }
         ]
       }

@@ -9,4 +9,16 @@ export interface MenuItem {
   };
   active?: boolean;
   children?: MenuItem[];
+  permission?: string;
+  actions?: MenuAction[];
+}
+
+export interface MenuAction {
+  label: string;
+  permission: string;
+  isMenu?: boolean;
+  isNotReadable?: boolean;
+  isNotEditable?: boolean;
+  isNotDeletable?: boolean;
+  isNotCreatable?: boolean;
 }
