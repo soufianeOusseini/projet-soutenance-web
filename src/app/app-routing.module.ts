@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {LoginComponent} from "./auth/login/login.component";
-import {AdminComponent} from "./admin/admin.component";
-import {ProfilComponent} from "./admin/profil/profil.component";
 import {ChangePasswordComponent} from "./auth/change-password/change-password.component";
 
 const routes: Routes = [
@@ -13,6 +10,10 @@ const routes: Routes = [
   { path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent,
+  }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -12,7 +12,7 @@ export class RoleService {
   constructor(private http: HttpClient) { }
 
   getAllRoles(): Observable<Role[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    return this.http.get<any[]>(`${this.apiUrl}/company`);
   }
 
   getRoleById(id: number): Observable<Role> {

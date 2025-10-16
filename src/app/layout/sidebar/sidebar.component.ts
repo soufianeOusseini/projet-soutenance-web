@@ -153,13 +153,6 @@ export class SidebarComponent implements OnInit {
             icon: 'bi bi-building',
             permission: 'MY_COMPANY_READ'
           },
-          {
-            id: 102,
-            text: 'Utilisateurs',
-            link: '/admin/users',
-            icon: 'bi bi-users',
-            permission: 'USERS_READ'
-          }
         ]
       }
     ];

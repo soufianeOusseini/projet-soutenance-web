@@ -21,7 +21,7 @@ export class TicketComponent implements OnInit{
   isLoading: boolean = true;
   selectedStatusFilter: string = '';
   selectedTypeFilter: string = '';
-
+  downloadingTicketId: number | null = null;
   constructor(
     private ticketService: TicketService,
     private modalService: NgbModal,
@@ -169,6 +169,7 @@ export class TicketComponent implements OnInit{
   }
 
   downloadPdf(ticketId: number): void {
+    this.downloadingTicketId = ticketId;
     this.ticketService.downloadTicketPdf(ticketId).subscribe({
       next: (pdfBlob) => {
         const url = window.URL.createObjectURL(pdfBlob);
@@ -179,10 +180,12 @@ export class TicketComponent implements OnInit{
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        this.downloadingTicketId = null;
       },
       error: (error) => {
         console.error('Erreur lors du téléchargement:', error);
         showHttpError(error);
+        this.downloadingTicketId = null
       }
     });
   }
@@ -220,20 +223,19 @@ export class TicketComponent implements OnInit{
     const hoursUntilExpiry = (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     return hoursUntilExpiry > 0 && hoursUntilExpiry <= 2; // Expire dans moins de 2h
   }
-
   getStatusBadgeClass(status: string | undefined): string {
     const baseClass = 'badge';
     switch (status) {
       case 'RESERVE':
-        return `${baseClass} bg-warning`;
+        return `${baseClass} bg-info text-white`; // Changé en bleu avec texte blanc
       case 'PAYE':
-        return `${baseClass} bg-success`;
+        return `${baseClass} bg-success text-white`;
       case 'ANNULE':
-        return `${baseClass} bg-danger`;
+        return `${baseClass} bg-danger text-white`;
       case 'UTILISE':
-        return `${baseClass} bg-secondary`;
+        return `${baseClass} bg-secondary text-white`;
       case 'EXPIRE':
-        return `${baseClass} bg-dark`;
+        return `${baseClass} bg-dark text-white`;
       default:
         return `${baseClass} bg-light text-dark`;
     }
@@ -243,10 +245,10 @@ export class TicketComponent implements OnInit{
     const baseClass = 'badge';
     switch (type) {
       case 'RESERVATION':
-        return `${baseClass} bg-warning text-dark`;
+        return `${baseClass} bg-primary text-white`; // Changé en bleu primaire avec texte blanc
       case 'ACHAT':
       default:
-        return `${baseClass} bg-success`;
+        return `${baseClass} bg-success text-white`;
     }
   }
 

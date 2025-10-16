@@ -80,7 +80,7 @@
                       </div>
                     </td>
                     <td>
-                      <span class="badge bg-info text-dark">
+                      <span class="badge bg-info text-white">
                         {{ ticket.trajetInfo || 'N/A' }}
                       </span>
                     </td>
@@ -140,12 +140,20 @@
                         </button>
 
                         <!-- Bouton Télécharger PDF -->
+                        <!-- Bouton Télécharger PDF -->
+                        <!-- Bouton Télécharger PDF -->
                         <button
                           *ngIf="canDownloadPdf(ticket)"
                           class="btn btn-sm btn-primary"
                           (click)="downloadPdf(ticket.id!)"
+                          [disabled]="downloadingTicketId === ticket.id"
                           title="Télécharger le reçu PDF">
-                          <i class="ri-download-line"></i>
+                            <span *ngIf="downloadingTicketId !== ticket.id">
+                              <i class="ri-download-line"></i>
+                            </span>
+                                                    <span *ngIf="downloadingTicketId === ticket.id" class="spinner-border spinner-border-sm" role="status">
+                              <span class="visually-hidden">Téléchargement...</span>
+                            </span>
                         </button>
 
                         <!-- Bouton Annuler -->

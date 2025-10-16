@@ -1,85 +1,100 @@
-<div class="container-fluid mt-3">
-  <div class="row">
+<div class="container-fluid py-4">
+  <div class="row g-4">
 
-    <!-- COLONNE GAUCHE : Informations entreprise -->
-    <div class="col-md-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <!-- Logo Upload - Style similaire à school.component -->
-          <div class="profile-user position-relative d-inline-block mx-auto mb-4">
-            <!-- Profile Image avec gestion dynamique du logo -->
+    <!-- COLONNE GAUCHE : Carte profil entreprise -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+        <!-- Header avec gradient -->
+        <div class="card-header border-0 text-white position-relative overflow-hidden"
+             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 1.5rem;">
+          <div class="position-absolute w-100 h-100 top-0 start-0"
+               style="background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23fff%22 opacity=%220.1%22/></svg>') repeat; opacity: 0.1;"></div>
+
+          <!-- Logo Upload -->
+          <div class="position-relative d-inline-block mx-auto">
             <img
               [src]="FileUtility.getImageUrl(formGroup.value?.logoPath)"
               alt="Logo entreprise"
-              class="rounded-circle avatar-xl img-thumbnail user-profile-image shadow"
-              style="width: 150px; height: 150px; object-fit: cover;" />
+              class="rounded-circle border border-4 border-white shadow-lg"
+              style="width: 120px; height: 120px; object-fit: cover; background: white;" />
 
-            <!-- Camera Icon Overlay - Style identique au school component -->
-            <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
+            <!-- Camera Icon -->
+            <div class="position-absolute" style="bottom: 5px; right: 5px;">
               <input
                 id="logo-img-file-input"
                 type="file"
-                class="profile-img-file-input"
+                class="d-none"
                 accept="image/png, image/jpeg, image/jpg"
-                (change)="onLogoSelected($event)"
-                hidden
-              />
+                (change)="onLogoSelected($event)" />
               <label
                 for="logo-img-file-input"
-                class="profile-photo-edit avatar-xs"
-                style="cursor: pointer;"
-              >
-                <span class="avatar-title rounded-circle bg-light text-body shadow">
-                  <i class="ri-camera-fill" title="Changer le logo"></i>
-                </span>
+                class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center m-0"
+                style="width: 40px; height: 40px; cursor: pointer;">
+                <i class="ri-camera-fill text-primary fs-5"></i>
               </label>
             </div>
           </div>
 
-          <!-- Nom du fichier sélectionné -->
-          <div *ngIf="logoFileName" class="mb-2">
-            <small class="text-muted">Fichier sélectionné: {{ logoFileName }}</small>
+          <div *ngIf="logoFileName" class="mt-2">
+            <small class="text-white-50">📄 {{ logoFileName }}</small>
           </div>
+        </div>
 
-          <!-- Infos entreprise -->
-          <h4 class="mb-1">{{ formGroup.value?.name || company?.name || 'Nom entreprise' }}</h4>
-          <p class="text-muted small mb-1">{{ formGroup.value?.address || company?.address }}</p>
-          <p class="text-muted small mb-1">{{ formGroup.value?.city || company?.city }}</p>
-          <p class="text-muted small">Tél : {{ formGroup.value?.telephone || company?.telephone }}</p>
+        <!-- Infos entreprise -->
+        <div class="card-body text-center px-4 py-4">
+          <h4 class="fw-bold mb-2">{{ formGroup.value?.name || company?.name || 'Nom entreprise' }}</h4>
+
+          <div class="d-flex flex-column gap-2 mt-4 text-start">
+            <div class="d-flex align-items-center text-muted">
+              <i class="ri-map-pin-line me-2 text-primary"></i>
+              <small>{{ formGroup.value?.address || company?.address || 'Adresse non renseignée' }}</small>
+            </div>
+            <div class="d-flex align-items-center text-muted">
+              <i class="ri-building-line me-2 text-primary"></i>
+              <small>{{ formGroup.value?.city || company?.city || 'Ville' }}</small>
+            </div>
+            <div class="d-flex align-items-center text-muted">
+              <i class="ri-phone-line me-2 text-primary"></i>
+              <small>{{ formGroup.value?.telephone || company?.telephone || 'Téléphone' }}</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- COLONNE DROITE : Tabs -->
-    <div class="col-md-8">
-      <div class="card h-100 d-flex flex-column">
-        <!-- Navigation tabs -->
-        <div class="border-bottom px-3 pt-3">
+    <!-- COLONNE DROITE : Contenu avec Tabs -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+
+        <!-- Tabs Navigation -->
+        <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
           <ul
             ngbNav
             #companyTabs="ngbNav"
             [activeId]="1"
-            class="nav nav-pills"
-          >
-            <li [ngbNavItem]="1">
-              <a ngbNavLink>
-                <i class="fas fa-building me-1"></i> Général
+            class="nav nav-pills nav-pills-custom">
+            <li [ngbNavItem]="1" class="nav-item">
+              <a ngbNavLink class="nav-link d-flex align-items-center gap-2">
+                <i class="ri-building-line fs-5"></i>
+                <span>Général</span>
               </a>
               <ng-template ngbNavContent>
                 <app-general [company]="company" [user]="user" [formGroup]="formGroup"></app-general>
               </ng-template>
             </li>
-            <li [ngbNavItem]="2">
-              <a ngbNavLink>
-                <i class="fas fa-map-marked-alt me-1"></i> Agences
+            <li [ngbNavItem]="2" class="nav-item">
+              <a ngbNavLink class="nav-link d-flex align-items-center gap-2">
+                <i class="ri-community-line fs-5"></i>
+                <span>Agences</span>
               </a>
               <ng-template ngbNavContent>
                 <app-agency [company]="company" [user]="user" [formGroup]="formGroup"></app-agency>
               </ng-template>
             </li>
-            <li [ngbNavItem]="3">
-              <a ngbNavLink>
-                <i class="fas fa-wallet me-1"></i> Comptes
+            <li [ngbNavItem]="3" class="nav-item">
+              <a ngbNavLink class="nav-link d-flex align-items-center gap-2">
+                <i class="ri-wallet-3-line fs-5"></i>
+                <span>Comptes</span>
               </a>
               <ng-template ngbNavContent>
                 <app-accounts [company]="company" [user]="user" [formGroup]="formGroup"></app-accounts>
@@ -88,48 +103,48 @@
           </ul>
         </div>
 
-        <!-- Contenu des tabs avec scroll -->
-        <div class="card-body flex-grow-1 p-0">
-          <div class="tab-content-wrapper" style="height: 50vh; overflow-y: auto; padding: 1.5rem;">
-            <div [ngbNavOutlet]="companyTabs"></div>
+        <!-- Contenu scrollable -->
+        <div class="card-body p-0">
+          <div class="tab-content-wrapper" style="max-height: 60vh; overflow-y: auto;">
+            <div class="p-4">
+              <div [ngbNavOutlet]="companyTabs"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Footer avec boutons d'action - TOUJOURS VISIBLE -->
-        <div class="card-footer bg-light border-top">
+        <!-- Footer avec boutons d'action -->
+        <div class="card-footer bg-light border-top-0">
           <div class="d-flex justify-content-end gap-2">
             <button
               type="button"
-              class="btn btn-outline-danger btn-sm"
-              (click)="reset()"
-            >
-              <i class="ri-close-circle-line me-1"></i>
+              class="btn btn-outline-secondary"
+              (click)="reset()">
+              <i class="ri-close-line me-2"></i>
               Annuler
             </button>
 
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="btn btn-primary"
               [disabled]="formGroup.invalid"
               (click)="save()"
-              *ngIf="!formGroup.value?.id"
-            >
-              <i class="ri-add-line me-1"></i>
-              Ajouter
+              *ngIf="!formGroup.value?.id">
+              <i class="ri-add-line me-2"></i>
+              Enregistrer
             </button>
 
             <button
               type="button"
-              class="btn btn-success btn-sm"
+              class="btn btn-success"
               [disabled]="formGroup.invalid"
               (click)="update()"
-              *ngIf="formGroup.value?.id"
-            >
-              <i class="ri-edit-line me-1"></i>
+              *ngIf="formGroup.value?.id">
+              <i class="ri-check-line me-2"></i>
               Mettre à jour
             </button>
           </div>
         </div>
+
       </div>
     </div>
 

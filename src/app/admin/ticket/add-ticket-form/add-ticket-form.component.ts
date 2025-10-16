@@ -51,12 +51,39 @@ export class AddTicketFormComponent implements OnInit {
     this.planningService.getSchedulesByDateRange( startOfMonth.toISOString().split('T')[0],
       endOfMonth.toISOString().split('T')[0]).subscribe({
       next: data => {
-        this.tripSchedules = data;
+        // Filtrer les planifications passées
+        this.tripSchedules = data.filter(schedule => !this.isSchedulePassed(schedule));
       },
       error: error => {
         console.error('Erreur lors du chargement des trajets:', error);
       }
     });
+  }
+
+  /**
+   * Vérifie si une planification est déjà passée
+   */
+  isSchedulePassed(schedule: TripSchedule): boolean {
+    const now = new Date();
+
+    // Créer un objet Date avec la date et l'heure de départ
+    const scheduleDateTime = new Date(schedule.dateDepart!);
+
+    // Parser l'heure (format attendu: "HH:mm" ou "HH:mm:ss")
+    const timeParts = schedule.heureDepart!.split(':');
+    scheduleDateTime.setHours(parseInt(timeParts[0], 10));
+    scheduleDateTime.setMinutes(parseInt(timeParts[1], 10));
+    scheduleDateTime.setSeconds(timeParts[2] ? parseInt(timeParts[2], 10) : 0);
+
+    // Comparer avec l'heure actuelle
+    return scheduleDateTime <= now;
+  }
+
+  /**
+   * Vérifie si une planification est disponible (non passée et places disponibles)
+   */
+  isScheduleAvailable(schedule: TripSchedule): boolean {
+    return !this.isSchedulePassed(schedule) && schedule.nombrePlacesDisponibles! > 0;
   }
 
   onTransactionTypeChange(type: string): void {
@@ -85,7 +112,17 @@ export class AddTicketFormComponent implements OnInit {
     const scheduleId = this.formGroup.get('scheduleId')?.value;
     if (scheduleId) {
       this.selectedSchedule = this.tripSchedules.find(s => s.id == scheduleId) || null;
+
       if (this.selectedSchedule) {
+        // Vérifier si la planification est passée
+        if (this.isSchedulePassed(this.selectedSchedule)) {
+          alert('Cette planification est déjà passée. Veuillez en sélectionner une autre.');
+          this.formGroup.patchValue({ scheduleId: '' });
+          this.selectedSchedule = null;
+          this.placesRestantes = 0;
+          return;
+        }
+
         this.formGroup.patchValue({
           prix: this.selectedSchedule.prix,
           date: this.selectedSchedule.dateDepart,
@@ -144,6 +181,12 @@ export class AddTicketFormComponent implements OnInit {
     }
 
     if (!this.selectedSchedule || this.selectedSchedule?.nombrePlacesDisponibles! <= 0) {
+      return;
+    }
+
+    // Vérification finale avant la soumission
+    if (this.isSchedulePassed(this.selectedSchedule)) {
+      alert('Cette planification est déjà passée. Impossible de continuer.');
       return;
     }
 
@@ -222,6 +265,7 @@ export class AddTicketFormComponent implements OnInit {
     if (this.formGroup.invalid) return false;
     if (!this.selectedSchedule) return false;
     if (this.selectedSchedule.nombrePlacesDisponibles! <= 0) return false;
+    if (this.isSchedulePassed(this.selectedSchedule)) return false;
 
     return true;
   }

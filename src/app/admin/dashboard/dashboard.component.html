@@ -1,432 +1,222 @@
-<div class="app-body">
-
-  <!-- Container starts -->
-  <div class="container-fluid">
-
-    <!-- Row start -->
-    <div class="row">
-      <div class="col-xl-4 col-sm-6 col-12">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="d-flex flex-row">
-              <div class="icon-box lg rounded-3 bg-light mb-4">
-                <i class="bi bi-car-front text-primary fs-2"></i>
-              </div>
-              <div class="ms-4">
-                <p class="mb-2 lh-1 d-flex align-items-center">
-                  <i class="bi bi-caret-up-fill text-success me-1 fs-3"></i><span class="text-success me-2">8%
-                            </span> from
-                  last week.
-                </p>
-                <h1 class="fw-bold mb-2">7,500</h1>
-                <h6 class="m-0 opacity-50">Trips</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-sm-6 col-12">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="d-flex flex-row">
-              <div class="icon-box lg rounded-3 bg-light mb-4">
-                <i class="bi bi-car-front text-primary fs-2"></i>
-              </div>
-              <div class="ms-4">
-                <p class="mb-2 lh-1 d-flex align-items-center">
-                  <i class="bi bi-caret-up-fill text-success me-1 fs-3"></i><span
-                  class="text-success me-2">23% </span> from
-                  last week.
-                </p>
-                <h1 class="fw-bold mb-2">3,900</h1>
-                <h6 class="m-0 opacity-50">Passengers</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="d-flex flex-row">
-              <div class="icon-box lg rounded-3 bg-light mb-4">
-                <i class="bi bi-car-front-fill text-primary fs-2"></i>
-              </div>
-              <div class="ms-4">
-                <p class="mb-2 lh-1 d-flex align-items-center">
-                  <i class="bi bi-caret-down-fill text-danger me-1 fs-3"></i><span
-                  class="text-danger me-2">18% </span> from
-                  last week.
-                </p>
-                <h1 class="fw-bold mb-2">$9,300</h1>
-                <h6 class="m-0 opacity-50">Earnings</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="dashboard-container" *ngIf="!loading; else loadingTemplate">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <div class="user-info">
+      <span>Bonjour, {{currentUser?.firstName}} {{currentUser?.lastName}}</span>
     </div>
-    <!-- Row end -->
-
-    <!-- Row start -->
-    <div class="row">
-      <div class="col-xxl-8 col-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h4 class="card-title">Trips Overview</h4>
-          </div>
-          <div class="card-body">
-            <!-- Row start -->
-            <div class="row">
-              <div class="col-lg-4">
-                <div class="text-center">
-                  <div class="text-center mb-3">
-                    <p class="text-muted mb-1">This Month</p>
-                    <div class="text-center">
-                      <h2 class="mb-0">$86,990</h2>
-                      <div class="badge bg-success mt-2">
-                        + 21.68%
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row g-0">
-                    <div class="col-sm-6">
-                      <div class="border-bottom border-end p-3">
-                        <p class="text-muted mb-1">Booked</p>
-                        <h5 class="m-0">3,690</h5>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="border-bottom p-3">
-                        <p class="text-muted mb-1">Trips</p>
-                        <h5 class="m-0">6065</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row g-0">
-                    <div class="col-sm-6">
-                      <div class="border-bottom border-end p-3">
-                        <p class="text-muted mb-1">Growth</p>
-                        <h5 class="m-0">18.9%</h5>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="border-bottom p-3">
-                        <p class="text-muted mb-1">Signups</p>
-                        <h5 class="m-0">560</h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row g-0">
-                    <div class="col-sm-6">
-                      <div class="border-end p-3">
-                        <p class="text-muted mb-1">Ratings</p>
-                        <h5 class="m-0">$9,984</h5>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="p-3">
-                        <p class="text-muted mb-1">Earnings</p>
-                        <h5 class="m-0">$6,443</h5>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-8">
-                <div id="overview"></div>
-              </div>
-            </div>
-            <!-- Row end -->
-          </div>
-        </div>
-      </div>
-      <div class="col-xxl-4 col-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h4 class="card-title">Passengers</h4>
-          </div>
-          <div class="card-body">
-            <div class="auto-align-graph">
-              <div id="reachedAudience"></div>
-            </div>
-            <div class="grid text-center">
-              <div class="g-col-4">
-                <i class="bi bi-caret-up-fill text-primary"></i>
-                <h3 class="m-0 mt-1">54%</h3>
-                <p class="text-secondary m-0">Male</p>
-              </div>
-              <div class="g-col-4">
-                <i class="bi bi-caret-up-fill text-primary"></i>
-                <h3 class="m-0 mt-1">36%</h3>
-                <p class="text-secondary m-0">Female</p>
-              </div>
-              <div class="g-col-4">
-                <i class="bi bi-caret-down-fill text-danger"></i>
-                <h3 class="m-0 mt-1">10%</h3>
-                <p class="text-secondary m-0">Other</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Row end -->
-
-    <!-- Row start -->
-    <div class="row">
-      <div class="col-xxl-3 col-lg-6 col-md-12 col-sm-6 col-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h4 class="card-title">Top Social Networks</h4>
-          </div>
-          <div class="card-body">
-            <div id="socialNetwork" class="mb-5"></div>
-            <!-- Row start -->
-            <div class="row text-center">
-              <div class="col-4">
-                <i class="bi bi-record-circle text-primary"></i>
-                <h3 class="m-0 mt-1">68%</h3>
-                <p class="text-secondary m-0">Google</p>
-              </div>
-              <div class="col-4">
-                <i class="bi bi-record-circle text-primary"></i>
-                <h3 class="m-0 mt-1">24%</h3>
-                <p class="text-secondary m-0">Bing</p>
-              </div>
-              <div class="col-4">
-                <i class="bi bi-record-circle text-danger"></i>
-                <h3 class="m-0 mt-1">8%</h3>
-                <p class="text-secondary m-0">Yahoo</p>
-              </div>
-            </div>
-            <!-- Row end -->
-          </div>
-        </div>
-      </div>
-      <div class="col-xxl-3 col-lg-6 col-md-12 col-sm-6 col-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-              <h4 class="card-title">Bookings</h4>
-              <div id="sparkline1"></div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="text-center my-3">
-              <h1 class="fw-bold mb-2 display-6">2,500</h1>
-              <h5 class="m-0 opacity-50">
-                8% of total (2,54,000)
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-              <h4 class="card-title">Revenue</h4>
-              <div id="sparkline2"></div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="text-center my-3">
-              <h1 class="fw-bold mb-2 display-6">$7,900</h1>
-              <h5 class="m-0 opacity-50">
-                15% of total ($1,85,900.00)
-              </h5>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xxl-6 col-sm-12 col-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h4 class="card-title">Travellers</h4>
-          </div>
-          <div class="card-body">
-            <div class="m-0">
-              <h2 class="fw-semibold mb-2">5,89,000</h2>
-              <div class="d-flex gap-4">
-                <div class="fs-5">
-                  <span class="opacity-50">New</span>
-                  <span>465,900</span>
-                </div>
-                <div class="fs-5">
-                  <span class="opacity-50">Returning</span>
-                  <span>2,50,400</span>
-                </div>
-              </div>
-            </div>
-            <div id="visitorsGraph"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Row end -->
-
-    <!-- Row start -->
-    <div class="row">
-      <div class="col-xl-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              <div class="">
-                <h4 class="card-title">Fare Charges</h4>
-              </div>
-              <div class="btn-group ms-auto" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" checked="" />
-                <label class="btn btn-outline-primary" for="btnradio1">Today</label>
-
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" />
-                <label class="btn btn-outline-primary" for="btnradio2">7 days</label>
-
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" />
-                <label class="btn btn-outline-primary" for="btnradio3">15 Days</label>
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio4" />
-                <label class="btn btn-outline-primary" for="btnradio4">30 Days</label>
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio5" />
-                <label class="btn btn-outline-primary" for="btnradio5">90 Days</label>
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="table-outer">
-              <div class="table-responsive">
-                <table class="table align-middle custom-table m-0">
-                  <thead>
-                  <tr>
-                    <th></th>
-                    <th>Sunday</th>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                    <th></th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr class="bg-light">
-                    <td>
-                      <span class="fw-semibold">Income</span>
-                    </td>
-                    <td>
-                      <h2 class="my-3">72,350</h2>
-                      <div id="sparkline3"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">4,860</h2>
-                      <div id="sparkline4"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">8,430</h2>
-                      <div id="sparkline5"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">6,980</h2>
-                      <div id="sparkline6"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">2,003</h2>
-                      <div id="sparkline7"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">3932</h2>
-                      <div id="sparkline8"></div>
-                    </td>
-                    <td>
-                      <h2 class="my-3">8998</h2>
-                      <div id="sparkline9"></div>
-                    </td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Trips</td>
-                    <td>26</td>
-                    <td>19</td>
-                    <td>16</td>
-                    <td>22</td>
-                    <td>12</td>
-                    <td>14</td>
-                    <td>21</td>
-                    <td>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Avg.Time</td>
-                    <td>10.25</td>
-                    <td>14.59</td>
-                    <td>15.21</td>
-                    <td>12.23</td>
-                    <td>10.38</td>
-                    <td>15.33</td>
-                    <td>12.39</td>
-                    <td>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Waiting Time</td>
-                    <td>1.25</td>
-                    <td>1.32</td>
-                    <td>1.21</td>
-                    <td>1.12</td>
-                    <td>1.54</td>
-                    <td>2.54</td>
-                    <td>2.32</td>
-                    <td>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Tips</td>
-                    <td>72</td>
-                    <td>41</td>
-                    <td>38</td>
-                    <td>20</td>
-                    <td>67</td>
-                    <td>29</td>
-                    <td>69</td>
-                    <td>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Vehicle Type</td>
-                    <td>SUV</td>
-                    <td>Sedan</td>
-                    <td>Van</td>
-                    <td>Wagon</td>
-                    <td>Crossover</td>
-                    <td>Mini</td>
-                    <td>Coupe</td>
-                    <td>
-                      <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Row end -->
-
   </div>
-  <!-- Container ends -->
 
+  <!-- Statistiques Générales -->
+  <div class="statistiques-section" *ngIf="dashboard?.statistiquesGenerales">
+    <div class="stat-card trips-card">
+      <div class="stat-icon">
+        <i class="bi bi-car-front"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change" [ngClass]="dashboard?.statistiquesGenerales?.percentageTripsChange! >= 0 ? 'positive' : 'negative'">
+          <i [class]="dashboard?.statistiquesGenerales?.percentageTripsChange! >= 0 ? 'bi bi-caret-up-fill' : 'bi bi-caret-down-fill'"></i>
+          {{ dashboard?.statistiquesGenerales?.percentageTripsChange! | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalTrips | number }}</h2>
+        <p class="stat-label">Trajets</p>
+      </div>
+    </div>
+
+    <div class="stat-card passengers-card">
+      <div class="stat-icon">
+        <i class="bi bi-people"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change positive">
+          <i class="bi bi-caret-up-fill"></i>
+          {{ dashboard?.statistiquesGenerales?.percentagePassengersChange | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalPassengers | number }}</h2>
+        <p class="stat-label">Passagers</p>
+      </div>
+    </div>
+
+    <div class="stat-card earnings-card">
+      <div class="stat-icon">
+        <i class="bi bi-cash-coin"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change negative">
+          <i class="bi bi-caret-down-fill"></i>
+          {{ dashboard?.statistiquesGenerales?.percentageEarningsChange | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalEarnings | currency }}</h2>
+        <p class="stat-label">Revenus</p>
+      </div>
+    </div>
+
+    <div class="stat-card tickets-card">
+      <div class="stat-icon">
+        <i class="bi bi-ticket-perforated"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change positive">
+          <i class="bi bi-caret-up-fill"></i>
+          {{ (dashboard?.statistiquesGenerales?.percentageTicketsChange ?? 0) | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalTickets ?? 0 | number }}</h2>
+        <p class="stat-label">Tickets</p>
+      </div>
+    </div>
+
+    <div class="stat-card reservations-card">
+      <div class="stat-icon">
+        <i class="bi bi-calendar-check"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change positive">
+          <i class="bi bi-caret-up-fill"></i>
+          {{ (dashboard?.statistiquesGenerales?.percentageReservationsChange ?? 0) | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalReservations ?? 0 | number }}</h2>
+        <p class="stat-label">Réservations</p>
+      </div>
+    </div>
+
+    <div class="stat-card colis-card">
+      <div class="stat-icon">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change positive">
+          <i class="bi bi-caret-up-fill"></i>
+          {{ dashboard?.statistiquesGenerales?.percentageColisChange | number:'1.1-1' }}% from last week.
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalColis | number }}</h2>
+        <p class="stat-label">Colis</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenus et Colis -->
+  <div class="main-grid">
+    <!-- Revenus Section -->
+    <div class="card revenus-card" *ngIf="dashboard?.revenus">
+      <div class="card-header">
+        <h3>Revenus sur les 7 derniers jours</h3>
+      </div>
+      <div class="card-body">
+        <div class="revenue-stats">
+          <div class="revenue-item">
+            <span class="revenue-label">Aujourd'hui</span>
+            <h3>{{ dashboard?.revenus?.revenusToday | currency }}</h3>
+          </div>
+          <div class="revenue-item">
+            <span class="revenue-label">Ce mois</span>
+            <h3>{{ dashboard?.revenus?.revenusThisMonth | currency }}</h3>
+            <div class="badge badge-success">+ {{ dashboard?.revenus?.percentageMonthChange! | number:'1.2-2' }}%</div>
+          </div>
+        </div>
+        <div class="revenue-chart">
+          <div class="chart-bars">
+            <div class="chart-bar-item" *ngFor="let day of dashboard?.revenus?.revenuesByDay">
+              <div class="bar" [style.height.%]="(day.amount / getMaxRevenue(dashboard?.revenus?.revenuesByDay!)) * 100"></div>
+              <span class="bar-label">{{ day.day }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colis Statistics -->
+    <div class="card colis-details-card" *ngIf="dashboard?.colisStatistics">
+      <div class="card-header">
+        <h3>Statistiques Colis</h3>
+      </div>
+      <div class="card-body">
+        <div class="colis-stats-grid">
+          <div class="colis-stat-item delivered">
+            <i class="bi bi-check-circle"></i>
+            <div class="colis-stat-content">
+              <p class="colis-stat-label">Livrés</p>
+              <h4>{{ dashboard?.colisStatistics?.colisDelivered }}</h4>
+            </div>
+          </div>
+          <div class="colis-stat-item pending">
+            <i class="bi bi-hourglass-split"></i>
+            <div class="colis-stat-content">
+              <p class="colis-stat-label">En attente</p>
+              <h4>{{ dashboard?.colisStatistics?.colisPending }}</h4>
+            </div>
+          </div>
+          <div class="colis-stat-item transit">
+            <i class="bi bi-arrow-repeat"></i>
+            <div class="colis-stat-content">
+              <p class="colis-stat-label">En transit</p>
+              <h4>{{ dashboard?.colisStatistics?.colisInTransit }}</h4>
+            </div>
+          </div>
+          <div class="colis-stat-item total">
+            <i class="bi bi-box2"></i>
+            <div class="colis-stat-content">
+              <p class="colis-stat-label">Total</p>
+              <h4>{{ dashboard?.colisStatistics?.totalColis }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="delivery-rate">
+          <p class="delivery-rate-label">Taux de livraison</p>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="dashboard?.colisStatistics?.deliveryRate"></div>
+          </div>
+          <span class="delivery-rate-value">{{ dashboard?.colisStatistics?.deliveryRate | number:'1.1-1' }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Répartition des Trajets et Activités -->
+  <div class="bottom-grid">
+    <!-- Trajets Repartition -->
+    <div class="card trajets-repartition-card" *ngIf="dashboard?.trajetRepartition">
+      <div class="card-header">
+        <h3>Répartition des trajets les plus fréquentés</h3>
+      </div>
+      <div class="card-body">
+        <div class="repartition-list">
+          <div class="repartition-item" *ngFor="let trajet of dashboard?.trajetRepartition">
+            <div class="repartition-info">
+              <span class="trajet-route">{{ trajet.route }}</span>
+              <div class="progress-bar-small">
+                <div class="progress-fill" [style.width.%]="(trajet.count / getMaxTrajetCount(dashboard?.trajetRepartition!)) * 100"></div>
+              </div>
+            </div>
+            <span class="trajet-count">{{ trajet.count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activités Récentes -->
+    <div class="card activites-recentes-card" *ngIf="dashboard?.activitesRecentes">
+      <div class="card-header">
+        <h3>Activité récente</h3>
+      </div>
+      <div class="card-body">
+        <div class="activites-list">
+          <div class="activite-item" *ngFor="let activite of dashboard?.activitesRecentes">
+            <div class="activite-icon" [ngClass]="activite.type.toLowerCase()">
+              <i [class]="getActivityIcon(activite.type)"></i>
+            </div>
+            <div class="activite-content">
+              <p class="activite-description">{{ activite.description }}</p>
+              <p class="activite-time">{{ activite.timeAgo }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement du dashboard...</p>
+  </div>
+</ng-template>

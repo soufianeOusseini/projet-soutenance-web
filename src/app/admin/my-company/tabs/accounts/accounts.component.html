@@ -1,26 +1,41 @@
 <div class="company-account-view">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="mb-0">Gestion des comptes</h5>
+    <h5 class="mb-0 fw-bold">
+      <i class="ri-wallet-3-line me-2 text-primary"></i>
+      Gestion des comptes
+    </h5>
     <button class="btn btn-primary btn-sm" (click)="showAddAccountForm()" *ngIf="!showAddForm">
-      <i class="fas fa-plus me-1"></i>
+      <i class="ri-add-line me-2"></i>
       Nouveau compte
     </button>
   </div>
 
   <!-- Formulaire d'ajout/modification -->
-  <div *ngIf="showAddForm" class="card mb-4">
-    <div class="card-header">
-      <h6 class="mb-0">{{ editingAccount ? 'Modifier le compte' : 'Nouveau compte' }}</h6>
+  <div *ngIf="showAddForm" class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <h6 class="mb-0 fw-semibold">
+        <i class="ri-add-circle-line me-2"></i>
+        {{ editingAccount ? 'Modifier le compte' : 'Nouveau compte' }}
+      </h6>
     </div>
-    <div class="card-body">
+    <div class="card-body p-4">
       <form [formGroup]="accountForm" (ngSubmit)="saveAccount()">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Nom du compte <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" formControlName="accountName">
+        <div class="row g-3">
+          <!-- Nom du compte -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="ri-wallet-line me-1"></i>
+              Nom du compte <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" formControlName="accountName" placeholder="Ex: Compte Principal">
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Type de compte</label>
+
+          <!-- Type de compte -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="ri-file-list-line me-1"></i>
+              Type de compte
+            </label>
             <select class="form-select" formControlName="type">
               <option value="PRINCIPAL">Principal</option>
               <option value="SECONDARY">Secondaire</option>
@@ -28,27 +43,42 @@
               <option value="CREDIT">Crédit</option>
             </select>
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Solde initial</label>
-            <input type="number" class="form-control" formControlName="balance" step="0.01">
+
+          <!-- Solde initial -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="ri-money-dollar-circle-line me-1"></i>
+              Solde initial
+            </label>
+            <input type="number" class="form-control" formControlName="balance" step="0.01" placeholder="0.00">
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Limite de crédit</label>
-            <input type="number" class="form-control" formControlName="creditLimit" step="0.01">
+
+          <!-- Limite de crédit -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="ri-bank-card-line me-1"></i>
+              Limite de crédit
+            </label>
+            <input type="number" class="form-control" formControlName="creditLimit" step="0.01" placeholder="0.00">
           </div>
-          <div class="col-12 mb-3">
-            <label class="form-label">Notes</label>
-            <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+
+          <!-- Notes -->
+          <div class="col-12">
+            <label class="form-label fw-semibold">
+              <i class="ri-file-text-line me-1"></i>
+              Notes
+            </label>
+            <textarea class="form-control" rows="3" formControlName="notes" placeholder="Informations supplémentaires sur le compte"></textarea>
           </div>
         </div>
 
-        <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-secondary btn-sm me-2" (click)="cancelAccountForm()">
-            <i class="fas fa-times me-1"></i>
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelAccountForm()">
+            <i class="ri-close-line me-2"></i>
             Annuler
           </button>
-          <button type="submit" class="btn btn-primary btn-sm" [disabled]="accountForm.invalid">
-            <i class="fas fa-save me-1"></i>
+          <button type="submit" class="btn btn-primary" [disabled]="accountForm.invalid">
+            <i class="ri-save-line me-2"></i>
             {{ editingAccount ? 'Modifier' : 'Créer' }}
           </button>
         </div>
@@ -57,102 +87,142 @@
   </div>
 
   <!-- Résumé financier -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card bg-primary text-white">
-        <div class="card-body text-center">
-          <h4>{{ totalBalance | currency:'XOF':'symbol':'1.0-0' }}</h4>
-          <small>Solde total</small>
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+      <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body text-white text-center p-4">
+          <i class="ri-money-dollar-circle-line display-4 mb-2 opacity-75"></i>
+          <h4 class="fw-bold mb-1">{{ totalBalance | currency:'XOF':'symbol':'1.0-0' }}</h4>
+          <small class="opacity-75">Solde total</small>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-success text-white">
-        <div class="card-body text-center">
-          <h4>{{ activeAccounts }}</h4>
-          <small>Comptes actifs</small>
+    <div class="col-md-3 col-sm-6">
+      <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+        <div class="card-body text-white text-center p-4">
+          <i class="ri-checkbox-circle-line display-4 mb-2 opacity-75"></i>
+          <h4 class="fw-bold mb-1">{{ activeAccounts }}</h4>
+          <small class="opacity-75">Comptes actifs</small>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-info text-white">
-        <div class="card-body text-center">
-          <h4>{{ totalCreditLimit | currency:'XOF':'symbol':'1.0-0' }}</h4>
-          <small>Limite totale</small>
+    <div class="col-md-3 col-sm-6">
+      <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">
+        <div class="card-body text-white text-center p-4">
+          <i class="ri-bank-card-line display-4 mb-2 opacity-75"></i>
+          <h4 class="fw-bold mb-1">{{ totalCreditLimit | currency:'XOF':'symbol':'1.0-0' }}</h4>
+          <small class="opacity-75">Limite totale</small>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-warning text-white">
-        <div class="card-body text-center">
-          <h4>{{ accounts.length }}</h4>
-          <small>Total comptes</small>
+    <div class="col-md-3 col-sm-6">
+      <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+        <div class="card-body text-white text-center p-4">
+          <i class="ri-wallet-3-line display-4 mb-2 opacity-75"></i>
+          <h4 class="fw-bold mb-1">{{ accounts.length }}</h4>
+          <small class="opacity-75">Total comptes</small>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Liste des comptes -->
-  <div class="row">
-    <div class="col-12">
-      <div *ngIf="accounts.length === 0" class="text-center py-5">
-        <i class="fas fa-wallet fa-3x text-muted mb-3"></i>
-        <h6 class="text-muted">Aucun compte configuré</h6>
-        <p class="text-muted">Créez votre premier compte pour commencer.</p>
-      </div>
+  <div *ngIf="accounts.length === 0 && !showAddForm" class="text-center py-5">
+    <div class="empty-state">
+      <i class="ri-wallet-3-line display-1 text-muted mb-3"></i>
+      <h6 class="text-muted">Aucun compte configuré</h6>
+      <p class="text-muted small">Créez votre premier compte pour commencer.</p>
+      <button class="btn btn-primary mt-3" (click)="showAddAccountForm()">
+        <i class="ri-add-line me-2"></i>
+        Créer un compte
+      </button>
+    </div>
+  </div>
 
-      <div *ngIf="accounts.length > 0" class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th>Compte</th>
-            <th>Numéro</th>
-            <th>Type</th>
-            <th>Solde</th>
-            <th>Limite</th>
-            <th>Statut</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let account of accounts">
-            <td>
-              <strong>{{ account.accountName }}</strong>
-            </td>
-            <td>
-              <code>{{ account.accountNumber }}</code>
-            </td>
-            <td>
-              <span class="badge bg-secondary">{{ getAccountTypeLabel(account.type) }}</span>
-            </td>
-            <td>
-                <span [class]="account.balance >= 0 ? 'text-success' : 'text-danger'">
-                  {{ account.balance | currency:'XOF':'symbol':'1.0-0' }}
-                </span>
-            </td>
-            <td>{{ account.creditLimit | currency:'XOF':'symbol':'1.0-0' }}</td>
-            <td>
-                <span class="badge bg-{{ getStatusClass(account.status) }}">
-                  {{ getAccountStatusLabel(account.status) }}
-                </span>
-            </td>
-            <td>
-              <div class="btn-group" role="group">
-                <button class="btn btn-outline-primary btn-sm" (click)="editAccount(account)">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-outline-info btn-sm" (click)="viewTransactions(account)">
-                  <i class="fas fa-list"></i>
-                </button>
-                <button class="btn btn-outline-danger btn-sm" (click)="toggleAccountStatus(account)">
-                  <i class="fas" [class.fa-lock]="account.status === 'ACTIVE'" [class.fa-unlock]="account.status !== 'ACTIVE'"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+  <div *ngIf="accounts.length > 0" class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+        <tr>
+          <th class="border-0 py-3">
+            <i class="ri-wallet-line me-1"></i>
+            Compte
+          </th>
+          <th class="border-0 py-3">
+            <i class="ri-barcode-line me-1"></i>
+            Numéro
+          </th>
+          <th class="border-0 py-3">
+            <i class="ri-file-list-line me-1"></i>
+            Type
+          </th>
+          <th class="border-0 py-3 text-end">
+            <i class="ri-money-dollar-circle-line me-1"></i>
+            Solde
+          </th>
+          <th class="border-0 py-3 text-end">
+            <i class="ri-bank-card-line me-1"></i>
+            Limite
+          </th>
+          <th class="border-0 py-3 text-center">
+            <i class="ri-toggle-line me-1"></i>
+            Statut
+          </th>
+          <th class="border-0 py-3 text-center">
+            <i class="ri-tools-line me-1"></i>
+            Actions
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let account of accounts" class="account-row">
+          <td>
+            <div class="fw-semibold">{{ account.accountName }}</div>
+          </td>
+          <td>
+            <code class="bg-light px-2 py-1 rounded">{{ account.accountNumber }}</code>
+          </td>
+          <td>
+            <span class="badge bg-secondary">{{ getAccountTypeLabel(account.type) }}</span>
+          </td>
+          <td class="text-end">
+              <span [class]="account.balance >= 0 ? 'text-success fw-semibold' : 'text-danger fw-semibold'">
+                {{ account.balance | currency:'XOF':'symbol':'1.0-0' }}
+              </span>
+          </td>
+          <td class="text-end">
+            <span class="text-muted">{{ account.creditLimit | currency:'XOF':'symbol':'1.0-0' }}</span>
+          </td>
+          <td class="text-center">
+              <span class="badge rounded-pill bg-{{ getStatusClass(account.status) }}">
+                {{ getAccountStatusLabel(account.status) }}
+              </span>
+          </td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                (click)="editAccount(account)"
+                title="Modifier">
+                <i class="ri-edit-line"></i>
+              </button>
+              <button
+                class="btn btn-outline-info btn-sm"
+                (click)="viewTransactions(account)"
+                title="Voir les transactions">
+                <i class="ri-file-list-line"></i>
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                (click)="toggleAccountStatus(account)"
+                title="{{ account.status === 'ACTIVE' ? 'Désactiver' : 'Activer' }}">
+                <i class="ri-{{ account.status === 'ACTIVE' ? 'lock' : 'lock-unlock' }}-line"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

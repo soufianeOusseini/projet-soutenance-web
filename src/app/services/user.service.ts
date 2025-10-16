@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {Role} from "../models/role.model";
 import {User} from "../models/user";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<User[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    return this.http.get<any[]>(`${this.apiUrl}/company`);
   }
 
   getUserById(id: number): Observable<any> {
@@ -35,5 +36,9 @@ export class UserService {
 
   uploadProfile(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/upload-profile`, formData);
+  }
+
+  updateProfile(userData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/update`, userData);
   }
 }

@@ -1,93 +1,122 @@
 <!-- Mode Lecture -->
-<div *ngIf="!editMode" class="company-general-view fade-in">
+<div *ngIf="!editMode" class="company-general-view">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="mb-0">
-      <i class="fas fa-building me-2 text-primary"></i>
+    <h5 class="mb-0 fw-bold">
+      <i class="ri-information-line me-2 text-primary"></i>
       Informations générales
     </h5>
     <button class="btn btn-outline-primary btn-sm" (click)="toggleEditMode()">
-      <i class="fas fa-edit me-1"></i>
+      <i class="ri-edit-line me-2"></i>
       Modifier
     </button>
   </div>
 
-  <div class="row g-3">
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-building me-1"></i>
-        Nom de l'établissement
-      </label>
-      <p class="form-control-plaintext">{{ company?.name || 'Non renseigné' }}</p>
+  <div class="row g-4">
+    <!-- Nom de l'établissement -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-building-line me-2"></i>
+          Nom de l'établissement
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.name || 'Non renseigné' }}</div>
+      </div>
     </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-envelope me-1"></i>
-        Email
-      </label>
-      <p class="form-control-plaintext">{{ company?.email || 'Non renseigné' }}</p>
+
+    <!-- Email -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-mail-line me-2"></i>
+          Email
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.email || 'Non renseigné' }}</div>
+      </div>
     </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-phone me-1"></i>
-        Téléphone
-      </label>
-      <p class="form-control-plaintext">{{ company?.telephone || 'Non renseigné' }}</p>
+
+    <!-- Téléphone -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-phone-line me-2"></i>
+          Téléphone
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.telephone || 'Non renseigné' }}</div>
+      </div>
     </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-map me-1"></i>
-        Région
-      </label>
-      <p class="form-control-plaintext">{{ company?.region || 'Non renseignée' }}</p>
+
+    <!-- Région -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-map-line me-2"></i>
+          Région
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.region || 'Non renseignée' }}</div>
+      </div>
     </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-city me-1"></i>
-        Ville
-      </label>
-      <p class="form-control-plaintext">{{ company?.city || 'Non renseignée' }}</p>
+
+    <!-- Ville -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-building-2-line me-2"></i>
+          Ville
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.city || 'Non renseignée' }}</div>
+      </div>
     </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-mail-bulk me-1"></i>
-        Code postal
-      </label>
-      <p class="form-control-plaintext">{{ company?.postalCode || 'Non renseigné' }}</p>
+
+    <!-- Code postal -->
+    <div class="col-md-6">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-mail-send-line me-2"></i>
+          Code postal
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.postalCode || 'Non renseigné' }}</div>
+      </div>
     </div>
-    <div class="col-12 mb-3">
-      <label class="form-label fw-bold">
-        <i class="fas fa-map-marker-alt me-1"></i>
-        Adresse complète
-      </label>
-      <p class="form-control-plaintext">{{ company?.address || 'Non renseignée' }}</p>
+
+    <!-- Adresse complète -->
+    <div class="col-12">
+      <div class="info-card p-3 rounded-3 bg-light border">
+        <label class="text-muted small mb-2 d-flex align-items-center">
+          <i class="ri-map-pin-line me-2"></i>
+          Adresse complète
+        </label>
+        <div class="fw-semibold text-dark">{{ company?.address || 'Non renseignée' }}</div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Mode Édition -->
-<div *ngIf="editMode" class="company-general-edit fade-in">
+<div *ngIf="editMode" class="company-general-edit">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="mb-0">
-      <i class="fas fa-edit me-2 text-primary"></i>
-      Modifier les informations générales
+    <h5 class="mb-0 fw-bold">
+      <i class="ri-edit-box-line me-2 text-primary"></i>
+      Modifier les informations
     </h5>
-    <div class="btn-group">
+    <div class="d-flex gap-2">
       <button class="btn btn-outline-secondary btn-sm" (click)="cancelEdit()">
-        <i class="fas fa-times me-1"></i>
+        <i class="ri-close-line me-2"></i>
         Annuler
       </button>
       <button class="btn btn-success btn-sm" (click)="saveChanges()">
-        <i class="fas fa-save me-1"></i>
+        <i class="ri-check-line me-2"></i>
         Sauvegarder
       </button>
     </div>
   </div>
 
   <form class="needs-validation" novalidate>
-    <div class="row g-3">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-building me-1"></i>
+    <div class="row g-4">
+
+      <!-- Nom de l'établissement -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-building-line me-1"></i>
           Nom de l'établissement
           <span class="text-danger">*</span>
         </label>
@@ -100,9 +129,10 @@
           placeholder="Entrez le nom de l'établissement">
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-envelope me-1"></i>
+      <!-- Email -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-mail-line me-1"></i>
           Email
         </label>
         <input
@@ -113,9 +143,10 @@
           placeholder="exemple@email.com">
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-phone me-1"></i>
+      <!-- Téléphone -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-phone-line me-1"></i>
           Téléphone
           <span class="text-danger">*</span>
         </label>
@@ -125,12 +156,13 @@
           [(ngModel)]="editedCompany.telephone"
           name="telephone"
           required
-          placeholder="+226 XX XX XX XX">
+          placeholder="+228 XX XX XX XX">
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-map me-1"></i>
+      <!-- Région -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-map-line me-1"></i>
           Région
         </label>
         <select
@@ -138,25 +170,18 @@
           [(ngModel)]="editedCompany.region"
           name="region">
           <option value="">Sélectionner une région</option>
-          <option value="Centre">Centre</option>
-          <option value="Boucle du Mouhoun">Boucle du Mouhoun</option>
-          <option value="Cascades">Cascades</option>
-          <option value="Centre-Est">Centre-Est</option>
-          <option value="Centre-Nord">Centre-Nord</option>
-          <option value="Centre-Ouest">Centre-Ouest</option>
-          <option value="Centre-Sud">Centre-Sud</option>
-          <option value="Est">Est</option>
-          <option value="Hauts-Bassins">Hauts-Bassins</option>
-          <option value="Nord">Nord</option>
-          <option value="Plateau-Central">Plateau-Central</option>
-          <option value="Sahel">Sahel</option>
-          <option value="Sud-Ouest">Sud-Ouest</option>
+          <option value="Maritime">Maritime</option>
+          <option value="Plateaux">Plateaux</option>
+          <option value="Centrale">Centrale</option>
+          <option value="Kara">Kara</option>
+          <option value="Savanes">Savanes</option>
         </select>
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-city me-1"></i>
+      <!-- Ville -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-building-2-line me-1"></i>
           Ville
           <span class="text-danger">*</span>
         </label>
@@ -169,9 +194,10 @@
           placeholder="Nom de la ville">
       </div>
 
-      <div class="col-md-6 mb-3">
-        <label class="form-label">
-          <i class="fas fa-mail-bulk me-1"></i>
+      <!-- Code postal -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">
+          <i class="ri-mail-send-line me-1"></i>
           Code postal
         </label>
         <input
@@ -182,9 +208,10 @@
           placeholder="Code postal">
       </div>
 
-      <div class="col-12 mb-4">
-        <label class="form-label">
-          <i class="fas fa-map-marker-alt me-1"></i>
+      <!-- Adresse complète -->
+      <div class="col-12">
+        <label class="form-label fw-semibold">
+          <i class="ri-map-pin-line me-1"></i>
           Adresse complète
         </label>
         <textarea
@@ -194,6 +221,7 @@
           name="address"
           placeholder="Adresse complète de l'établissement"></textarea>
       </div>
+
     </div>
   </form>
 </div>

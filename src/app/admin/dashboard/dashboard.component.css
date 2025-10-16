@@ -1,0 +1,532 @@
+.dashboard-container {
+  padding: 30px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.user-info {
+  font-size: 16px;
+  color: #7f8c8d;
+}
+
+/* Statistiques Cards */
+.statistiques-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.trips-card .stat-icon {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.passengers-card .stat-icon {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.earnings-card .stat-icon {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.reservations-card .stat-icon {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.colis-card .stat-icon {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-change.positive {
+  color: #22c55e;
+}
+
+.stat-change.negative {
+  color: #ef4444;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 8px 0;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Revenus Card */
+.revenue-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.revenue-item {
+  text-align: center;
+}
+
+.revenue-label {
+  display: block;
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.revenue-item h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.revenue-chart {
+  margin-top: 20px;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 150px;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+.chart-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(180deg, #1976d2 0%, #1565c0 100%);
+  border-radius: 4px 4px 0 0;
+  min-height: 10px;
+  transition: all 0.3s ease;
+}
+
+.chart-bar-item:hover .bar {
+  background: linear-gradient(180deg, #1565c0 0%, #0d47a1 100%);
+}
+
+.bar-label {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+/* Colis Details Card */
+.colis-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.colis-stat-item {
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colis-stat-item i {
+  font-size: 24px;
+}
+
+.colis-stat-item.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+
+.colis-stat-item.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.colis-stat-item.transit {
+  background: #cfe2ff;
+  color: #084298;
+}
+
+.colis-stat-item.total {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.colis-stat-content {
+  flex: 1;
+}
+
+.colis-stat-label {
+  font-size: 12px;
+  margin: 0;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.colis-stat-item h4 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+}
+
+.delivery-rate {
+  margin-top: 20px;
+}
+
+.delivery-rate-label {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.delivery-rate-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Bottom Grid */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+/* Trajets Repartition */
+.repartition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.repartition-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.repartition-item:last-child {
+  border-bottom: none;
+}
+
+.repartition-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trajet-route {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.progress-bar-small {
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.trajet-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1976d2;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Activités Récentes */
+.activites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.activite-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.activite-item:hover {
+  background: #f0f0f0;
+}
+
+.activite-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.activite-icon.ticket {
+  background: #dbeafe;
+  color: #1976d2;
+}
+
+.activite-icon.reservation {
+  background: #fed7aa;
+  color: #f57c00;
+}
+
+.activite-icon.colis {
+  background: #dcfce7;
+  color: #388e3c;
+}
+
+.activite-content {
+  flex: 1;
+}
+
+.activite-description {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 4px 0;
+}
+
+.activite-time {
+  font-size: 12px;
+  color: #95a5a6;
+  margin: 0;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statistiques-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .statistiques-section {
+    grid-template-columns: 1fr;
+  }
+
+  .colis-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-bars {
+    height: 120px;
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+}

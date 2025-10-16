@@ -9,10 +9,10 @@
         <div class="row">
 
           <!-- Section Admin -->
-          <div class="col-12 mb-2">
+          <div class="col-12 mb-2" *ngIf="!formGroup.value.id">
             <h6 class="fw-bold">Information de l'admin</h6>
           </div>
-          <div class="col-6">
+          <div class="col-6" *ngIf="!formGroup.value.id">
             <div class="mb-3">
               <label for="adminFirstName" class="form-label">Prénom *</label>
               <input type="text" class="form-control" id="adminFirstName" placeholder="Prénom" formControlName="adminFirstName"/>
@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-6" *ngIf="!formGroup.value.id">
             <div class="mb-3">
               <label for="adminLastName" class="form-label">Nom *</label>
               <input type="text" class="form-control" id="adminLastName" placeholder="Nom" formControlName="adminLastName"/>
@@ -30,7 +30,7 @@
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-6" *ngIf="!formGroup.value.id">
             <div class="mb-3">
               <label for="adminPhone" class="form-label">Téléphone *</label>
               <input type="text" class="form-control" id="adminPhone" placeholder="Téléphone" formControlName="adminPhone"/>
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-6" *ngIf="!formGroup.value.id">
             <div class="mb-3">
               <label for="adminEmail" class="form-label">Email *</label>
               <input type="email" class="form-control" id="adminEmail" placeholder="Email" formControlName="adminEmail"/>

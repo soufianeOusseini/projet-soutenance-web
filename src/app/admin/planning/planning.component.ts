@@ -123,6 +123,19 @@ export class PlanningComponent implements OnInit{
     });
   }
 
+  onTrajetChange(): void {
+    const trajetId = this.currentSchedule.trajetId;
+    if (trajetId && trajetId !== 0) {
+      const selectedTrajet = this.trajets.find(trajet => trajet.id == trajetId);
+      console.log("Trajet " + selectedTrajet);
+      if (selectedTrajet) {
+        this.currentSchedule.prix = selectedTrajet.amount || 0;
+      }
+    } else {
+      this.currentSchedule.prix = 0;
+    }
+  }
+
   loadFormOptions(): void {
     this.busService.getAll().subscribe({
       next: (data) => {
@@ -192,7 +205,10 @@ export class PlanningComponent implements OnInit{
         nombrePlacesTotales: schedule.nombrePlacesTotales,
         prix: schedule.prix
       };
-      setTimeout(() => this.onBusChange(), 0);
+      setTimeout(() => {
+        this.onBusChange();
+        this.onTrajetChange(); // Ajouter ceci
+      }, 0);
     } else {
       this.isEditMode = false;
       this.currentSchedule = this.initializeSchedule();
