@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
+import {AgencyService} from "../../../services/agency.service";
+import {showHttpError} from "../../../utils/message.util";
+import {AgencyModel} from "../../../models/agency";
+import {takeUntil} from "rxjs";
+import {AuthService} from "../../../auth/service/auth.service";
 @Component({
   selector: 'app-add-users',
   standalone: false,
@@ -10,23 +15,56 @@ import {UserService} from "../../../services/user.service";
   styleUrl: './add-users.component.css'
 })
 export class AddUsersComponent implements OnInit{
-
+  agencies: AgencyModel[] = [];
   formGroup: FormGroup;
   isSubmitting = false;
-  user: User| null = null;
+  @Input() user: User | null = null;
+  currentUser: User | null = null;
 
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private userService: UserService,
+    private agencyService: AgencyService,
+    private authService: AuthService,
   ) {
     this.formGroup = this.createFormGroup();
   }
 
   ngOnInit(): void {
+    this.loadAgencies()
+    this.loadUserData()
     if (this.user) {
       this.populateForm();
     }
+  }
+
+  loadUserData(): void {
+    this.authService.getCurrentUser()
+      .subscribe({
+        next: (data) => {
+          this.currentUser = data;
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement des données utilisateur:', error);
+        }
+      });
+  }
+
+  shouldShowAgencySelect(): boolean {
+    return !this.currentUser || !this.currentUser.agencyId;
+  }
+
+  loadAgencies(): void {
+    this.agencyService.getAgenciesByCompany().subscribe({
+      next: (data) => {
+        this.agencies = data;
+      },
+      error: (error) => {
+        showHttpError(error)
+        console.error(error);
+      }
+    });
   }
 
   private createFormGroup(): FormGroup {
@@ -36,7 +74,8 @@ export class AddUsersComponent implements OnInit{
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^[+]?[0-9\s\-\(\)]{8,}$/)]],
-      profile: ['', [Validators.required]]
+      profile: ['', [Validators.required]],
+      agencyId: [],
     });
   }
 
@@ -48,8 +87,11 @@ export class AddUsersComponent implements OnInit{
         lastName: this.user.lastName,
         email: this.user.username,
         phone: this.user.phone,
-        profile: this.user.profile
+        profile: this.user.profile,
+        agencyId: this.user.agencyId || null
       });
+      this.formGroup.markAsPristine();
+      this.formGroup.markAsUntouched();
     }
   }
 
@@ -72,7 +114,8 @@ export class AddUsersComponent implements OnInit{
         phone: formData.phone,
         profile: formData.profile,
         username: this.generateUsername(formData.firstName, formData.lastName),
-        password: this.generateTemporaryPassword()
+        password: this.generateTemporaryPassword(),
+        agencyId: formData.agencyId || this.currentUser?.agencyId,
       };
 
       const operation = userDto.id ?

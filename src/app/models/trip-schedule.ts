@@ -3,7 +3,7 @@ export class TripSchedule {
   trajet: any;
   bus: any;
   driver: any;
-  company: any;
+  agency: any;
   dateDepart?: string;
   heureDepart?: string;
   nombrePlacesTotales?: number;
@@ -16,7 +16,7 @@ export class TripScheduleDTO {
   trajetId?: number;
   busId?: number;
   driverId?: number;
-  companyId?: number;
+  agencyId?: number;
   dateDepart?: string;
   heureDepart?: string;
   nombrePlacesTotales?: number;

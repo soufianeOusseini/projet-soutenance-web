@@ -8,7 +8,7 @@ export interface CompanyAccount {
   type: 'PRINCIPAL' | 'SECONDARY' | 'SAVINGS' | 'CREDIT';
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BLOCKED' | 'CLOSED';
   notes?: string;
-  companyId: number;
+  agencyId: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -19,7 +19,7 @@ export class Ticket {
 
   // Informations supplémentaires
   trajetInfo?: string;
-  companyName?: string;
+  agencyName?: string;
   userId?: number;
   reservationId?: number;
 }

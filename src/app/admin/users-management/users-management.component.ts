@@ -73,18 +73,13 @@ export class UsersManagementComponent implements OnInit, OnDestroy {
       size: 'lg'
     });
 
-    // Passer l'utilisateur à modifier au composant modal
-    modalRef.componentInstance.user = { ...user };
-
+    modalRef.componentInstance.user = user;
     modalRef.result.then(
       (result) => {
         if (result) {
-          this.loadUsers(); // Recharger la liste après modification
+          this.loadUsers();
         }
       },
-      (dismissed) => {
-        // Modal fermée sans sauvegarde
-      }
     );
   }
 

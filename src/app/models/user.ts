@@ -24,6 +24,7 @@ export class User extends BaseEntity {
   profilePath: string | undefined;
   birthDate: Date | undefined;
   email?: string;
+  agencyId?: number
 
   birthPlace: string | undefined;
   lastConnectionAt: any;

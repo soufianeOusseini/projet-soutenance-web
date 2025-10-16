@@ -11,8 +11,8 @@ export class AgencyService {
 
   constructor(private http: HttpClient) { }
 
-  getAgenciesByCompany(companyId: number): Observable<AgencyModel[]> {
-    return this.http.get<AgencyModel[]>(`${this.apiUrl}/company/${companyId}`);
+  getAgenciesByCompany(): Observable<AgencyModel[]> {
+    return this.http.get<AgencyModel[]>(`${this.apiUrl}/company`);
   }
 
   getAgencyById(id: number): Observable<AgencyModel> {

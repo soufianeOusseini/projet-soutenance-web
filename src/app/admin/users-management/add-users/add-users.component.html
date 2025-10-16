@@ -77,13 +77,26 @@
                 [class.is-invalid]="isFieldInvalid('profile')">
                 <option value="">Sélectionner un profil</option>
                 <option value="ADMIN">Administrateur</option>
-                <option value="USER">Utilisateur</option>
-                <option value="COMPANY">Entreprise</option>
+                <option value="AGENCY">Utilisateur</option>
                 <option value="DRIVER">Chauffeur</option>
               </select>
               <div *ngIf="isFieldInvalid('profile')" class="invalid-feedback">
                 Le profil est obligatoire
               </div>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="shouldShowAgencySelect()">
+            <div class="mb-3">
+              <label for="agency" class="form-label">Agence</label>
+              <select
+                class="form-control"
+                id="agency"
+                formControlName="agencyId">
+                <option value="">Sélectionner une agence</option>
+                <option *ngFor="let agency of agencies" [value]="agency.id">
+                  {{ agency.name }}
+                </option>
+              </select>
             </div>
           </div>
         </div>
