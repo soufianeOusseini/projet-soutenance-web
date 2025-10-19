@@ -66,8 +66,17 @@ export class SidebarComponent implements OnInit {
         icon: 'bi bi-buildings',
         text: 'Compagnies',
         link: '/admin/companies',
-        permission: 'COMPANIES_READ',
+        permission: 'ROLE_SUPER_ADMIN',
         actions: COMPANIES_ACTIONS
+      },
+
+      {
+        id: 12,
+        icon: 'bi bi-building-gear',
+        text: 'Agences',
+        link: '/admin/agencies',
+        permission: 'ROLE_COMPANY_ADMIN',
+        // actions: AGENCIES_ACTIONS
       },
       {
         id: 4,
