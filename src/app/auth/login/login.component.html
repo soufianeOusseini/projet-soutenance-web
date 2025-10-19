@@ -1,38 +1,54 @@
 <div class="row justify-content-center">
-  <div *ngIf="error" style="color: red">
-    {{ error }}
-    {{message}}
-  </div>
   <div class="col-xl-4 col-lg-5 col-sm-6 col-12">
-    <form class="my-5">
+
+    <!-- Bloc d'erreur propre -->
+    <div *ngIf="error || message" class="alert alert-danger d-flex align-items-start gap-2 mt-4" role="alert">
+      <span class="fw-bold">Oups.</span>
+      <div class="ms-1">
+        <div *ngIf="error as e" class="fw-semibold">{{ e }}</div>
+        <small *ngIf="message" class="d-block opacity-75">{{ message }}</small>
+      </div>
+    </div>
+    <!-- /Bloc d'erreur -->
+
+    <form class="my-5" (ngSubmit)="login()" novalidate>
       <div class="border rounded-2 p-4 mt-5">
         <div class="login-form">
-          <a href="index.html" class="mb-4 d-flex">
-            <img src="assets/logo/logo.png" class="img-fluid login-logo" alt="Cab Admin Dashboard"  />
+          <a href="javascript:void(0)" class="mb-4 d-flex">
+            <img src="assets/logo/logo.png" class="img-fluid login-logo" alt="Cab Admin Dashboard" />
           </a>
-          <h5 class="fw-bold mb-5">Sign in</h5>
+          <h5 class="fw-bold mb-4 text-center">Connectez-vous</h5>
+
           <div class="mb-3">
-            <label class="form-label">Your Email</label>
-            <input type="text" class="form-control" placeholder="Enter your email" name="username"  [(ngModel)]="user.username" />
+            <label class="form-label">Email</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Entrez votre email"
+              name="username"
+              [(ngModel)]="user.username"
+            />
           </div>
+
           <div class="mb-3">
-            <label class="form-label">Your Password</label>
-            <input type="password" class="form-control" placeholder="Enter password" name="password"  [(ngModel)]="user.password"/>
+            <label class="form-label">Mot de passe</label>
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Entrez votre mot de passe"
+              name="password"
+              [(ngModel)]="user.password"
+            />
           </div>
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="form-check m-0">
-              <input class="form-check-input" type="checkbox" value="" id="rememberPassword" />
-              <label class="form-check-label" for="rememberPassword">Remember</label>
-            </div>
-            <a href="forgot-password.html" class="text-blue text-decoration-underline">Lost password?</a>
-          </div>
-          <div class="d-grid py-3 mt-4">
-            <button type="submit" class="btn btn-lg btn-primary" (click)="login()">
-              LOGIN
+
+          <div class="d-grid py-3 mt-3">
+            <button type="submit" class="btn btn-lg btn-primary">
+              CONNEXION
             </button>
           </div>
         </div>
       </div>
     </form>
+
   </div>
 </div>

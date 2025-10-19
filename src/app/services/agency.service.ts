@@ -15,6 +15,10 @@ export class AgencyService {
     return this.http.get<AgencyModel[]>(`${this.apiUrl}/company`);
   }
 
+  getAgenciesByCompanyId(id: number): Observable<AgencyModel[]> {
+    return this.http.get<AgencyModel[]>(`${this.apiUrl}/company/${id}`);
+  }
+
   getAgencyById(id: number): Observable<AgencyModel> {
     return this.http.get<AgencyModel>(`${this.apiUrl}/${id}`);
   }

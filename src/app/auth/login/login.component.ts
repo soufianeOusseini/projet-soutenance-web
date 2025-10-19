@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         if (StatusCodes.UNAUTHORIZED == error.status) {
-          this.error = 'Identifiants incorrects ou compte non activé';
+          this.error = 'Identifiants incorrects';
         } else {
           this.error = 'Une erreur est survenue lors de la connexion';
         }

@@ -59,7 +59,7 @@ export class AgencyComponent implements OnInit, OnDestroy {
     if (!this.company?.id) return;
 
     this.loading = true;
-    this.agencyService.getAgenciesByCompany()
+    this.agencyService.getAgenciesByCompanyId(this.company?.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (agencies) => {
