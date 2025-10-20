@@ -44,38 +44,39 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
+    // La méthode login() mise à jour charge automatiquement l'utilisateur et ses rôles
     this.authService.login(this.user).subscribe({
-      next: (tokens) => {
-        this.authService.getCurrentUser().subscribe({
-          next: (userData) => {
-            this.permissionService.getUserPermissions().subscribe({
-              next: (permissions) => {
-                localStorage.setItem('roles', JSON.stringify(permissions));
+      next: (userData) => {
+        console.log('✅ Login réussi, utilisateur:', userData);
 
-                if (userData && userData.passwordReseted === false) {
-                  this.router.navigate(['/change-password'], {
-                    queryParams: { returnUrl: this.returnUrl }
-                  });
-                } else {
-                  window.location.href = this.returnUrl;
-                }
-                this.loading = false;
-              },
-              error: (permError) => {
-                console.error('Erreur lors de la récupération des permissions:', permError);
-                window.location.href = this.returnUrl;
-                this.loading = false;
-              }
-            });
+        // Récupérer les permissions
+        this.permissionService.getUserPermissions().subscribe({
+          next: (permissions) => {
+            console.log('🔐 Permissions récupérées:', permissions);
+            localStorage.setItem('roles', JSON.stringify(permissions));
+
+            // Vérifier si le mot de passe doit être réinitialisé
+            if (userData && userData.passwordReseted === false) {
+              this.router.navigate(['/change-password'], {
+                queryParams: { returnUrl: this.returnUrl }
+              });
+            } else {
+              // Rediriger selon le rôle
+              this.redirectBasedOnRole();
+            }
+            this.loading = false;
           },
-          error: (userError) => {
-            console.error('Erreur lors de la récupération des données utilisateur:', userError);
-            window.location.href = this.returnUrl;
+          error: (permError) => {
+            console.error('❌ Erreur lors de la récupération des permissions:', permError);
+            // Rediriger quand même selon le rôle
+            this.redirectBasedOnRole();
             this.loading = false;
           }
         });
       },
       error: (error) => {
+        console.error('❌ Erreur de connexion:', error);
+
         if (StatusCodes.UNAUTHORIZED == error.status) {
           this.error = 'Identifiants incorrects';
         } else {
@@ -84,5 +85,26 @@ export class LoginComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  /**
+   * Redirige l'utilisateur selon son rôle
+   */
+  private redirectBasedOnRole(): void {
+    const roles = this.authService.getCurrentUserRoles();
+    const roleNames = roles.map(r => r.name);
+
+    console.log('🔍 Redirection basée sur les rôles:', roleNames);
+
+    if (roleNames.includes('ROLE_SUPER_ADMIN')) {
+      console.log('➡️ Redirection vers /admin-system');
+      this.router.navigate(['/admin-system']);
+    } else if (roleNames.includes('ROLE_ADMIN') || roleNames.includes('ROLE_COMPANY_ADMIN')) {
+      console.log('➡️ Redirection vers /admin');
+      this.router.navigate(['/admin']);
+    } else {
+      console.log('➡️ Redirection par défaut vers', this.returnUrl);
+      this.router.navigate([this.returnUrl]);
+    }
   }
 }

@@ -1,0 +1,185 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="addAgencyLabel">{{ isEditMode ? 'Modification' : 'Création' }} d'une agence</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <form [formGroup]="formGroup" (ngSubmit)="save()">
+      <div class="col-xl-12 col-12">
+        <div class="row">
+
+          <!-- Section Informations de base -->
+          <div class="col-12 mb-2">
+            <h6 class="fw-bold">Informations de l'agence</h6>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nom de l'agence *</label>
+              <input type="text" class="form-control" id="name" placeholder="Ex: Agence Centrale" formControlName="name"/>
+              <div *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="code" class="form-label">Code agence *</label>
+              <input type="text" class="form-control" id="code" placeholder="Ex: AG001" formControlName="code"/>
+              <div *ngIf="formGroup.get('code')?.invalid && formGroup.get('code')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="telephone" class="form-label">Téléphone *</label>
+              <input type="tel" class="form-control" id="telephone" placeholder="+228 XX XX XX XX" formControlName="telephone"/>
+              <div *ngIf="formGroup.get('telephone')?.invalid && formGroup.get('telephone')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="agence@exemple.com" formControlName="email"/>
+              <div *ngIf="formGroup.get('email')?.invalid && formGroup.get('email')?.touched" class="text-danger small">
+                <span *ngIf="formGroup.get('email')?.errors?.['email']">Email invalide</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Localisation -->
+          <div class="col-12 mt-3 mb-2">
+            <h6 class="fw-bold">Localisation</h6>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="city" class="form-label">Ville *</label>
+              <input type="text" class="form-control" id="city" placeholder="Nom de la ville" formControlName="city"/>
+              <div *ngIf="formGroup.get('city')?.invalid && formGroup.get('city')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="region" class="form-label">Région</label>
+              <select class="form-select" id="region" formControlName="region">
+                <option value="">Sélectionner une région</option>
+                <option value="Maritime">Maritime</option>
+                <option value="Plateaux">Plateaux</option>
+                <option value="Centrale">Centrale</option>
+                <option value="Kara">Kara</option>
+                <option value="Savanes">Savanes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="address" class="form-label">Adresse</label>
+              <textarea class="form-control" rows="2" id="address" placeholder="Adresse complète de l'agence" formControlName="address"></textarea>
+            </div>
+          </div>
+
+          <!-- Section Responsable -->
+          <div class="col-12 mt-3 mb-2">
+            <h6 class="fw-bold">Responsable de l'agence</h6>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="managerName" class="form-label">Nom du responsable</label>
+              <input type="text" class="form-control" id="managerName" placeholder="Nom complet" formControlName="managerName"/>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="managerPhone" class="form-label">Téléphone responsable</label>
+              <input type="tel" class="form-control" id="managerPhone" placeholder="+228 XX XX XX XX" formControlName="managerPhone"/>
+            </div>
+          </div>
+
+          <!-- Section Statut -->
+          <div class="col-12 mt-3 mb-2">
+            <h6 class="fw-bold">Statut</h6>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label for="status" class="form-label">Statut de l'agence</label>
+              <select class="form-select" id="status" formControlName="status">
+                <option value="ACTIVE">Actif</option>
+                <option value="INACTIVE">Inactif</option>
+                <option value="SUSPENDED">Suspendu</option>
+                <option value="PENDING">En attente</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Compagnie (si nécessaire) -->
+          <div class="col-6" *ngIf="!formGroup.value.id">
+            <div class="mb-3">
+              <label for="companyId" class="form-label">Compagnie *</label>
+              <select class="form-select" id="companyId" formControlName="companyId">
+                <option value="">Sélectionner une compagnie</option>
+                <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+              </select>
+              <div *ngIf="formGroup.get('companyId')?.invalid && formGroup.get('companyId')?.touched" class="text-danger small">
+                Champ obligatoire
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="!isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Enregistrer
+    </span>
+  </button>
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    data-bs-toggle="button"
+    [disabled]="formGroup.invalid"
+    (click)="save()"
+    *ngIf="isEditMode"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Modifier
+    </span>
+  </button>
+</div>

@@ -3,8 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SidebarComponent } from './layout/sidebar/sidebar.component';
-import { HeaderComponent } from './layout/header/header.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
 import {AuthModule} from "./auth/auth.module";
@@ -15,10 +13,14 @@ import {AuthInterceptor} from "./utils/auth.interceptor";
 import {MessageService} from "primeng/api";
 import {Toast, ToastModule} from "primeng/toast";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {RoleBasedRedirectGuard} from "./guards/role-based-redirect.guard";
+import {AuthGuard} from "./guards/auth.guard";
+
 export let StaticInjector: Injector
+
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -35,6 +37,8 @@ export let StaticInjector: Injector
     ToastModule,
   ],
   providers: [
+    RoleBasedRedirectGuard,
+    AuthGuard,
     MessageService,
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

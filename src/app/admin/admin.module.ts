@@ -2,13 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminComponent } from './admin.component';
 import {RouterModule, RouterOutlet} from "@angular/router";
-import {SidebarComponent} from "../layout/sidebar/sidebar.component";
-import {HeaderComponent} from "../layout/header/header.component";
-import {BrowserModule} from "@angular/platform-browser";
-import { CompaniesComponent } from './companies/companies.component';
 import {AdminRoutingModule} from "./admin-routing.module";
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AddFormComponent } from './companies/add-form/add-form.component';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {DialogModule} from "primeng/dialog";
 import {Button} from "primeng/button";
@@ -38,15 +33,14 @@ import {SecuredDirective} from "../utils/secured.directive";
 import { AddRoleFormComponent } from './account/role/add-form/add-role-form.component';
 import { PermissionComponent } from './account/permission/permission.component';
 import { AddPermissionToAccessComponent } from './account/permission/add-permission-role/add-permission-to-access.component';
+import {SharedModule} from "../shared/shared.module";
+import { AgenciesComponent } from './agencies/agencies.component';
+import { AddAgencyFormComponent } from './agencies/add-agency-form/add-agency-form.component';
 
 @NgModule({
   declarations: [
     AdminComponent,
-    SidebarComponent,
-    HeaderComponent,
-    CompaniesComponent,
     DashboardComponent,
-    AddFormComponent,
     BusComponent,
     TrajetComponent,
     ColisComponent,
@@ -70,7 +64,9 @@ import { AddPermissionToAccessComponent } from './account/permission/add-permiss
     RoleComponent,
     AddRoleFormComponent,
     PermissionComponent,
-    AddPermissionToAccessComponent
+    AddPermissionToAccessComponent,
+    AgenciesComponent,
+    AddAgencyFormComponent,
   ],
   imports: [
     RouterModule,
@@ -83,6 +79,7 @@ import { AddPermissionToAccessComponent } from './account/permission/add-permiss
     ReactiveFormsModule,
     FormsModule,
     SecuredDirective,
+    SharedModule
   ]
 })
 export class AdminModule { }

@@ -5,6 +5,7 @@ import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from "../../models/user";
 import { Router } from '@angular/router';
+import {Role} from "../../models/role.model";
 
 interface TokenResponse {
   accessToken: string;
@@ -17,6 +18,13 @@ interface TokenResponse {
 export class AuthService {
   readonly AUTH_PATH = 'http://localhost:8080/api/authentication';
   jwtHelper = new JwtHelperService();
+
+  // Utiliser BehaviorSubject pour les rôles
+  private currentUserRolesSubject: BehaviorSubject<Role[]> = new BehaviorSubject<Role[]>([]);
+  public currentUserRoles$: Observable<Role[]> = this.currentUserRolesSubject.asObservable();
+
+  private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
   public isConnected: WritableSignal<boolean> = signal(false);
   public username: WritableSignal<string> = signal('');
@@ -32,6 +40,7 @@ export class AuthService {
   ) {
     this.initializeSignals();
     this.setupTokenExpirationTimer();
+    this.loadUserFromToken();
   }
 
   private initializeSignals(): void {
@@ -44,6 +53,26 @@ export class AuthService {
       this.isConnected.set(false);
       this.username.set('');
       this.hasAdminRole.set(false);
+    }
+  }
+
+  /**
+   * Charge les informations utilisateur depuis le token au démarrage
+   */
+  private loadUserFromToken(): void {
+    if (this.isAuthenticated()) {
+      this.getCurrentUser().subscribe({
+        next: (user) => {
+          this.currentUserSubject.next(user);
+          this.currentUserRolesSubject.next(user.roles || []);
+          console.log('✅ Utilisateur chargé depuis le token:', user);
+          console.log('🔐 Rôles chargés:', user.roles);
+        },
+        error: (error) => {
+          console.error('❌ Erreur lors du chargement de l\'utilisateur:', error);
+          this.logout();
+        }
+      });
     }
   }
 
@@ -170,6 +199,7 @@ export class AuthService {
         localStorage.setItem('token', JSON.stringify(tokens));
         this.resetSignals();
         this.setupTokenExpirationTimer();
+        this.loadUserFromToken();
         this.refreshTokenSubject.next(tokens);
       }),
       catchError((error) => {
@@ -200,14 +230,32 @@ export class AuthService {
     return this.httpClient
       .post<TokenResponse>(this.AUTH_PATH + '/login', user)
       .pipe(
-        map((tokens) => {
+        tap((tokens) => {
+          // Stocker le token
           localStorage.setItem('token', JSON.stringify(tokens));
+          console.log('✅ Token stocké:', tokens);
+        }),
+        switchMap(() => {
+          // Charger l'utilisateur complet avec ses rôles
+          return this.getCurrentUser();
+        }),
+        tap((currentUser) => {
+          // Mettre à jour les subjects
+          this.currentUserSubject.next(currentUser);
+          this.currentUserRolesSubject.next(currentUser.roles || []);
+
+          // Stocker les rôles dans localStorage pour les permissions
+          const roleNames = currentUser.roles?.map(r => r.name) || [];
+          localStorage.setItem('roles', JSON.stringify(roleNames));
+
+          console.log('✅ Utilisateur connecté:', currentUser);
+          console.log('🔐 Rôles:', currentUser.roles);
+
           this.resetSignals();
           this.setupTokenExpirationTimer();
-          return tokens;
         }),
         catchError((error: HttpErrorResponse) => {
-          console.error('Erreur de connexion:', error);
+          console.error('❌ Erreur de connexion:', error);
           return throwError(() => error);
         })
       );
@@ -229,7 +277,13 @@ export class AuthService {
 
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
+
+    // Réinitialiser les subjects
+    this.currentUserSubject.next(null);
+    this.currentUserRolesSubject.next([]);
+
     this.resetSignals();
+    console.log('👋 Déconnexion effectuée');
   }
 
   getCurrentUser(): Observable<User> {
@@ -274,5 +328,35 @@ export class AuthService {
       }
     }
     return [];
+  }
+
+  /**
+   * Retourne un Observable des rôles de l'utilisateur
+   */
+  getUserRoles(): Observable<Role[]> {
+    return this.currentUserRoles$;
+  }
+
+  /**
+   * Retourne la valeur actuelle des rôles (synchrone)
+   */
+  getCurrentUserRoles(): Role[] {
+    return this.currentUserRolesSubject.value;
+  }
+
+  /**
+   * Vérifie si l'utilisateur a un rôle spécifique
+   */
+  hasRole(roleName: string): boolean {
+    const roles = this.currentUserRolesSubject.value;
+    return roles.some(role => role.name === roleName);
+  }
+
+  /**
+   * Vérifie si l'utilisateur a au moins un des rôles requis
+   */
+  hasAnyRole(roleNames: string[]): boolean {
+    const roles = this.currentUserRolesSubject.value;
+    return roles.some(role => roleNames.includes(role.name!));
   }
 }

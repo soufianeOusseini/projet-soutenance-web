@@ -1,4 +1,4 @@
-import {MenuAction} from "../../utils/menu-item";
+import {MenuAction} from "../../../utils/menu-item";
 
 export const DASHBOARD_ACTIONS: MenuAction[] = [
   {

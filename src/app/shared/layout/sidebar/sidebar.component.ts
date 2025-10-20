@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
-import {filter} from 'rxjs/operators';
-import {MenuItem} from "../../utils/menu-item";
+import {filter, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {
   DASHBOARD_ACTIONS,
   TRIPS_ACTIONS,
@@ -14,6 +14,9 @@ import {
   COMPTES_ACTIONS,
   CONFIGURATIONS_ACTIONS
 } from "./menu-actions";
+import {MenuItem} from "../../../utils/menu-item";
+import {Role} from "../../../models/role.model";
+import {AuthService} from "../../../auth/service/auth.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -21,37 +24,60 @@ import {
   styleUrl: './sidebar.component.css',
   standalone: false
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
   openMenuIds: Set<number> = new Set();
   openChildMenuIds: Set<number> = new Set();
   currentUrl: string = '';
   accordionMode: boolean = true;
+  userRoles: Role[] = [];
+  private destroy$ = new Subject<void>();
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.initializeMenu();
+    console.log('🚀 SidebarComponent - Initialisation');
+
+    this.authService.getUserRoles().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((roles: Role[]) => {
+      this.userRoles = roles;
+      this.initializeMenu();
+
+      setTimeout(() => {
+        this.updateActiveMenuItem();
+      }, 100);
+    });
+
     this.currentUrl = this.router.url;
-    this.updateActiveMenuItem();
 
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
     ).subscribe((event: NavigationEnd) => {
       this.currentUrl = event.url;
       this.updateActiveMenuItem();
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   initializeMenu(): void {
-    this.menuItems = [
+    const allMenuItems = [
       {
         id: 1,
         icon: 'bi bi-speedometer2',
         text: 'Dashboard',
         link: '/admin/dashboard',
         permission: 'DASHBOARD_READ',
-        actions: DASHBOARD_ACTIONS
+        actions: DASHBOARD_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 2,
@@ -59,24 +85,25 @@ export class SidebarComponent implements OnInit {
         text: 'Trajets',
         link: '/admin/trips',
         permission: 'TRIPS_READ',
-        actions: TRIPS_ACTIONS
+        actions: TRIPS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 3,
         icon: 'bi bi-buildings',
         text: 'Compagnies',
-        link: '/admin/companies',
-        permission: 'ROLE_SUPER_ADMIN',
-        actions: COMPANIES_ACTIONS
+        link: '/admin-system/companies',
+        permission: 'COMPANIES_READ',
+        actions: COMPANIES_ACTIONS,
+        roles: ['ROLE_SUPER_ADMIN']
       },
-
       {
         id: 12,
         icon: 'bi bi-building-gear',
         text: 'Agences',
         link: '/admin/agencies',
-        permission: 'ROLE_COMPANY_ADMIN',
-        // actions: AGENCIES_ACTIONS
+        permission: 'AGENCIES_READ',
+        roles: ['ROLE_COMPANY_ADMIN']
       },
       {
         id: 4,
@@ -84,7 +111,8 @@ export class SidebarComponent implements OnInit {
         text: 'Bus',
         link: '/admin/bus',
         permission: 'BUS_READ',
-        actions: BUS_ACTIONS
+        actions: BUS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 5,
@@ -92,7 +120,8 @@ export class SidebarComponent implements OnInit {
         text: 'Colis',
         link: '/admin/colis',
         permission: 'COLIS_READ',
-        actions: COLIS_ACTIONS
+        actions: COLIS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 6,
@@ -100,7 +129,8 @@ export class SidebarComponent implements OnInit {
         text: 'Tickets',
         link: '/admin/tickets',
         permission: 'TICKETS_READ',
-        actions: TICKETS_ACTIONS
+        actions: TICKETS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 7,
@@ -108,7 +138,8 @@ export class SidebarComponent implements OnInit {
         text: 'Chauffeurs',
         link: '/admin/drivers',
         permission: 'DRIVERS_READ',
-        actions: DRIVERS_ACTIONS
+        actions: DRIVERS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 8,
@@ -116,7 +147,8 @@ export class SidebarComponent implements OnInit {
         text: 'Planning',
         link: '/admin/planning',
         permission: 'PLANNING_READ',
-        actions: PLANNING_ACTIONS
+        actions: PLANNING_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
       {
         id: 11,
@@ -124,27 +156,31 @@ export class SidebarComponent implements OnInit {
         text: 'Comptes',
         permission: 'COMPTES_READ',
         actions: COMPTES_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN'],
         children: [
           {
             id: 111,
             text: 'Rôles',
             link: '/admin/roles',
             icon: 'bi bi-shield-check',
-            permission: 'ROLES_READ'
+            permission: 'ROLES_READ',
+            roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
           },
           {
             id: 112,
             text: 'Permissions',
             link: '/admin/permissions',
             icon: 'bi bi-key',
-            permission: 'PERMISSIONS_READ'
+            permission: 'PERMISSIONS_READ',
+            roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
           },
           {
             id: 113,
             text: 'Utilisateurs',
             link: '/admin/users',
             icon: 'bi bi-person-gear',
-            permission: 'USERS_READ'
+            permission: 'USERS_READ',
+            roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
           }
         ]
       },
@@ -154,17 +190,44 @@ export class SidebarComponent implements OnInit {
         text: 'Configurations',
         permission: 'CONFIGURATIONS_READ',
         actions: CONFIGURATIONS_ACTIONS,
+        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN'],
         children: [
           {
             id: 101,
             text: 'Ma Compagnie',
             link: '/admin/my-company',
             icon: 'bi bi-building',
-            permission: 'MY_COMPANY_READ'
-          },
+            permission: 'MY_COMPANY_READ',
+            roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
+          }
         ]
       }
     ];
+
+    this.menuItems = this.filterMenusByRole(allMenuItems);
+  }
+
+  private filterMenusByRole(items: MenuItem[]): MenuItem[] {
+    return items
+      .filter(item => this.hasRequiredRole(item))
+      .map(item => ({
+        ...item,
+        children: item.children ? this.filterMenusByRole(item.children) : undefined
+      }))
+      .filter(item => !item.children || item.children.length > 0);
+  }
+
+  private hasRequiredRole(item: MenuItem): boolean {
+    if (!item.roles || item.roles.length === 0) {
+      return true;
+    }
+
+    const hasRole = this.userRoles.some(role =>
+      item.roles?.includes(role?.name!)
+    );
+
+
+    return hasRole;
   }
 
   updateActiveMenuItem(): void {

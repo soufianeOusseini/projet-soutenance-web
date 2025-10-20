@@ -11,6 +11,7 @@ export interface MenuItem {
   children?: MenuItem[];
   permission?: string;
   actions?: MenuAction[];
+  roles?: string[];
 }
 
 export interface MenuAction {

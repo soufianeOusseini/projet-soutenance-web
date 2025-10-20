@@ -50,6 +50,11 @@ export class AgencyService {
   getAgencyStats(companyId: number): Observable<AgencyStats> {
     return this.http.get<AgencyStats>(`${this.apiUrl}/company/${companyId}/stats`);
   }
+
+  getAllAgencies(): Observable<any> {
+      return this.http.get<any>(`${(this.apiUrl)}/company`,)
+  }
+
 }
 
 export interface AgencyStats {
