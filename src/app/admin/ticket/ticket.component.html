@@ -30,7 +30,7 @@
                 </select>
               </div>
 
-              <button type="button" class="btn btn-primary" (click)="add()">
+              <button secured permission="TICKET_ADD" type="button" class="btn btn-primary" (click)="add()">
                 <i class="ri-add-line align-bottom me-1"></i> Nouvelle transaction
               </button>
             </div>
@@ -123,6 +123,7 @@
 
                         <!-- Bouton Modifier (seulement si pas utilisé/annulé) -->
                         <button
+                          secured permission="TICEKT_EDIT"
                           *ngIf="canEdit(ticket)"
                           class="btn btn-sm btn-info"
                           (click)="edit(ticket)"
@@ -139,9 +140,6 @@
                           <i class="ri-check-double-line"></i>
                         </button>
 
-                        <!-- Bouton Télécharger PDF -->
-                        <!-- Bouton Télécharger PDF -->
-                        <!-- Bouton Télécharger PDF -->
                         <button
                           *ngIf="canDownloadPdf(ticket)"
                           class="btn btn-sm btn-primary"

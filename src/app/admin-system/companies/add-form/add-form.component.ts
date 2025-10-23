@@ -28,6 +28,17 @@ export class AddFormComponent implements OnInit {
 
     if (this.isEditMode && this.company) {
       this.formGroup.patchValue(this.company);
+      // Retirer les validateurs des champs admin en mode édition
+      this.formGroup.get('adminFirstName')?.clearValidators();
+      this.formGroup.get('adminLastName')?.clearValidators();
+      this.formGroup.get('adminPhone')?.clearValidators();
+      this.formGroup.get('adminEmail')?.clearValidators();
+
+      // Mettre à jour la validation
+      this.formGroup.get('adminFirstName')?.updateValueAndValidity();
+      this.formGroup.get('adminLastName')?.updateValueAndValidity();
+      this.formGroup.get('adminPhone')?.updateValueAndValidity();
+      this.formGroup.get('adminEmail')?.updateValueAndValidity();
     }
   }
 

@@ -1,0 +1,107 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ isEditMode ? 'Modification' : 'Création' }} d'un plan d'abonnement</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="formGroup" (ngSubmit)="save()">
+    <div class="row">
+      <div class="col-12">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nom du plan *</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            placeholder="Ex: Plan Mensuel, Plan Annuel"
+            formControlName="name"
+          />
+          <div *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="text-danger small">
+            Champ obligatoire
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="mb-3">
+          <label for="price" class="form-label">Prix (FCFA) *</label>
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            placeholder="50000"
+            formControlName="price"
+            min="0"
+          />
+          <div *ngIf="formGroup.get('price')?.invalid && formGroup.get('price')?.touched" class="text-danger small">
+            <span *ngIf="formGroup.get('price')?.errors?.['required']">Champ obligatoire</span>
+            <span *ngIf="formGroup.get('price')?.errors?.['min']">Le prix doit être positif</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="mb-3">
+          <label for="durationInDays" class="form-label">Durée (jours) *</label>
+          <input
+            type="number"
+            class="form-control"
+            id="durationInDays"
+            placeholder="30"
+            formControlName="durationInDays"
+            min="1"
+          />
+          <div *ngIf="formGroup.get('durationInDays')?.invalid && formGroup.get('durationInDays')?.touched" class="text-danger small">
+            <span *ngIf="formGroup.get('durationInDays')?.errors?.['required']">Champ obligatoire</span>
+            <span *ngIf="formGroup.get('durationInDays')?.errors?.['min']">La durée doit être au moins 1 jour</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            id="description"
+            rows="3"
+            placeholder="Décrivez les avantages de ce plan..."
+            formControlName="description"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="col-12" *ngIf="isEditMode">
+        <div class="alert alert-info">
+          <i class="ri-information-line"></i>
+          <strong>Information:</strong> Le statut du plan peut être modifié depuis la liste des plans
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    [disabled]="formGroup.invalid || loading"
+    (click)="save()"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+    </span>
+  </button>
+</div>

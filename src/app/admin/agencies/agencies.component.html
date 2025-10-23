@@ -12,7 +12,7 @@
           </div>
           <div class="card-body">
             <div class="d-flex justify-content-end mb-2">
-              <button type="button" class="btn btn-primary" (click)="add()">
+              <button secured permission="AGENCY_ADD" type="button" class="btn btn-primary" (click)="add()">
                 <i class="ri-add-line align-middle me-1"></i> Ajouter une agence
               </button>
             </div>
@@ -49,10 +49,10 @@
                     </td>
                     <td>
                       <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-info" (click)="edit(agency)">
+                        <button secured permission="AGENCY_EDIT" class="btn btn-sm btn-info" (click)="edit(agency)">
                           <i class="ri-edit-line"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger" (click)="confirmDelete(agency.id)">
+                        <button secured permission="AGENCY_DELETE" class="btn btn-sm btn-danger" (click)="confirmDelete(agency.id)">
                           <i class="ri-delete-bin-line"></i>
                         </button>
                       </div>

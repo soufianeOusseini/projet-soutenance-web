@@ -14,6 +14,14 @@ import {Button} from "primeng/button";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SecuredDirective} from "../utils/secured.directive";
 import {SharedModule} from "../shared/shared.module";
+import { InvoiceComponent } from './billings/invoice/invoice.component';
+import { SubscriptionPlanComponent } from './billings/subscription-plan/subscription-plan.component';
+import { SubscriptionComponent } from './billings/subscription/subscription.component';
+import { SubscriptionFormComponent } from './billings/subscription/subscription-form/subscription-form.component';
+import { SubscriptionPlanFormComponent } from './billings/subscription-plan/subscription-plan-form/subscription-plan-form.component';
+import { InvoiceFormComponent } from './billings/invoice/invoice-form/invoice-form.component';
+import { PayInvoiceModalComponent } from './billings/invoice/pay-invoice-modal/pay-invoice-modal.component';
+import { InvoiceListComponent } from './billings/invoice/invoice-list/invoice-list.component';
 
 
 @NgModule({
@@ -22,6 +30,14 @@ import {SharedModule} from "../shared/shared.module";
     CompaniesComponent,
     AddFormComponent,
     StatistiqueComponent,
+    InvoiceComponent,
+    SubscriptionPlanComponent,
+    SubscriptionComponent,
+    SubscriptionFormComponent,
+    SubscriptionPlanFormComponent,
+    InvoiceFormComponent,
+    PayInvoiceModalComponent,
+    InvoiceListComponent,
   ],
   imports: [
     CommonModule,
@@ -36,7 +52,7 @@ import {SharedModule} from "../shared/shared.module";
     ReactiveFormsModule,
     FormsModule,
     SecuredDirective,
-    SharedModule
+    SharedModule,
   ]
 })
 export class AdminSystemModule { }

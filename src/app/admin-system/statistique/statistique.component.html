@@ -1,1 +1,70 @@
-<p>statistique works!</p>
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="dashboard-title">Dashboard</h2>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div *ngIf="!loading && stats" class="row g-3 mb-4">
+    <!-- Total Companies -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card stat-card-blue">
+        <div class="stat-card-body">
+          <h6 class="stat-card-title">Total Companies</h6>
+          <h2 class="stat-card-value">{{ formatNumber(stats.totalCompanies) }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Agencies -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card stat-card-beige">
+        <div class="stat-card-body">
+          <h6 class="stat-card-title">Total Agences</h6>
+          <h2 class="stat-card-value">{{ formatNumber(stats.totalAgencies) }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Tickets -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card stat-card-orange">
+        <div class="stat-card-body">
+          <h6 class="stat-card-title">Total Tickets</h6>
+          <h2 class="stat-card-value">{{ formatNumber(stats.totalTickets) }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Sales -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card stat-card-coral">
+        <div class="stat-card-body">
+          <h6 class="stat-card-title">Total Sales</h6>
+          <h2 class="stat-card-value">{{ formatNumber(stats.totalSales) }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div *ngIf="!loading && stats" class="row">
+    <div class="col-12">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h5 class="chart-title">Total Sales</h5>
+        </div>
+        <div class="chart-card-body">
+          <canvas #salesChart style="height: 400px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

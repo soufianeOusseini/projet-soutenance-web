@@ -3,7 +3,6 @@
 
     <!-- Bloc d'erreur propre -->
     <div *ngIf="error || message" class="alert alert-danger d-flex align-items-start gap-2 mt-4" role="alert">
-      <span class="fw-bold">Oups.</span>
       <div class="ms-1">
         <div *ngIf="error as e" class="fw-semibold">{{ e }}</div>
         <small *ngIf="message" class="d-block opacity-75">{{ message }}</small>

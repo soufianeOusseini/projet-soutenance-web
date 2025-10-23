@@ -97,3 +97,26 @@ export const CONFIGURATIONS_ACTIONS: MenuAction[] = [
     permission: "USERS"
   }
 ];
+
+// export const BILLING_ACTIONS: MenuAction[] = [
+//   {
+//     label: "Menu Facturation",
+//     permission: "MENU_FACTURATION",
+//     isMenu: true,
+//     isNotCreatable: true,
+//     isNotEditable: true,
+//     isNotDeletable: true,
+//   },
+//   {
+//     label: "Plan Abonnement",
+//     permission: "SUBSCRIPTION_PLAN",
+//   },
+//   {
+//     label: "Abonnement",
+//     permission: "SUBSCRIPTION",
+//   },
+//   {
+//     label: "Facture",
+//     permission: "INVOICE",
+//   }
+// ]

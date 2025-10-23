@@ -18,6 +18,11 @@ import {PermissionComponent} from "../admin/account/permission/permission.compon
 import {AdminSystemComponent} from "./admin-system.component";
 import {CompaniesComponent} from "./companies/companies.component";
 import {StatistiqueComponent} from "./statistique/statistique.component";
+import {SubscriptionPlanComponent} from "./billings/subscription-plan/subscription-plan.component";
+import {SubscriptionComponent} from "./billings/subscription/subscription.component";
+import {InvoiceListComponent} from "./billings/invoice/invoice-list/invoice-list.component";
+import {InvoiceComponent} from "./billings/invoice/invoice.component";
+import {PermissionGuard} from "../guards/permission.guard";
 
 
 const routes: Routes = [
@@ -27,12 +32,29 @@ const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
         component: StatistiqueComponent,
       },
       {
         path: 'companies',
         component: CompaniesComponent,
       },
+      {
+        path: 'subscription-plan',
+        component: SubscriptionPlanComponent,
+      },
+      {
+        path: 'subscription',
+        component: SubscriptionComponent,
+      },
+      {
+        path: 'invoices',
+        component: InvoiceComponent,
+      }
     ]
   }
 

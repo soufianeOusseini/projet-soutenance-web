@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {DashboardStats} from "../models/super-dashboard-stats";
 
 export interface StatistiquesGenerales {
   totalTrips: number;
@@ -67,5 +68,9 @@ export class DashboardService {
 
   getDashboard(): Observable<Dashboard> {
     return this.http.get<Dashboard>(this.apiUrl);
+  }
+
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.apiUrl}/stats`);
   }
 }

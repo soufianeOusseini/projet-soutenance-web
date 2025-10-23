@@ -1,0 +1,75 @@
+<div class="modal-header">
+  <h5 class="modal-title">Factures de {{ companyName }}</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <div class="table-responsive" *ngIf="invoices.length > 0">
+    <table class="table align-middle table-sm">
+      <thead>
+      <tr class="bg-light">
+        <th>N° Facture</th>
+        <th>Montant</th>
+        <th>Date émission</th>
+        <th>Date échéance</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let invoice of invoices">
+        <td><strong>{{ invoice.invoiceNumber }}</strong></td>
+        <td>{{ invoice.amount | number:'1.0-0' }} FCFA</td>
+        <td>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+        <td>{{ invoice.dueDate | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <span class="badge" [class]="getStatusBadgeClass(invoice.status!)">
+            {{ getStatusLabel(invoice.status!) }}
+          </span>
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <button
+              class="btn btn-sm btn-success"
+              (click)="pay(invoice)"
+              *ngIf="invoice.status === 'PENDING'"
+              title="Payer"
+            >
+              <i class="ri-money-dollar-circle-line"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-info"
+              (click)="viewDetails(invoice)"
+              title="Détails"
+            >
+              <i class="ri-eye-line"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info text-center" *ngIf="invoices.length === 0">
+    <i class="ri-information-line"></i>
+    Aucune facture trouvée pour cet abonnement
+  </div>
+
+  <div class="text-center" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-secondary btn-sm"
+    (click)="activeModal.dismiss('Close')"
+  >
+    <i class="ri-close-line align-bottom"></i>
+    Fermer
+  </button>
+</div>

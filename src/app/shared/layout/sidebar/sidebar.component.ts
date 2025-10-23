@@ -12,7 +12,7 @@ import {
   DRIVERS_ACTIONS,
   PLANNING_ACTIONS,
   COMPTES_ACTIONS,
-  CONFIGURATIONS_ACTIONS
+  CONFIGURATIONS_ACTIONS,
 } from "./menu-actions";
 import {MenuItem} from "../../../utils/menu-item";
 import {Role} from "../../../models/role.model";
@@ -71,6 +71,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
   initializeMenu(): void {
     const allMenuItems = [
       {
+        id: 0,
+        icon: 'bi bi-speedometer2',
+        text: 'Dashboard',
+        link: '/admin-system/dashboard',
+        permission: 'DASHBOARD_READ',
+        roles: ['ROLE_SUPER_ADMIN',]
+      },
+      {
         id: 1,
         icon: 'bi bi-speedometer2',
         text: 'Dashboard',
@@ -79,6 +87,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         actions: DASHBOARD_ACTIONS,
         roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
+
       {
         id: 2,
         icon: 'bi bi-signpost-split',
@@ -102,7 +111,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         icon: 'bi bi-building-gear',
         text: 'Agences',
         link: '/admin/agencies',
-        permission: 'AGENCIES_READ',
+        permission: 'AGENCY_READ',
         roles: ['ROLE_COMPANY_ADMIN']
       },
       {
@@ -184,6 +193,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           }
         ]
       },
+
       {
         id: 9,
         icon: 'bi bi-gear',
@@ -199,6 +209,36 @@ export class SidebarComponent implements OnInit, OnDestroy {
             icon: 'bi bi-building',
             permission: 'MY_COMPANY_READ',
             roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
+          }
+        ]
+      },
+
+      {
+        id: 13,
+        icon: 'bi bi-gear',
+        text: 'Facturation',
+        roles: ['ROLE_SUPER_ADMIN'],
+        children: [
+          {
+            id: 131,
+            text: 'Plan d\'abonnement',
+            link: '/admin-system/subscription-plan',
+            icon: 'bi bi-building',
+            roles: ['ROLE_SUPER_ADMIN']
+          },
+          {
+            id: 132,
+            text: 'Abonnement',
+            link: '/admin-system/subscription',
+            icon: 'bi bi-building',
+            roles: ['ROLE_SUPER_ADMIN']
+          },
+          {
+            id: 133,
+            text: 'Facture',
+            link: '/admin-system/invoices',
+            icon: 'bi bi-building',
+            roles: ['ROLE_SUPER_ADMIN']
           }
         ]
       }

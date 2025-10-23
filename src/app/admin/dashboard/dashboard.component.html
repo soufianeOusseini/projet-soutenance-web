@@ -15,7 +15,6 @@
       <div class="stat-content">
         <p class="stat-change" [ngClass]="dashboard?.statistiquesGenerales?.percentageTripsChange! >= 0 ? 'positive' : 'negative'">
           <i [class]="dashboard?.statistiquesGenerales?.percentageTripsChange! >= 0 ? 'bi bi-caret-up-fill' : 'bi bi-caret-down-fill'"></i>
-          {{ dashboard?.statistiquesGenerales?.percentageTripsChange! | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalTrips | number }}</h2>
         <p class="stat-label">Trajets</p>
@@ -29,7 +28,6 @@
       <div class="stat-content">
         <p class="stat-change positive">
           <i class="bi bi-caret-up-fill"></i>
-          {{ dashboard?.statistiquesGenerales?.percentagePassengersChange | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalPassengers | number }}</h2>
         <p class="stat-label">Passagers</p>
@@ -43,7 +41,6 @@
       <div class="stat-content">
         <p class="stat-change negative">
           <i class="bi bi-caret-down-fill"></i>
-          {{ dashboard?.statistiquesGenerales?.percentageEarningsChange | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalEarnings | currency }}</h2>
         <p class="stat-label">Revenus</p>
@@ -57,7 +54,6 @@
       <div class="stat-content">
         <p class="stat-change positive">
           <i class="bi bi-caret-up-fill"></i>
-          {{ (dashboard?.statistiquesGenerales?.percentageTicketsChange ?? 0) | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalTickets ?? 0 | number }}</h2>
         <p class="stat-label">Tickets</p>
@@ -71,7 +67,6 @@
       <div class="stat-content">
         <p class="stat-change positive">
           <i class="bi bi-caret-up-fill"></i>
-          {{ (dashboard?.statistiquesGenerales?.percentageReservationsChange ?? 0) | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalReservations ?? 0 | number }}</h2>
         <p class="stat-label">Réservations</p>
@@ -85,7 +80,6 @@
       <div class="stat-content">
         <p class="stat-change positive">
           <i class="bi bi-caret-up-fill"></i>
-          {{ dashboard?.statistiquesGenerales?.percentageColisChange | number:'1.1-1' }}% from last week.
         </p>
         <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalColis | number }}</h2>
         <p class="stat-label">Colis</p>

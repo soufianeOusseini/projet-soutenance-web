@@ -1,0 +1,147 @@
+<div class="modal-header">
+  <h5 class="modal-title">Créer un nouvel abonnement</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="formGroup" (ngSubmit)="save()">
+    <div class="row">
+
+      <div class="col-12">
+        <div class="mb-3">
+          <label for="companyId" class="form-label">Compagnie *</label>
+          <select
+            class="form-select"
+            id="companyId"
+            formControlName="companyId"
+            (change)="onCompanyChange()"
+          >
+            <option [value]="null">Sélectionnez une compagnie</option>
+            <option *ngFor="let company of companies" [value]="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <div *ngIf="formGroup.get('companyId')?.invalid && formGroup.get('companyId')?.touched" class="text-danger small">
+            Veuillez sélectionner une compagnie
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerte si la compagnie a déjà un abonnement actif -->
+      <div class="col-12" *ngIf="hasActiveSubscription">
+        <div class="alert alert-warning">
+          <i class="ri-alert-line"></i>
+          <strong>Attention:</strong> Cette compagnie possède déjà un abonnement actif.
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="mb-3">
+          <label for="planId" class="form-label">Plan d'abonnement *</label>
+          <select
+            class="form-select"
+            id="planId"
+            formControlName="planId"
+            (change)="onPlanChange()"
+          >
+            <option [value]="null">Sélectionnez un plan</option>
+            <option *ngFor="let plan of plans" [value]="plan.id">
+              {{ plan.name }} - {{ plan.price | number:'1.0-0' }} FCFA ({{ plan.durationInDays }} jours)
+            </option>
+          </select>
+          <div *ngIf="formGroup.get('planId')?.invalid && formGroup.get('planId')?.touched" class="text-danger small">
+            Veuillez sélectionner un plan
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails du plan sélectionné -->
+      <div class="col-12" *ngIf="selectedPlan">
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <h6 class="card-title">Détails du plan</h6>
+            <div class="row">
+              <div class="col-4">
+                <strong>Prix:</strong> {{ selectedPlan.price | number:'1.0-0' }} FCFA
+              </div>
+              <div class="col-4">
+                <strong>Durée:</strong> {{ selectedPlan.durationInDays }} jours
+              </div>
+              <div class="col-4">
+                <strong>Date de fin:</strong> {{ calculateEndDate() | date:'dd/MM/yyyy' }}
+              </div>
+            </div>
+            <div class="mt-2" *ngIf="selectedPlan.description">
+              <strong>Description:</strong> {{ selectedPlan.description }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Date de début *</label>
+          <input
+            type="date"
+            class="form-control"
+            id="startDate"
+            formControlName="startDate"
+          />
+          <div *ngIf="formGroup.get('startDate')?.invalid && formGroup.get('startDate')?.touched" class="text-danger small">
+            Champ obligatoire
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="mb-3">
+          <label class="form-label d-block">Auto-renouvellement</label>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="autoRenew"
+              formControlName="autoRenew"
+            />
+            <label class="form-check-label" for="autoRenew">
+              Renouveler automatiquement à l'expiration
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="ri-information-line"></i>
+          <strong>Information:</strong> Une facture sera générée automatiquement lors de la création de l'abonnement.
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger btn-sm custom-toggle me-1"
+    (click)="reset()"
+  >
+    <span class="icon-on">
+      <i class="ri-close-circle-line align-bottom"></i>
+      Effacer
+    </span>
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-success btn-sm custom-toggle me-1"
+    [disabled]="formGroup.invalid || loading || hasActiveSubscription"
+    (click)="save()"
+  >
+    <span class="icon-on">
+      <i class="ri-save-line align-bottom"></i>
+      Créer l'abonnement
+    </span>
+  </button>
+</div>

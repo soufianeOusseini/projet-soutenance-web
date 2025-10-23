@@ -5,7 +5,7 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title">Planification des Voyages</h4>
-          <button class="btn btn-primary" (click)="openModal()">
+          <button secured permission="TRIP_SCHEDULE_ADD" class="btn btn-primary" (click)="openModal()">
             <i class="bi bi-plus-circle"></i> Nouveau Voyage
           </button>
         </div>
@@ -243,12 +243,14 @@
                   <div class="btn-group btn-group-sm">
                     <button class="btn btn-outline-primary"
                             (click)="editSchedule(schedule)"
-                            title="Modifier">
+                            title="Modifier"
+                            secured permission="TRIP_SCHEDULE_EDIT">
                       <i class="bi bi-pencil"></i>
                     </button>
                     <button class="btn btn-outline-danger"
                             (click)="confirmDelete(schedule.id!)"
-                            title="Supprimer">
+                            title="Supprimer"
+                            secured permission="TRIP_SCHEDULE_DELETE">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>

@@ -1,0 +1,77 @@
+<div class="app-body">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Plans d'abonnement</h4>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-end mb-2">
+              <button type="button" class="btn btn-primary" (click)="add()">
+                <i class="ri-add-line align-middle me-1"></i> Ajouter un plan
+              </button>
+            </div>
+
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Nom</th>
+                    <th>Prix (FCFA)</th>
+                    <th>Durée (jours)</th>
+                    <th>Description</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let plan of plans">
+                    <td><strong>{{ plan.name }}</strong></td>
+                    <td>{{ plan.price | number:'1.0-0' }} FCFA</td>
+                    <td>{{ plan.durationInDays }} jours</td>
+                    <td>{{ plan.description || 'N/A' }}</td>
+                    <td>
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          [checked]="plan.active"
+                          (change)="toggleStatus(plan)"
+                          [title]="plan.active ? 'Désactiver' : 'Activer'"
+                        />
+                        <label class="form-check-label">
+                          <span [class]="plan.active ? 'badge bg-success' : 'badge bg-secondary'">
+                            {{ plan.active ? 'Actif' : 'Inactif' }}
+                          </span>
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-info" (click)="edit(plan)">
+                          <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" (click)="confirmDelete(plan.id)" *ngIf="!plan.active">
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="plans.length === 0">
+                    <td colspan="6" class="text-center">
+                      Aucun plan d'abonnement trouvé
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

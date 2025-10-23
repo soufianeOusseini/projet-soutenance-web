@@ -1,0 +1,153 @@
+<div class="app-body">
+  <div class="container-fluid">
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selectedCompanyId" (change)="filterSubscriptions()">
+          <option [value]="null">Toutes les compagnies</option>
+          <option *ngFor="let company of companies" [value]="company.id">
+            {{ company.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="filterStatus" (change)="filterSubscriptions()">
+          <option value="all">Tous les statuts</option>
+          <option value="active">Actifs</option>
+          <option value="inactive">Inactifs</option>
+          <option value="expiring">Expirant bientôt</option>
+        </select>
+      </div>
+      <div class="col-md-4 text-end">
+        <button type="button" class="btn btn-primary" (click)="add()">
+          <i class="ri-add-line align-middle me-1"></i> Nouvel abonnement
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card bg-success text-white">
+          <div class="card-body">
+            <h5 class="card-title">Abonnements actifs</h5>
+            <h2>{{ stats.active }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-warning text-white">
+          <div class="card-body">
+            <h5 class="card-title">Expirant bientôt</h5>
+            <h2>{{ stats.expiring }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-danger text-white">
+          <div class="card-body">
+            <h5 class="card-title">Expirés</h5>
+            <h2>{{ stats.expired }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-info text-white">
+          <div class="card-body">
+            <h5 class="card-title">Total</h5>
+            <h2>{{ stats.total }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des abonnements -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Abonnements</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>Compagnie</th>
+                    <th>Plan</th>
+                    <th>Prix</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Jours restants</th>
+                    <th>Auto-renouvellement</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let subscription of filteredSubscriptions">
+                    <td><strong>{{ subscription.companyName }}</strong></td>
+                    <td>{{ subscription.planName }}</td>
+                    <td>{{ subscription.planPrice | number:'1.0-0' }} FCFA</td>
+                    <td>{{ subscription.startDate | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ subscription.endDate | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                      <span [class]="getDaysRemainingClass(subscription)">
+                        {{ getDaysRemaining(subscription) }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [class]="subscription.autoRenew ? 'bg-success' : 'bg-secondary'">
+                        {{ subscription.autoRenew ? 'Oui' : 'Non' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [class]="getStatusBadgeClass(subscription)">
+                        {{ getStatusLabel(subscription) }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <button
+                          class="btn btn-sm btn-success"
+                          (click)="viewInvoices(subscription)"
+                          title="Voir les factures"
+                        >
+                          <i class="ri-file-list-line"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-primary"
+                          (click)="renew(subscription)"
+                          *ngIf="subscription.active"
+                          title="Renouveler"
+                        >
+                          <i class="ri-refresh-line"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-danger"
+                          (click)="cancel(subscription)"
+                          *ngIf="subscription.active"
+                          title="Annuler"
+                        >
+                          <i class="ri-close-circle-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredSubscriptions.length === 0">
+                    <td colspan="9" class="text-center">
+                      Aucun abonnement trouvé
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

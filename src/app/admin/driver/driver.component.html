@@ -11,7 +11,7 @@
 
           <div class="card-body">
             <div class="d-flex justify-content-end mb-2">
-              <button type="button" class="btn btn-primary" (click)="add()">
+              <button secured permission="DRIVER_ADD" type="button" class="btn btn-primary" (click)="add()">
                 <i class="ri-add-line align-bottom"></i> Ajouter un chauffeur
               </button>
             </div>
@@ -67,10 +67,10 @@
                     </td>
                     <td>
                       <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-info" (click)="edit(driver)" title="Modifier">
+                        <button secured permission="DRIVER_EDIT" class="btn btn-sm btn-info" (click)="edit(driver)" title="Modifier">
                           <i class="ri-edit-line"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger" (click)="confirmDelete(driver.id!)" title="Supprimer">
+                        <button secured permission="DRIVER_DELETE" class="btn btn-sm btn-danger" (click)="confirmDelete(driver.id!)" title="Supprimer">
                           <i class="ri-delete-bin-line"></i>
                         </button>
                       </div>

@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    this.authService.logout();
 
     if (this.router.url.indexOf('/auth/logout') > -1) {
       window.location.href = '/';
@@ -43,6 +42,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.loading = true;
     this.error = '';
+    this.message = '';
 
     // La méthode login() mise à jour charge automatiquement l'utilisateur et ses rôles
     this.authService.login(this.user).subscribe({
@@ -76,13 +76,34 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Erreur de connexion:', error);
+        this.loading = false;
 
-        if (StatusCodes.UNAUTHORIZED == error.status) {
-          this.error = 'Identifiants incorrects';
+        // Gestion des erreurs spécifiques
+        if (error.status === StatusCodes.UNAUTHORIZED) {
+          // Vérifier le message d'erreur pour identifier le type de problème
+          const errorMessage = error.error?.message || error.message || '';
+
+          if (errorMessage.includes('company account is inactive')) {
+            this.error = 'Votre compte entreprise est inactif. Veuillez contacter le support.';
+          } else if (errorMessage.includes('agency account is inactive')) {
+            this.error = "Votre compte d'agence est inactif. Veuillez contacter l'administrateur de votre entreprise.";
+          } else {
+            this.error = 'Identifiants incorrects';
+          }
+        } else if (error.status === StatusCodes.BAD_REQUEST) {
+          // Gérer aussi les BadCredentialsException qui peuvent être retournées en 400
+          const errorMessage = error.error?.message || error.message || '';
+
+          if (errorMessage.includes('company account is inactive')) {
+            this.error = 'Votre compte entreprise est inactif. Veuillez contacter le support.';
+          } else if (errorMessage.includes('agency account is inactive')) {
+            this.error = "Votre compte d'agence est inactif. Veuillez contacter l'administrateur de votre entreprise.";
+          } else {
+            this.error = 'Identifiants incorrects';
+          }
         } else {
           this.error = 'Une erreur est survenue lors de la connexion';
         }
-        this.loading = false;
       },
     });
   }

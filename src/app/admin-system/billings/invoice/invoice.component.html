@@ -1,0 +1,161 @@
+<div class="app-body">
+  <div class="container-fluid">
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="selectedCompanyId" (change)="filterInvoices()">
+          <option [value]="null">Toutes les compagnies</option>
+          <option *ngFor="let company of companies" [value]="company.id">
+            {{ company.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-select" [(ngModel)]="filterStatus" (change)="filterInvoices()">
+          <option value="all">Tous les statuts</option>
+          <option value="PENDING">En attente</option>
+          <option value="PAID">Payées</option>
+          <option value="OVERDUE">En retard</option>
+          <option value="CANCELLED">Annulées</option>
+        </select>
+      </div>
+      <div class="col-md-4 text-end">
+        <button type="button" class="btn btn-warning me-2" (click)="loadOverdueInvoices()">
+          <i class="ri-alarm-warning-line align-middle me-1"></i> Factures en retard
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card bg-warning text-white">
+          <div class="card-body">
+            <h5 class="card-title">En attente</h5>
+            <h2>{{ stats.pending }}</h2>
+            <small>{{ stats.pendingAmount | number:'1.0-0' }} FCFA</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-success text-white">
+          <div class="card-body">
+            <h5 class="card-title">Payées</h5>
+            <h2>{{ stats.paid }}</h2>
+            <small>{{ stats.paidAmount | number:'1.0-0' }} FCFA</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-danger text-white">
+          <div class="card-body">
+            <h5 class="card-title">En retard</h5>
+            <h2>{{ stats.overdue }}</h2>
+            <small>{{ stats.overdueAmount | number:'1.0-0' }} FCFA</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-info text-white">
+          <div class="card-body">
+            <h5 class="card-title">Total</h5>
+            <h2>{{ stats.total }}</h2>
+            <small>{{ stats.totalAmount | number:'1.0-0' }} FCFA</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des factures -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Factures</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-outer">
+              <div class="table-responsive">
+                <table class="table align-middle custom-table m-0">
+                  <thead>
+                  <tr class="bg-light">
+                    <th>N° Facture</th>
+                    <th>Compagnie</th>
+                    <th>Montant</th>
+                    <th>Date émission</th>
+                    <th>Date échéance</th>
+                    <th>Date paiement</th>
+                    <th>Méthode</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let invoice of filteredInvoices">
+                    <td><strong>{{ invoice.invoiceNumber }}</strong></td>
+                    <td>{{ invoice.companyName }}</td>
+                    <td>{{ invoice.amount | number:'1.0-0' }} FCFA</td>
+                    <td>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                      <span [class]="getDueDateClass(invoice)">
+                        {{ invoice.dueDate | date:'dd/MM/yyyy' }}
+                      </span>
+                    </td>
+                    <td>{{ invoice.paymentDate ? (invoice.paymentDate | date:'dd/MM/yyyy') : '-' }}</td>
+                    <td>{{ invoice.paymentMethod || '-' }}</td>
+                    <td>
+                      <span class="badge" [class]="getStatusBadgeClass(invoice.status!)">
+                        {{ getStatusLabel(invoice.status!) }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-2">
+                        <button
+                          class="btn btn-sm btn-success"
+                          (click)="pay(invoice)"
+                          *ngIf="invoice.status === 'PENDING'"
+                          title="Payer"
+                        >
+                          <i class="ri-money-dollar-circle-line"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-info"
+                          (click)="viewDetails(invoice)"
+                          title="Détails"
+                        >
+                          <i class="ri-eye-line"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-primary"
+                          (click)="downloadInvoice(invoice)"
+                          title="Télécharger"
+                        >
+                          <i class="ri-download-line"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-danger"
+                          (click)="cancel(invoice)"
+                          *ngIf="invoice.status === 'PENDING'"
+                          title="Annuler"
+                        >
+                          <i class="ri-close-circle-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="filteredInvoices.length === 0">
+                    <td colspan="9" class="text-center">
+                      Aucune facture trouvée
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
