@@ -1,3 +1,5 @@
+import {Trajet} from "./trajet.model";
+
 export class Ticket {
   id?: number;
   prix: number | undefined;
@@ -22,4 +24,6 @@ export class Ticket {
   agencyName?: string;
   userId?: number;
   reservationId?: number;
+  seatNumber?: number
+  trajet?: Trajet
 }

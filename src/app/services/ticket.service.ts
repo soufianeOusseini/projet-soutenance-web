@@ -106,8 +106,14 @@ export class TicketService {
     });
   }
 
-  cancelTicket(ticketId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${ticketId}/cancel`, {});
+  cancelTicket(ticketId: number, cancellationReason: string, comment?: string): Observable<any> {
+    let params = new HttpParams().set('cancellationReason', cancellationReason);
+
+    if (comment) {
+      params = params.set('comment', comment);
+    }
+
+    return this.http.put(`${this.apiUrl}/${ticketId}/cancel`, null, { params });
   }
 
   confirmReservation(id: number, modePaiement: string): Observable<Ticket> {
@@ -127,5 +133,9 @@ export class TicketService {
       headers: headers,
       responseType: 'blob'
     });
+  }
+
+  getOccupiedSeats(trajetId: number, date: string): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/occupied-seats/${trajetId}/${date}`);
   }
 }

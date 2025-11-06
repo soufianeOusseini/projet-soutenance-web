@@ -16,7 +16,7 @@ export class DetailComponent implements OnInit {
   error = false;
   colisId: number = 0;
   updatingStatus = false;
-
+  downloadingId: number | null = null;
   headerAnimated = false;
   cardAnimated = false;
   itemsAnimated = false;
@@ -215,7 +215,25 @@ export class DetailComponent implements OnInit {
     this.router.navigate(['admin/colis/edit', this.colisId]);
   }
 
-  printColis(): void {
-    window.print();
+  printColis(colis: any): void {
+    this.downloadingId = colis.id;
+    this.colisService.print(colis?.id).subscribe({
+      next: (pdfBlob) => {
+        const url = window.URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `colis-${this.colis?.numero}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        this.downloadingId = null;
+      },
+      error: (error) => {
+        console.error('Erreur lors du téléchargement du PDF:', error);
+        showHttpError(error);
+        this.downloadingId = null;
+      }
+    });
   }
 }

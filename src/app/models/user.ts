@@ -2,6 +2,7 @@ import { BaseEntity } from './base-entiry';
 import {Role} from "./role.model";
 import {Profile} from "./profile.model";
 import {UserProfile} from "./enums/user-profile";
+import {CompanieModel} from "./companie.model";
 
 export class User extends BaseEntity {
   username: string;
@@ -25,7 +26,7 @@ export class User extends BaseEntity {
   birthDate: Date | undefined;
   email?: string;
   agencyId?: number
-
+  company?: CompanieModel
   birthPlace: string | undefined;
   lastConnectionAt: any;
 

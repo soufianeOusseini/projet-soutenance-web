@@ -171,6 +171,88 @@
           </div>
         </div>
 
+        <div class="card mb-3" *ngIf="selectedTransactionType && selectedSchedule">
+          <div class="card-header bg-info text-white">
+            <h6 class="mb-0"><i class="ri-calendar-check-line me-2"></i>Sélection du siège</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="seatNumber" class="form-label">Numéro de siège *</label>
+                  <select
+                    class="form-control"
+                    id="seatNumber"
+                    formControlName="seatNumber"
+                    (change)="onSeatChange()"
+                    [class.is-invalid]="isFieldInvalid('seatNumber')">
+                    <option value="">Sélectionner un siège</option>
+                    <option *ngFor="let seat of availableSeats" [value]="seat">
+                      Siège n°{{ seat }}
+                    </option>
+                  </select>
+                  <div *ngIf="isFieldInvalid('seatNumber')" class="invalid-feedback">
+                    Le numéro de siège est obligatoire
+                  </div>
+                  <small class="text-muted">
+                    <i class="ri-information-line me-1"></i>
+                    <span *ngIf="nextAvailableSeat">Prochain siège disponible: <strong>n°{{ nextAvailableSeat }}</strong></span>
+                    <span *ngIf="!nextAvailableSeat">Aucun siège disponible</span>
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Informations sièges</label>
+                  <div class="d-flex gap-3 align-items-center">
+                    <div>
+                      <span class="badge bg-success">{{ availableSeats.length }}</span>
+                      <small class="text-muted ms-1">Disponibles</small>
+                    </div>
+                    <div>
+                      <span class="badge bg-danger">{{ occupiedSeats.length }}</span>
+                      <small class="text-muted ms-1">Occupés</small>
+                    </div>
+                    <div>
+                      <span class="badge bg-primary">{{ busCapacity }}</span>
+                      <small class="text-muted ms-1">Total</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visualisation optionnelle des sièges (style plan de bus) -->
+            <div *ngIf="occupiedSeats.length > 0" class="mt-3">
+              <label class="form-label">Plan des sièges</label>
+              <div class="seat-map">
+                <div class="d-flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    *ngFor="let i of [].constructor(busCapacity); let idx = index"
+                    class="btn btn-sm"
+                    [class.btn-success]="isSeatAvailable(idx + 1)"
+                    [class.btn-danger]="!isSeatAvailable(idx + 1)"
+                    [class.btn-primary]="formGroup.get('seatNumber')?.value === idx + 1"
+                    [disabled]="!isSeatAvailable(idx + 1)"
+                    (click)="formGroup.patchValue({ seatNumber: idx + 1 })"
+                    style="width: 45px; height: 45px;">
+                    {{ idx + 1 }}
+                  </button>
+                </div>
+                <div class="mt-2">
+                  <small class="text-muted">
+                    <span class="badge bg-success me-2"></span>Disponible
+                    <span class="badge bg-danger mx-2"></span>Occupé
+                    <span class="badge bg-primary ms-2"></span>Sélectionné
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Section Paiement - Seulement pour les achats immédiats -->
         <div class="card mb-3" *ngIf="selectedTransactionType === 'ACHAT'">
           <div class="card-header bg-warning text-white">
@@ -188,7 +270,6 @@
                     [class.is-invalid]="isFieldInvalid('modePaiement')">
                     <option value="">Sélectionner un mode de paiement</option>
                     <option value="ESPECES">Espèces</option>
-                    <option value="CARTE_BANCAIRE">Carte bancaire</option>
                     <option value="MOBILE">Paiement mobile</option>
                   </select>
                   <div *ngIf="isFieldInvalid('modePaiement')" class="invalid-feedback">

@@ -6,7 +6,10 @@ import {CompanieModel} from "../../models/companie.model";
 import {Subject, takeUntil} from 'rxjs';
 
 import {CompaniesService} from "../../services/companies.service";
-import {FileUtility} from "../../utils/file-util"; // Ajustez le chemin selon votre structure
+import {FileUtility} from "../../utils/file-util";
+import {Subscription} from "../../models/subscription";
+import {SubscriptionService} from "../../services/subscription.service";
+import Swal from "sweetalert2"; // Ajustez le chemin selon votre structure
 
 @Component({
   selector: 'app-my-company',
@@ -21,13 +24,16 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
   logoPath: any;
   logoFileName: any;
   FileUtility = FileUtility;
+  subscription: Subscription | null = null;
   private _unsubscribeAll: Subject<any> = new Subject();
+  currentUser: any
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private fb: FormBuilder,
     private companyService: CompaniesService,
+    private subscriptionService: SubscriptionService
   ) {
   }
 
@@ -37,17 +43,80 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
         this.user = data;
         this.company = this.user.company;
         this.formGroup = this.createForm();
+        this.loadActiveSubscription(data);
+
       },
       error: err => {
         console.error('Erreur lors de la récupération des données utilisateur:', err);
       }
     });
+
+
   }
 
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
+  loadActiveSubscription(data  : any): void {
+    console.log("Load Active Subscription id = " + data.company);
+    this.subscriptionService.getActiveSubscriptionByCompany(data.company?.id!).subscribe({
+      next: (sub) => {
+        this.subscription = sub;
+      },
+      error: (error) => {
+        console.log('Pas d\'abonnement actif pour cette compagnie');
+        this.subscription = null;
+      }
+    });
   }
+
+  toggleAutoRenew(event: any): void {
+    const isChecked = event.target.checked;
+
+    if (!this.subscription?.id) {
+      Swal.fire('Erreur', 'Aucun abonnement actif trouvé', 'error');
+      event.target.checked = false;
+      return;
+    }
+
+    const action = isChecked ? 'activer' : 'désactiver';
+    const title = isChecked ? '🔄 Activer le renouvellement automatique' : '⏸️ Désactiver le renouvellement automatique';
+    const text = isChecked
+      ? 'Votre abonnement sera automatiquement renouvelé à son expiration avec le même plan.'
+      : 'Vous devrez renouveler manuellement votre abonnement avant son expiration.';
+
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: isChecked ? '#28a745' : '#ffc107',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: `Oui, ${action}`,
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.subscriptionService.updateAutoRenew(this.subscription!.id!, isChecked).subscribe({
+          next: () => {
+            this.subscription!.autoRenew = isChecked;
+            Swal.fire({
+              title: 'Succès!',
+              text: `Le renouvellement automatique a été ${isChecked ? 'activé' : 'désactivé'}`,
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          },
+          error: (error) => {
+            console.error('Erreur lors de la mise à jour', error);
+            Swal.fire('Erreur', `Impossible de ${action} le renouvellement automatique`, 'error');
+            event.target.checked = !isChecked; // Remettre l'ancien état
+          }
+        });
+      } else {
+        event.target.checked = !isChecked; // Annuler le changement
+      }
+    });
+  }
+
+
 
   createForm(): FormGroup {
     return this.fb.group({
@@ -58,7 +127,10 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
       telephone: [this.company?.telephone, [Validators.required]],
       email: [this.company?.email, [Validators.email]],
       logoPath: [this.company?.logoPath],
-      // Ajoutez d'autres champs selon votre modèle CompanieModel
+      region: [this.company?.region, [Validators.required]],
+      postalCode: [this.company?.postalCode, [Validators.required]],
+      adminEmail: [this.user?.email, [Validators.required, Validators.email]],
+      status: [this.company?.status],
     });
   }
 
@@ -71,7 +143,6 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
         this.logoFileName = file.name;
         this.logoPath = file;
 
-        // Si la compagnie existe déjà, on met à jour automatiquement
         if (this.formGroup.value?.id) {
           this.update();
         }
@@ -135,6 +206,7 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
       });
   }
 
+
   reset(): void {
     this.formGroup.reset();
     this.logoPath = null;
@@ -152,5 +224,10 @@ export class MyCompanyComponent implements OnInit, OnDestroy{
         console.error('Erreur lors de la récupération des données utilisateur:', err);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
 }

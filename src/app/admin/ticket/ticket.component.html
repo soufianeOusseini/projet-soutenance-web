@@ -132,18 +132,18 @@
                         </button>
 
                         <!-- Bouton Utiliser (marquer comme utilisé) -->
-                        <button
-                          *ngIf="canUse(ticket)"
-                          class="btn btn-sm btn-secondary"
-                          (click)="useTicket(ticket.id!)"
-                          title="Marquer comme utilisé">
-                          <i class="ri-check-double-line"></i>
-                        </button>
+<!--                        <button-->
+<!--                          *ngIf="canUse(ticket)"-->
+<!--                          class="btn btn-sm btn-secondary"-->
+<!--                          (click)="useTicket(ticket.id!)"-->
+<!--                          title="Marquer comme utilisé">-->
+<!--                          <i class="ri-check-double-line"></i>-->
+<!--                        </button>-->
 
                         <button
                           *ngIf="canDownloadPdf(ticket)"
                           class="btn btn-sm btn-primary"
-                          (click)="downloadPdf(ticket.id!)"
+                          (click)="downloadPdf(ticket)"
                           [disabled]="downloadingTicketId === ticket.id"
                           title="Télécharger le reçu PDF">
                             <span *ngIf="downloadingTicketId !== ticket.id">

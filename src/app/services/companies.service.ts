@@ -44,4 +44,11 @@ export class CompaniesService {
   changeStatus(id: number): Observable<void>{
     return this.http.get<void>(`${this.url}/change-status/${id}`);
   }
+
+  updateLogo(formData: FormData): Observable<any> {
+    return this.http.post<any>(
+      `${(this.url)}/logo`,
+      formData,
+    )
+  }
 }

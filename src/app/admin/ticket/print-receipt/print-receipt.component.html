@@ -1,0 +1,90 @@
+<div class="modal-header bg-success text-white">
+  <div class="d-flex align-items-center w-100">
+    <div class="text-center w-100">
+      <i class="ri-checkbox-circle-line" style="font-size: 3rem;"></i>
+      <h4 class="modal-title mt-2" id="successModalLabel">Transaction réussie !</h4>
+      <p class="mb-0">Votre ticket a été créé avec succès</p>
+    </div>
+  </div>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <!-- Informations du ticket -->
+  <div class="card mb-4 border-0 bg-light">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-6">
+          <small class="text-muted d-block">N° Ticket</small>
+          <strong class="text-dark">{{ ticketData?.numero }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Siège</small>
+          <strong class="text-dark">N° {{ ticketData?.seatNumber }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Trajet</small>
+          <strong class="text-dark">{{ ticketData?.trajet }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Prix</small>
+          <strong class="text-success">{{ ticketData?.prix }} F CFA</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Date</small>
+          <strong class="text-dark">{{ ticketData?.date | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="col-6">
+          <small class="text-muted d-block">Heure</small>
+          <strong class="text-dark">{{ ticketData?.heureDepart }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question de téléchargement -->
+  <div class="text-center mb-4">
+    <h5 class="mb-2">Voulez-vous télécharger le reçu ?</h5>
+    <p class="text-muted small mb-0">
+      <i class="ri-information-line me-1"></i>
+      Vous pourrez l'imprimer ou le consulter ultérieurement
+    </p>
+  </div>
+
+  <!-- Alert info -->
+  <div class="alert alert-info d-flex align-items-start" role="alert">
+    <i class="ri-printer-line me-2 mt-1"></i>
+    <div>
+      <strong>Astuce :</strong> Vous pouvez retrouver ce reçu dans la section "Mes tickets" et l'imprimer à tout moment.
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer border-0 pt-0">
+  <div class="d-grid gap-2 w-100">
+    <!-- Bouton Télécharger -->
+    <button
+      type="button"
+      class="btn btn-success btn-lg"
+      (click)="downloadTicketPdf()"
+      [disabled]="isDownloading">
+      <span *ngIf="!isDownloading">
+        <i class="ri-download-2-line me-2"></i>
+        Télécharger le reçu PDF
+      </span>
+      <span *ngIf="isDownloading">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Téléchargement en cours...
+      </span>
+    </button>
+
+    <!-- Bouton Plus tard -->
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="activeModal.close('later')"
+      [disabled]="isDownloading">
+      Plus tard
+    </button>
+  </div>
+</div>

@@ -36,6 +36,9 @@ import { AddPermissionToAccessComponent } from './account/permission/add-permiss
 import {SharedModule} from "../shared/shared.module";
 import { AgenciesComponent } from './agencies/agencies.component';
 import { AddAgencyFormComponent } from './agencies/add-agency-form/add-agency-form.component';
+import { PrintReceiptComponent } from './ticket/print-receipt/print-receipt.component';
+import { ConfirmReservationModalComponent } from './ticket/confirm-reservation-modal/confirm-reservation-modal.component';
+import { CancelReservationModalComponent } from './ticket/cancel-reservation-modal/cancel-reservation-modal.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +70,9 @@ import { AddAgencyFormComponent } from './agencies/add-agency-form/add-agency-fo
     AddPermissionToAccessComponent,
     AgenciesComponent,
     AddAgencyFormComponent,
+    PrintReceiptComponent,
+    ConfirmReservationModalComponent,
+    CancelReservationModalComponent,
   ],
   imports: [
     RouterModule,

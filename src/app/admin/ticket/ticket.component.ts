@@ -5,6 +5,8 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AddTicketFormComponent} from "./add-ticket-form/add-ticket-form.component";
 import {ConfirmDeleteComponent} from "../../utils/confirm-delete/confirm-delete.component";
 import {showHttpError, showSuccess} from "../../utils/message.util";
+import {ConfirmReservationModalComponent} from "./confirm-reservation-modal/confirm-reservation-modal.component";
+import {CancelReservationModalComponent} from "./cancel-reservation-modal/cancel-reservation-modal.component";
 
 declare var bootstrap: any;
 
@@ -106,27 +108,40 @@ export class TicketComponent implements OnInit{
     const ticket = this.tickets.find(t => t.id === ticketId);
     if (!ticket) return;
 
-    // Modal pour choisir le mode de paiement
-    const modePaiement = prompt(`Confirmer la réservation de ${ticket.clientPrenom} ${ticket.clientNom}\n\nMode de paiement:\n1. ESPECES\n2. CARTE_BANCAIRE\n3. MOBILE\n\nEntrez le numéro (1-3):`);
+    // Ouvrir le modal de confirmation
+    const modalRef = this.modalService.open(ConfirmReservationModalComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
 
-    const modes = ['', 'ESPECES', 'CARTE_BANCAIRE', 'MOBILE'];
-    const selectedMode = modes[parseInt(modePaiement || '0')] || 'ESPECES';
+    // Passer les données du ticket au modal
+    modalRef.componentInstance.ticketData = {
+      id: ticket.id,
+      numero: ticket.numero,
+      clientNom: ticket.clientNom,
+      clientPrenom: ticket.clientPrenom,
+      clientContact: ticket.clientContact,
+      seatNumber: ticket.seatNumber,
+      trajet: `${ticket.trajet?.villeDepart} → ${ticket.trajet?.villeArrive}`,
+      prix: ticket.prix,
+      date: ticket.date,
+      heureDepart: ticket.heureDepart,
+      dateLimitePaiement: ticket.dateLimitePaiement
+    };
 
-    if (modePaiement && ['1', '2', '3'].includes(modePaiement)) {
-      this.ticketService.confirmReservation(ticketId, selectedMode).subscribe({
-        next: (data) => {
-          showSuccess('Réservation confirmée avec succès !');
+    // Gérer la fermeture du modal
+    modalRef.result.then(
+      (result) => {
+        if (result && result.success) {
+          // Recharger la liste des tickets
           this.loadTickets();
-
-          if (confirm('Voulez-vous télécharger le reçu PDF maintenant ?')) {
-            this.downloadPdf(ticketId);
-          }
-        },
-        error: (error) => {
-          showHttpError(error);
         }
-      });
-    }
+      },
+      (reason) => {
+        console.log('Modal fermé sans confirmation:', reason);
+      }
+    );
   }
 
   useTicket(ticketId: number): void {
@@ -147,35 +162,48 @@ export class TicketComponent implements OnInit{
   }
 
   confirmCancelTicket(ticket: Ticket): void {
-    const typeText = ticket.typeTransaction === 'RESERVATION' ? 'réservation' : 'ticket';
-    const refundText = ticket.status === 'PAYE' ? '\nUne place sera libérée dans le voyage.' : '';
+    // Ouvrir le modal d'annulation
+    const modalRef = this.modalService.open(CancelReservationModalComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
 
-    const confirmMessage = `Êtes-vous sûr de vouloir annuler cette ${typeText} ?\n\n` +
-      `Numéro: ${ticket.numero}\n` +
-      `Client: ${ticket.clientPrenom} ${ticket.clientNom}\n` +
-      `${refundText}\n\nCette action ne peut pas être annulée.`;
+    // Passer les données du ticket au modal
+    modalRef.componentInstance.ticketData = {
+      id: ticket.id,
+      numero: ticket.numero,
+      clientNom: ticket.clientNom,
+      clientPrenom: ticket.clientPrenom,
+      clientContact: ticket.clientContact,
+      seatNumber: ticket.seatNumber,
+      trajet: `${ticket.trajet?.villeDepart} → ${ticket.trajet?.villeArrive}`,
+      date: ticket.date,
+      heureDepart: ticket.heureDepart
+    };
 
-    if (confirm(confirmMessage)) {
-      this.ticketService.cancelTicket(ticket.id!).subscribe({
-        next: (data) => {
-          showSuccess(`${typeText.charAt(0).toUpperCase() + typeText.slice(1)} annulée avec succès`);
+    // Gérer la fermeture du modal
+    modalRef.result.then(
+      (result) => {
+        if (result && result.success) {
+          // Recharger la liste des tickets
           this.loadTickets();
-        },
-        error: (error) => {
-          showHttpError(error);
         }
-      });
-    }
+      },
+      (reason) => {
+        console.log('Modal fermé sans annulation:', reason);
+      }
+    );
   }
 
-  downloadPdf(ticketId: number): void {
-    this.downloadingTicketId = ticketId;
-    this.ticketService.downloadTicketPdf(ticketId).subscribe({
+  downloadPdf(ticket: any): void {
+    this.downloadingTicketId = ticket.id;
+    this.ticketService.downloadTicketPdf(ticket.id).subscribe({
       next: (pdfBlob) => {
         const url = window.URL.createObjectURL(pdfBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `ticket-${ticketId}.pdf`;
+        link.download = `ticket-${ticket.numero}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

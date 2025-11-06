@@ -41,8 +41,14 @@
           </div>
           <div class="col-md-4 text-end">
             <div class="action-buttons">
-              <button class="btn btn-outline-primary me-2" (click)="printColis()">
+              <button class="btn btn-outline-primary me-2" (click)="printColis(colis)">
                 <i class="ri-printer-line me-1"></i>Imprimer
+                <span *ngIf="downloadingId !== colis.id">
+                              <i class="ri-download-line"></i>
+                            </span>
+                <span *ngIf="downloadingId === colis.id" class="spinner-border spinner-border-sm" role="status">
+                              <span class="visually-hidden">Téléchargement...</span>
+                            </span>
               </button>
               <button class="btn btn-primary" (click)="editColis()">
                 <i class="ri-edit-line me-1"></i>Modifier

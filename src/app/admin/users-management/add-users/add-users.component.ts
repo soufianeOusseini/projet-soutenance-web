@@ -4,10 +4,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
 import {AgencyService} from "../../../services/agency.service";
-import {showHttpError} from "../../../utils/message.util";
+import {showHttpError, showSuccess} from "../../../utils/message.util";
 import {AgencyModel} from "../../../models/agency";
 import {takeUntil} from "rxjs";
 import {AuthService} from "../../../auth/service/auth.service";
+import {RoleService} from "../../../services/role.service";
+import {Role} from "../../../models/role";
 @Component({
   selector: 'app-add-users',
   standalone: false,
@@ -16,6 +18,7 @@ import {AuthService} from "../../../auth/service/auth.service";
 })
 export class AddUsersComponent implements OnInit{
   agencies: AgencyModel[] = [];
+  roles: Role[] = []
   formGroup: FormGroup;
   isSubmitting = false;
   @Input() user: User | null = null;
@@ -27,12 +30,14 @@ export class AddUsersComponent implements OnInit{
     private userService: UserService,
     private agencyService: AgencyService,
     private authService: AuthService,
+    private roleService: RoleService
   ) {
     this.formGroup = this.createFormGroup();
   }
 
   ngOnInit(): void {
     this.loadAgencies()
+    this.getAllRole()
     this.loadUserData()
     if (this.user) {
       this.populateForm();
@@ -49,6 +54,19 @@ export class AddUsersComponent implements OnInit{
           console.error('Erreur lors du chargement des données utilisateur:', error);
         }
       });
+  }
+
+  getAllRole(){
+    this.roleService.getAllRoles().subscribe(
+      {
+        next: (data) =>{
+          this.roles = data
+        },
+        error: (error) => {
+          showHttpError(error);
+        }
+      }
+    )
   }
 
   shouldShowAgencySelect(): boolean {
@@ -113,7 +131,7 @@ export class AddUsersComponent implements OnInit{
         email: formData.email,
         phone: formData.phone,
         profile: formData.profile,
-        username: this.generateUsername(formData.firstName, formData.lastName),
+        username: formData.email,
         password: this.generateTemporaryPassword(),
         agencyId: formData.agencyId || this.currentUser?.agencyId,
       };
@@ -128,10 +146,12 @@ export class AddUsersComponent implements OnInit{
             'Utilisateur modifié avec succès' :
             'Utilisateur créé avec succès';
           this.activeModal.close(response);
+          showSuccess(message)
         },
         error: (error) => {
           console.error('Erreur lors de la sauvegarde:', error);
           this.isSubmitting = false;
+          showHttpError(error)
         },
         complete: () => {
           this.isSubmitting = false;
@@ -155,14 +175,8 @@ export class AddUsersComponent implements OnInit{
     });
   }
 
-  private generateUsername(firstName: string, lastName: string): string {
-    const cleanFirstName = firstName.toLowerCase().replace(/\s+/g, '');
-    const cleanLastName = lastName.toLowerCase().replace(/\s+/g, '');
-    return `${cleanFirstName}.${cleanLastName}`;
-  }
 
   private generateTemporaryPassword(): string {
-    // Génère un mot de passe temporaire de 8 caractères
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < 8; i++) {
@@ -171,7 +185,6 @@ export class AddUsersComponent implements OnInit{
     return result;
   }
 
-  // Getter pour faciliter l'accès aux contrôles du formulaire
   get f() {
     return this.formGroup.controls;
   }

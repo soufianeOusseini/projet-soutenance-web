@@ -19,7 +19,6 @@ export class AuthService {
   readonly AUTH_PATH = 'http://localhost:8080/api/authentication';
   jwtHelper = new JwtHelperService();
 
-  // Utiliser BehaviorSubject pour les rôles
   private currentUserRolesSubject: BehaviorSubject<Role[]> = new BehaviorSubject<Role[]>([]);
   public currentUserRoles$: Observable<Role[]> = this.currentUserRolesSubject.asObservable();
 
@@ -33,46 +32,170 @@ export class AuthService {
   private refreshTokenInProgress = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private tokenExpirationTimer: any;
+  private userLoadedFromStorage = false;
 
   constructor(
     private httpClient: HttpClient,
     private router: Router
   ) {
-    this.initializeSignals();
-    this.setupTokenExpirationTimer();
-    this.loadUserFromToken();
+    this.initializeAuth();
   }
 
-  private initializeSignals(): void {
-    try {
-      this.isConnected.set(this.isAuthenticated());
-      this.username.set(this.getUsername());
-      this.hasAdminRole.set(this.isAdmin());
-    } catch (error) {
-      console.error('Erreur lors de l\'initialisation des signaux:', error);
-      this.isConnected.set(false);
-      this.username.set('');
-      this.hasAdminRole.set(false);
+  /**
+   * Initialisation SANS appel HTTP pour éviter la dépendance circulaire
+   */
+  private initializeAuth(): void {
+    console.log('🔄 Initialisation AuthService...');
+
+    const token = this.getToken();
+    const refreshToken = this.getRefreshToken();
+
+    // Pas de token du tout
+    if (!token) {
+      console.log('ℹ️ Aucun token trouvé');
+      this.initializeSignals();
+      return;
+    }
+
+    // Vérifier la validité du token
+    const isExpired = this.isTokenExpired(token);
+
+    if (isExpired) {
+      console.warn('⚠️ Token expiré détecté');
+
+      // Si on a un refresh token, on va juste setup les signaux
+      // Le refresh se fera lors du premier appel HTTP via l'interceptor
+      if (refreshToken) {
+        console.log('ℹ️ Refresh token disponible - sera utilisé lors du prochain appel');
+        this.initializeSignals();
+        this.loadRolesFromStorage(); // Charger seulement depuis localStorage
+      } else {
+        console.warn('⚠️ Pas de refresh token disponible');
+        this.cleanupInvalidSession();
+      }
+    } else {
+      // Token valide
+      console.log('✅ Token valide trouvé');
+      this.initializeSignals();
+      this.setupTokenExpirationTimer();
+      this.loadRolesFromStorage(); // Charger seulement depuis localStorage
     }
   }
 
   /**
-   * Charge les informations utilisateur depuis le token au démarrage
+   * Charge les rôles uniquement depuis localStorage (pas d'appel HTTP)
+   * Évite la dépendance circulaire au démarrage
    */
-  private loadUserFromToken(): void {
+  private loadRolesFromStorage(): void {
+    try {
+      const rolesStr = localStorage.getItem('roles');
+      if (rolesStr) {
+        const roleNames = JSON.parse(rolesStr);
+        // Créer des objets Role simplifiés depuis les noms
+        const roles: Role[] = roleNames.map((name: string) => ({ name } as Role));
+        this.currentUserRolesSubject.next(roles);
+        console.log('✅ Rôles chargés depuis localStorage:', roleNames);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des rôles:', error);
+    }
+  }
+
+  /**
+   * Méthode publique pour charger l'utilisateur complet
+   * À appeler depuis un composant après l'initialisation
+   */
+  public ensureUserLoaded(): Observable<User> {
+    // Si déjà chargé, retourner l'utilisateur actuel
+    if (this.userLoadedFromStorage && this.currentUserSubject.value) {
+      return of(this.currentUserSubject.value);
+    }
+
+    // Sinon charger depuis l'API
     if (this.isAuthenticated()) {
-      this.getCurrentUser().subscribe({
-        next: (user) => {
+      return this.getCurrentUser().pipe(
+        tap((user) => {
           this.currentUserSubject.next(user);
           this.currentUserRolesSubject.next(user.roles || []);
-          console.log('✅ Utilisateur chargé depuis le token:', user);
-          console.log('🔐 Rôles chargés:', user.roles);
-        },
-        error: (error) => {
+          this.userLoadedFromStorage = true;
+
+          console.log('✅ Utilisateur chargé:', {
+            username: user.username,
+            roles: user.roles?.map(r => r.name)
+          });
+        }),
+        catchError((error) => {
           console.error('❌ Erreur lors du chargement de l\'utilisateur:', error);
-          this.logout();
-        }
+          if (error.status === 401) {
+            this.logout();
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+
+    return throwError(() => new Error('Non authentifié'));
+  }
+
+  /**
+   * Vérifie si le token est expiré avec une marge de sécurité
+   */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
+
+      if (!expirationDate) {
+        console.warn('⚠️ Impossible de récupérer la date d\'expiration');
+        return true;
+      }
+
+      const now = new Date();
+      // Ajouter une marge de 5 minutes (300000 ms)
+      const expirationWithMargin = new Date(expirationDate.getTime() - 300000);
+
+      const isExpired = now >= expirationWithMargin;
+
+      console.log('🕐 Vérification expiration:', {
+        now: now.toISOString(),
+        expiration: expirationDate.toISOString(),
+        expirationWithMargin: expirationWithMargin.toISOString(),
+        isExpired
       });
+
+      return isExpired;
+    } catch (error) {
+      console.error('❌ Erreur lors de la vérification d\'expiration:', error);
+      return true;
+    }
+  }
+
+  private cleanupInvalidSession(): void {
+    console.log('🧹 Nettoyage de la session invalide');
+    localStorage.removeItem('token');
+    localStorage.removeItem('roles');
+    this.currentUserSubject.next(null);
+    this.currentUserRolesSubject.next([]);
+    this.userLoadedFromStorage = false;
+    this.initializeSignals();
+  }
+
+  private initializeSignals(): void {
+    try {
+      const authenticated = this.isAuthenticated();
+      this.isConnected.set(authenticated);
+      this.username.set(authenticated ? this.getUsername() : '');
+      this.hasAdminRole.set(authenticated ? this.isAdmin() : false);
+
+      console.log('📊 Signaux initialisés:', {
+        isConnected: authenticated,
+        username: this.username(),
+        hasAdminRole: this.hasAdminRole()
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'initialisation des signaux:', error);
+      this.isConnected.set(false);
+      this.username.set('');
+      this.hasAdminRole.set(false);
     }
   }
 
@@ -91,6 +214,12 @@ export class AuthService {
     return userPermissions.includes('ROLE_ADMIN') || userPermissions.includes('ROLE_SUPER_ADMIN');
   }
 
+  public isAdminCompany(): boolean {
+    const userPermissions = this.getUserPermissions();
+    return userPermissions.includes('ROLE_COMPANY_ADMIN') || userPermissions.includes('ROLE_SUPER_ADMIN');
+  }
+
+
   getUsername() {
     if (this.isAuthenticated()) {
       const token = this.getToken();
@@ -107,7 +236,9 @@ export class AuthService {
     if (!token || token.split('.').length !== 3) {
       return false;
     }
-    return !this.jwtHelper.isTokenExpired(token);
+
+    // Utiliser notre méthode avec marge
+    return !this.isTokenExpired(token);
   }
 
   getToken(): string | null {
@@ -117,7 +248,7 @@ export class AuthService {
         const parsed = JSON.parse(tokenObject);
         return parsed.accessToken || null;
       } catch (e) {
-        console.error('Erreur de parsing du token :', e);
+        console.error('❌ Erreur de parsing du token :', e);
         return null;
       }
     }
@@ -131,7 +262,7 @@ export class AuthService {
         const parsed = JSON.parse(tokenObject);
         return parsed.refreshToken || null;
       } catch (e) {
-        console.error('Erreur de parsing du refresh token :', e);
+        console.error('❌ Erreur de parsing du refresh token :', e);
         return null;
       }
     }
@@ -148,14 +279,27 @@ export class AuthService {
       try {
         const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
         if (expirationDate) {
-          const timeUntilExpiry = expirationDate.getTime() - new Date().getTime();
-          const refreshTime = Math.max(timeUntilExpiry - 30000, 0);
+          const now = new Date().getTime();
+          const timeUntilExpiry = expirationDate.getTime() - now;
+
+          // Rafraîchir 5 minutes avant l'expiration
+          const refreshTime = Math.max(timeUntilExpiry - 300000, 0);
+
+          console.log('⏰ Timer configuré:', {
+            expiresIn: Math.round(timeUntilExpiry / 1000 / 60) + ' minutes',
+            refreshIn: Math.round(refreshTime / 1000 / 60) + ' minutes'
+          });
 
           this.tokenExpirationTimer = setTimeout(() => {
+            console.log('⏰ Tentative de refresh automatique...');
+
             if (this.isAuthenticated()) {
               this.refreshToken().subscribe({
-                next: () => console.log('Token rafraîchi avec succès'),
-                error: () => this.handleSessionExpired()
+                next: () => console.log('✅ Token rafraîchi automatiquement'),
+                error: () => {
+                  console.error('❌ Échec du refresh automatique');
+                  this.handleSessionExpired();
+                }
               });
             } else {
               this.handleSessionExpired();
@@ -163,7 +307,7 @@ export class AuthService {
           }, refreshTime);
         }
       } catch (error) {
-        console.error('Erreur lors de la configuration du timer d\'expiration:', error);
+        console.error('❌ Erreur lors de la configuration du timer:', error);
       }
     }
   }
@@ -172,10 +316,12 @@ export class AuthService {
     const refreshToken = this.getRefreshToken();
 
     if (!refreshToken) {
+      console.error('❌ Refresh token non disponible');
       return throwError(() => new Error('Refresh token non disponible'));
     }
 
     if (this.refreshTokenInProgress) {
+      console.log('⏳ Refresh déjà en cours, attente...');
       return this.refreshTokenSubject.pipe(
         switchMap(token => {
           if (token) {
@@ -187,6 +333,7 @@ export class AuthService {
       );
     }
 
+    console.log('🔄 Début du refresh token...');
     this.refreshTokenInProgress = true;
     this.refreshTokenSubject.next(null);
 
@@ -196,24 +343,26 @@ export class AuthService {
       { responseType: 'json' }
     ).pipe(
       tap((tokens: TokenResponse) => {
+        console.log('✅ Nouveaux tokens reçus');
         localStorage.setItem('token', JSON.stringify(tokens));
         this.resetSignals();
         this.setupTokenExpirationTimer();
-        this.loadUserFromToken();
         this.refreshTokenSubject.next(tokens);
       }),
       catchError((error) => {
-        console.error('Erreur lors du rafraîchissement du token:', error);
+        console.error('❌ Erreur lors du refresh:', error);
         this.handleSessionExpired();
         return throwError(() => error);
       }),
       finalize(() => {
+        console.log('🏁 Refresh terminé');
         this.refreshTokenInProgress = false;
       })
     );
   }
 
   private handleSessionExpired(): void {
+    console.warn('⚠️ Session expirée - déconnexion');
     this.logout();
     this.router.navigate(['/auth/login'], {
       queryParams: { expired: 'true' }
@@ -227,29 +376,30 @@ export class AuthService {
   }
 
   public login(user: User): Observable<any> {
+    console.log('🔐 Tentative de connexion...');
+
     return this.httpClient
       .post<TokenResponse>(this.AUTH_PATH + '/login', user)
       .pipe(
         tap((tokens) => {
-          // Stocker le token
+          console.log('✅ Tokens reçus');
           localStorage.setItem('token', JSON.stringify(tokens));
-          console.log('✅ Token stocké:', tokens);
         }),
         switchMap(() => {
-          // Charger l'utilisateur complet avec ses rôles
           return this.getCurrentUser();
         }),
         tap((currentUser) => {
-          // Mettre à jour les subjects
           this.currentUserSubject.next(currentUser);
           this.currentUserRolesSubject.next(currentUser.roles || []);
+          this.userLoadedFromStorage = true;
 
-          // Stocker les rôles dans localStorage pour les permissions
           const roleNames = currentUser.roles?.map(r => r.name) || [];
           localStorage.setItem('roles', JSON.stringify(roleNames));
 
-          console.log('✅ Utilisateur connecté:', currentUser);
-          console.log('🔐 Rôles:', currentUser.roles);
+          console.log('✅ Connexion réussie:', {
+            username: currentUser.username,
+            roles: roleNames
+          });
 
           this.resetSignals();
           this.setupTokenExpirationTimer();
@@ -270,6 +420,8 @@ export class AuthService {
   }
 
   logout() {
+    console.log('👋 Déconnexion...');
+
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
       this.tokenExpirationTimer = null;
@@ -278,12 +430,11 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
 
-    // Réinitialiser les subjects
     this.currentUserSubject.next(null);
     this.currentUserRolesSubject.next([]);
+    this.userLoadedFromStorage = false;
 
     this.resetSignals();
-    console.log('👋 Déconnexion effectuée');
   }
 
   getCurrentUser(): Observable<User> {
@@ -313,6 +464,10 @@ export class AuthService {
       return true;
     }
 
+    if(this.isAdminCompany()){
+      return true;
+    }
+
     const userPermissions = this.getUserPermissions();
     return userPermissions.includes(permission);
   }
@@ -323,38 +478,26 @@ export class AuthService {
       try {
         return JSON.parse(roles);
       } catch (e) {
-        console.error('Erreur de parsing des permissions:', e);
+        console.error('❌ Erreur de parsing des permissions:', e);
         return [];
       }
     }
     return [];
   }
 
-  /**
-   * Retourne un Observable des rôles de l'utilisateur
-   */
   getUserRoles(): Observable<Role[]> {
     return this.currentUserRoles$;
   }
 
-  /**
-   * Retourne la valeur actuelle des rôles (synchrone)
-   */
   getCurrentUserRoles(): Role[] {
     return this.currentUserRolesSubject.value;
   }
 
-  /**
-   * Vérifie si l'utilisateur a un rôle spécifique
-   */
   hasRole(roleName: string): boolean {
     const roles = this.currentUserRolesSubject.value;
     return roles.some(role => role.name === roleName);
   }
 
-  /**
-   * Vérifie si l'utilisateur a au moins un des rôles requis
-   */
   hasAnyRole(roleNames: string[]): boolean {
     const roles = this.currentUserRolesSubject.value;
     return roles.some(role => roleNames.includes(role.name!));

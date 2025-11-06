@@ -42,7 +42,7 @@
         <p class="stat-change negative">
           <i class="bi bi-caret-down-fill"></i>
         </p>
-        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalEarnings | currency }}</h2>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalEarnings }} FCFA</h2>
         <p class="stat-label">Revenus</p>
       </div>
     </div>
@@ -98,11 +98,11 @@
         <div class="revenue-stats">
           <div class="revenue-item">
             <span class="revenue-label">Aujourd'hui</span>
-            <h3>{{ dashboard?.revenus?.revenusToday | currency }}</h3>
+            <h3>{{ dashboard?.revenus?.revenusToday }} FCFA</h3>
           </div>
           <div class="revenue-item">
             <span class="revenue-label">Ce mois</span>
-            <h3>{{ dashboard?.revenus?.revenusThisMonth | currency }}</h3>
+            <h3>{{ dashboard?.revenus?.revenusThisMonth  }} FCFA</h3>
             <div class="badge badge-success">+ {{ dashboard?.revenus?.percentageMonthChange! | number:'1.2-2' }}%</div>
           </div>
         </div>

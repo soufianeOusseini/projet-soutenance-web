@@ -1,0 +1,136 @@
+<div class="modal-header bg-danger text-white">
+  <div class="d-flex align-items-center">
+    <i class="ri-close-circle-line me-2" style="font-size: 2rem;"></i>
+    <div>
+      <h6 class="modal-title mb-0" id="cancelReservationLabel">Annuler la réservation</h6>
+      <small class="opacity-75">Cette action est irréversible</small>
+    </div>
+  </div>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <!-- Informations de la réservation -->
+  <div class="card mb-4 border-danger">
+    <div class="card-header bg-danger bg-opacity-10">
+      <h6 class="mb-0 text-danger">
+        <i class="ri-information-line me-2"></i>
+        Informations de la réservation
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <small class="text-muted d-block">Client</small>
+          <strong class="text-dark">{{ ticketData?.clientPrenom }} {{ ticketData?.clientNom }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Contact</small>
+          <strong class="text-dark">{{ ticketData?.clientContact }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">N° Réservation</small>
+          <strong class="text-dark">{{ ticketData?.numero }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Siège</small>
+          <strong class="text-dark">N° {{ ticketData?.seatNumber }}</strong>
+        </div>
+        <div class="col-md-12">
+          <small class="text-muted d-block">Trajet</small>
+          <strong class="text-dark">{{ ticketData?.trajet }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Date de départ</small>
+          <strong class="text-dark">{{ ticketData?.date | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Heure</small>
+          <strong class="text-dark">{{ ticketData?.heureDepart }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulaire de raison d'annulation -->
+  <form [formGroup]="formGroup">
+    <div class="card border-warning">
+      <div class="card-header bg-warning bg-opacity-10">
+        <h6 class="mb-0 text-warning">
+          <i class="ri-file-list-line me-2"></i>
+          Motif d'annulation
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="motifAnnulation" class="form-label">Raison de l'annulation *</label>
+          <select
+            class="form-control"
+            id="motifAnnulation"
+            formControlName="motifAnnulation"
+            [class.is-invalid]="isFieldInvalid('motifAnnulation')">
+            <option value="">-- Sélectionner un motif --</option>
+            <option value="DEMANDE_CLIENT">Demande du client</option>
+            <option value="PAIEMENT_NON_EFFECTUE">Paiement non effectué</option>
+            <option value="CHANGEMENT_PROGRAMME">Changement de programme</option>
+            <option value="ERREUR_RESERVATION">Erreur de réservation</option>
+            <option value="AUTRE">Autre</option>
+          </select>
+          <div *ngIf="isFieldInvalid('motifAnnulation')" class="invalid-feedback">
+            Veuillez sélectionner un motif d'annulation
+          </div>
+        </div>
+
+        <div class="mb-0" *ngIf="formGroup.get('motifAnnulation')?.value === 'AUTRE'">
+          <label for="commentaire" class="form-label">Commentaire</label>
+          <textarea
+            class="form-control"
+            id="commentaire"
+            formControlName="commentaire"
+            rows="3"
+            placeholder="Précisez le motif d'annulation..."
+            [class.is-invalid]="isFieldInvalid('commentaire')"></textarea>
+          <div *ngIf="isFieldInvalid('commentaire')" class="invalid-feedback">
+            Veuillez préciser le motif
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Alerte d'avertissement -->
+  <div class="alert alert-danger d-flex align-items-start mt-4 mb-0" role="alert">
+    <i class="ri-alarm-warning-line me-2 mt-1"></i>
+    <div>
+      <strong>Attention !</strong>
+      <br>
+      Après validation, la réservation sera définitivement annulée et la place sera libérée.
+      Cette action ne peut pas être annulée.
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer border-0 bg-light">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="activeModal.dismiss('cancel')"
+    [disabled]="isProcessing">
+    <i class="ri-arrow-left-line me-1"></i>
+    Retour
+  </button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    (click)="confirmCancellation()"
+    [disabled]="!canConfirm() || isProcessing">
+    <span *ngIf="!isProcessing">
+      <i class="ri-close-circle-line me-2"></i>
+      Confirmer l'annulation
+    </span>
+    <span *ngIf="isProcessing">
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Annulation en cours...
+    </span>
+  </button>
+</div>

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {TicketService} from "../../../services/ticket.service";
 import {Trajet} from "../../../models/trajet.model";
 import {TrajetService} from "../../../services/trajet.service";
@@ -8,6 +8,7 @@ import {TicketStatus} from "../../../models/enums/ticket-status";
 import {showHttpError, showSuccess} from "../../../utils/message.util";
 import {TripScheduleService} from "../../../services/trip-schedule.service";
 import {TripSchedule} from "../../../models/trip-schedule";
+import {PrintReceiptComponent} from "../print-receipt/print-receipt.component";
 
 @Component({
   selector: 'app-add-ticket-form',
@@ -28,12 +29,19 @@ export class AddTicketFormComponent implements OnInit {
   selectedSchedule: TripSchedule | null = null;
   selectedTransactionType: string = '';
 
+  // Nouvelles propriétés pour la gestion des sièges
+  occupiedSeats: number[] = [];
+  availableSeats: number[] = [];
+  nextAvailableSeat: number | null = null;
+  busCapacity: number = 0;
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private ticketService: TicketService,
     private trajetService: TrajetService,
-    private planningService: TripScheduleService
+    private planningService: TripScheduleService,
+    private modalService: NgbModal,
   ) {
     this.today = new Date().toISOString().split('T')[0];
   }
@@ -51,7 +59,6 @@ export class AddTicketFormComponent implements OnInit {
     this.planningService.getSchedulesByDateRange( startOfMonth.toISOString().split('T')[0],
       endOfMonth.toISOString().split('T')[0]).subscribe({
       next: data => {
-        // Filtrer les planifications passées
         this.tripSchedules = data.filter(schedule => !this.isSchedulePassed(schedule));
       },
       error: error => {
@@ -60,28 +67,16 @@ export class AddTicketFormComponent implements OnInit {
     });
   }
 
-  /**
-   * Vérifie si une planification est déjà passée
-   */
   isSchedulePassed(schedule: TripSchedule): boolean {
     const now = new Date();
-
-    // Créer un objet Date avec la date et l'heure de départ
     const scheduleDateTime = new Date(schedule.dateDepart!);
-
-    // Parser l'heure (format attendu: "HH:mm" ou "HH:mm:ss")
     const timeParts = schedule.heureDepart!.split(':');
     scheduleDateTime.setHours(parseInt(timeParts[0], 10));
     scheduleDateTime.setMinutes(parseInt(timeParts[1], 10));
     scheduleDateTime.setSeconds(timeParts[2] ? parseInt(timeParts[2], 10) : 0);
-
-    // Comparer avec l'heure actuelle
     return scheduleDateTime <= now;
   }
 
-  /**
-   * Vérifie si une planification est disponible (non passée et places disponibles)
-   */
   isScheduleAvailable(schedule: TripSchedule): boolean {
     return !this.isSchedulePassed(schedule) && schedule.nombrePlacesDisponibles! > 0;
   }
@@ -89,8 +84,6 @@ export class AddTicketFormComponent implements OnInit {
   onTransactionTypeChange(type: string): void {
     this.selectedTransactionType = type;
     this.formGroup.patchValue({ typeTransaction: type });
-
-    // Réinitialiser les validateurs selon le type
     this.updateFormValidators();
   }
 
@@ -98,10 +91,8 @@ export class AddTicketFormComponent implements OnInit {
     const modePaiementControl = this.formGroup.get('modePaiement');
 
     if (this.selectedTransactionType === 'ACHAT') {
-      // Pour les achats, le mode de paiement est obligatoire
       modePaiementControl?.setValidators([Validators.required]);
     } else {
-      // Pour les réservations, pas de mode de paiement requis
       modePaiementControl?.clearValidators();
     }
 
@@ -114,7 +105,6 @@ export class AddTicketFormComponent implements OnInit {
       this.selectedSchedule = this.tripSchedules.find(s => s.id == scheduleId) || null;
 
       if (this.selectedSchedule) {
-        // Vérifier si la planification est passée
         if (this.isSchedulePassed(this.selectedSchedule)) {
           alert('Cette planification est déjà passée. Veuillez en sélectionner une autre.');
           this.formGroup.patchValue({ scheduleId: '' });
@@ -131,16 +121,85 @@ export class AddTicketFormComponent implements OnInit {
         });
 
         this.placesRestantes = this.selectedSchedule.nombrePlacesDisponibles;
+
+        // Récupérer la capacité du bus et charger les sièges occupés
+        this.busCapacity = this.selectedSchedule.bus?.capacity || 50; // Valeur par défaut si non défini
+        this.loadOccupiedSeats();
       }
     } else {
       this.selectedSchedule = null;
       this.placesRestantes = 0;
+      this.occupiedSeats = [];
+      this.availableSeats = [];
+      this.nextAvailableSeat = null;
       this.formGroup.patchValue({
         prix: 0,
         date: '',
         heureDepart: '',
-        trajetId: null
+        trajetId: null,
+        seatNumber: null
       });
+    }
+  }
+
+  /**
+   * Charge les sièges occupés depuis le backend
+   */
+  loadOccupiedSeats(): void {
+    if (!this.selectedSchedule) return;
+
+    this.ticketService.getOccupiedSeats(
+      this.selectedSchedule.trajet.id,
+      this.selectedSchedule.dateDepart!
+    ).subscribe({
+      next: (occupiedSeats) => {
+        this.occupiedSeats = occupiedSeats;
+        this.calculateAvailableSeats();
+        this.setNextAvailableSeat();
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des sièges occupés:', error);
+      }
+    });
+  }
+
+  /**
+   * Calcule la liste des sièges disponibles
+   */
+  calculateAvailableSeats(): void {
+    this.availableSeats = [];
+    for (let i = 1; i <= this.busCapacity; i++) {
+      if (!this.occupiedSeats.includes(i)) {
+        this.availableSeats.push(i);
+      }
+    }
+  }
+
+  /**
+   * Définit le prochain siège disponible par défaut
+   */
+  setNextAvailableSeat(): void {
+    this.nextAvailableSeat = this.availableSeats.length > 0 ? this.availableSeats[0] : null;
+    if (this.nextAvailableSeat) {
+      this.formGroup.patchValue({ seatNumber: this.nextAvailableSeat });
+    }
+  }
+
+  /**
+   * Vérifie si un siège est disponible
+   */
+  isSeatAvailable(seatNumber: number): boolean {
+    return this.availableSeats.includes(seatNumber);
+  }
+
+  /**
+   * Gère le changement de siège sélectionné
+   */
+  onSeatChange(): void {
+    const selectedSeat = this.formGroup.get('seatNumber')?.value;
+    if (selectedSeat && !this.isSeatAvailable(selectedSeat)) {
+      alert(`Le siège n°${selectedSeat} est déjà occupé. Veuillez en choisir un autre.`);
+      this.setNextAvailableSeat();
     }
   }
 
@@ -157,7 +216,8 @@ export class AddTicketFormComponent implements OnInit {
 
       numero: [''],
       prix: [{ value: 0, disabled: true }],
-      modePaiement: [''], // Validateurs ajoutés dynamiquement
+      modePaiement: [''],
+      seatNumber: [null, [Validators.required, Validators.min(1)]], // Nouveau champ
 
       status: [''],
       heureDepart: [{ value: '', disabled: true }]
@@ -184,18 +244,23 @@ export class AddTicketFormComponent implements OnInit {
       return;
     }
 
-    // Vérification finale avant la soumission
     if (this.isSchedulePassed(this.selectedSchedule)) {
       alert('Cette planification est déjà passée. Impossible de continuer.');
       return;
     }
 
+    // Vérifier que le siège est toujours disponible
+    const selectedSeat = this.formGroup.get('seatNumber')?.value;
+    if (!this.isSeatAvailable(selectedSeat)) {
+      alert(`Le siège n°${selectedSeat} n'est plus disponible. Veuillez en choisir un autre.`);
+      this.loadOccupiedSeats(); // Recharger les sièges
+      return;
+    }
+
     this.isSubmitting = true;
 
-    // Récupérer les valeurs en incluant les champs disabled
     const formValue = { ...this.formGroup.getRawValue() };
 
-    // Créer l'objet TicketDTO
     const ticketData: any = {
       trajetId: formValue.trajetId,
       date: formValue.date,
@@ -203,16 +268,14 @@ export class AddTicketFormComponent implements OnInit {
       prix: formValue.prix,
       numero: formValue.numero,
       typeTransaction: this.selectedTransactionType,
+      seatNumber: formValue.seatNumber, // Nouveau champ
 
-      // Informations client
       clientNom: formValue.clientNom,
       clientPrenom: formValue.clientPrenom,
       clientContact: formValue.clientContact,
 
-      // Paiement (seulement pour les achats)
       modePaiement: this.selectedTransactionType === 'ACHAT' ? formValue.modePaiement : null,
 
-      // Autres champs
       userId: null,
       reservationId: null
     };
@@ -222,15 +285,41 @@ export class AddTicketFormComponent implements OnInit {
         if (this.selectedTransactionType === 'ACHAT') {
           showSuccess('Ticket vendu avec succès !');
 
-          if (confirm('Voulez-vous télécharger le reçu PDF maintenant ?')) {
-            this.downloadTicketPdf(data.id!);
-          }
+          this.activeModal.close(data);
+
+          // Ouvrir le modal de confirmation
+          const modalRef = this.modalService.open(PrintReceiptComponent, {
+            size: 'md',
+            centered: true,
+            backdrop: 'static'
+          });
+
+          // Passer les données du ticket au modal
+          modalRef.componentInstance.ticketData = {
+            id: data.id,
+            numero: data.numero,
+            seatNumber: data.seatNumber,
+            trajet: `${this.selectedSchedule?.trajet.villeDepart} → ${this.selectedSchedule?.trajet.villeArrive}`,
+            prix: data.prix,
+            date: data.date,
+            heureDepart: data.heureDepart
+          };
+
+          // Gérer la fermeture du modal
+          modalRef.result.then(
+            (result) => {
+              console.log('Modal fermé avec:', result);
+            },
+            (reason) => {
+              console.log('Modal rejeté:', reason);
+            }
+          );
         } else {
           showSuccess('Réservation créée avec succès !');
+          this.activeModal.close(data);
         }
 
         this.isSubmitting = false;
-        this.activeModal.close(data);
       },
       error: (error) => {
         showHttpError(error);
@@ -267,6 +356,9 @@ export class AddTicketFormComponent implements OnInit {
     if (this.selectedSchedule.nombrePlacesDisponibles! <= 0) return false;
     if (this.isSchedulePassed(this.selectedSchedule)) return false;
 
+    const selectedSeat = this.formGroup.get('seatNumber')?.value;
+    if (!selectedSeat || !this.isSeatAvailable(selectedSeat)) return false;
+
     return true;
   }
 
@@ -276,6 +368,9 @@ export class AddTicketFormComponent implements OnInit {
     this.selectedTrajet = null;
     this.selectedSchedule = null;
     this.placesRestantes = 0;
+    this.occupiedSeats = [];
+    this.availableSeats = [];
+    this.nextAvailableSeat = null;
     this.generateTicketNumber();
     this.updateFormValidators();
   }
@@ -294,4 +389,5 @@ export class AddTicketFormComponent implements OnInit {
     if (this.placesRestantes! > 3) return 'bg-warning';
     return 'bg-danger';
   }
+
 }

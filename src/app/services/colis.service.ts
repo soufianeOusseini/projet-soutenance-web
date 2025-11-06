@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {CompanieModel} from "../models/companie.model";
 import {Observable} from "rxjs";
 import {Colis} from "../models/colis.model";
@@ -44,6 +44,17 @@ export class ColisService {
    */
   getAvailableStatusTransitions(id: number): Observable<string[]> {
     return this.http.get<string[]>(`${this.url}/${id}/available-status-transitions`);
+  }
+
+  print(id: number): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Accept': 'application/pdf'
+    });
+
+    return this.http.get(`${this.url}/${id}/pdf`, {
+      headers: headers,
+      responseType: 'blob'
+    });
   }
 }
 

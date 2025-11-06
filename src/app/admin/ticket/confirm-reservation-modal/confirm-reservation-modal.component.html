@@ -1,0 +1,145 @@
+<div class="modal-header bg-warning text-white">
+  <div class="d-flex align-items-center">
+    <i class="ri-bookmark-line me-2" style="font-size: 2rem;"></i>
+    <div>
+      <h6 class="modal-title mb-0" id="confirmReservationLabel">Confirmer la réservation</h6>
+      <small class="opacity-75">Transformation en ticket payé</small>
+    </div>
+  </div>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body">
+  <!-- Informations du client -->
+  <div class="card mb-4 border-warning">
+    <div class="card-header bg-warning bg-opacity-10">
+      <h6 class="mb-0 text-warning">
+        <i class="ri-user-line me-2"></i>
+        Informations de la réservation
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <small class="text-muted d-block">Client</small>
+          <strong class="text-dark">{{ ticketData?.clientPrenom }} {{ ticketData?.clientNom }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Contact</small>
+          <strong class="text-dark">{{ ticketData?.clientContact }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">N° Réservation</small>
+          <strong class="text-dark">{{ ticketData?.numero }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Siège</small>
+          <strong class="text-dark">N° {{ ticketData?.seatNumber }}</strong>
+        </div>
+        <div class="col-md-12">
+          <small class="text-muted d-block">Trajet</small>
+          <strong class="text-dark">{{ ticketData?.trajet }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Date de départ</small>
+          <strong class="text-dark">{{ ticketData?.date | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="col-md-6">
+          <small class="text-muted d-block">Heure</small>
+          <strong class="text-dark">{{ ticketData?.heureDepart }}</strong>
+        </div>
+        <div class="col-md-12">
+          <small class="text-muted d-block">Montant à payer</small>
+          <h4 class="mb-0 text-success">{{ ticketData?.prix | currency:'XOF':'symbol':'1.0-0' }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerte date limite -->
+  <div class="alert alert-warning d-flex align-items-start mb-4" role="alert" *ngIf="ticketData?.dateLimitePaiement">
+    <i class="ri-time-line me-2 mt-1"></i>
+    <div>
+      <strong>Date limite de paiement :</strong>
+      <br>
+      {{ ticketData?.dateLimitePaiement | date:'dd/MM/yyyy à HH:mm' }}
+    </div>
+  </div>
+
+  <!-- Formulaire de paiement -->
+  <form [formGroup]="formGroup">
+    <div class="card border-primary">
+      <div class="card-header bg-primary bg-opacity-10">
+        <h6 class="mb-0 text-primary">
+          <i class="ri-money-dollar-circle-line me-2"></i>
+          Mode de paiement
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="modePaiement" class="form-label">Sélectionnez le mode de paiement *</label>
+          <select
+            class="form-control form-control"
+            id="modePaiement"
+            formControlName="modePaiement"
+            [class.is-invalid]="isFieldInvalid('modePaiement')">
+            <option value="">-- Choisir un mode de paiement --</option>
+            <option value="ESPECES">
+              Espèces
+            </option>
+            <option value="MOBILE">
+              Paiement mobile (TMoney, Flooz)
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('modePaiement')" class="invalid-feedback">
+            Veuillez sélectionner un mode de paiement
+          </div>
+        </div>
+
+        <!-- Info supplémentaire selon le mode -->
+        <div *ngIf="formGroup.get('modePaiement')?.value" class="alert alert-info mb-0">
+          <i class="ri-information-line me-2"></i>
+          <span *ngIf="formGroup.get('modePaiement')?.value === 'ESPECES'">
+            Le client doit payer <strong>{{ ticketData?.prix }} F CFA</strong> en espèces.
+          </span>
+          <span *ngIf="formGroup.get('modePaiement')?.value === 'MOBILE'">
+            Le client doit effectuer le paiement mobile de <strong>{{ ticketData?.prix }} F CFA</strong>.
+          </span>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Note importante -->
+  <div class="alert alert-success d-flex align-items-start mt-4 mb-0" role="alert">
+    <i class="ri-checkbox-circle-line me-2 mt-1"></i>
+    <div>
+      Après validation, la réservation sera transformée en ticket payé et la place sera définitivement occupée.
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer border-0 bg-light">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="activeModal.dismiss('cancel')"
+    [disabled]="isProcessing">
+    <i class="ri-close-line me-1"></i>
+    Annuler
+  </button>
+  <button
+    type="button"
+    class="btn btn-success"
+    (click)="confirmPayment()"
+    [disabled]="!canConfirm() || isProcessing">
+    <span *ngIf="!isProcessing">
+      <i class="ri-check-line me-2"></i>
+      Confirmer le paiement
+    </span>
+    <span *ngIf="isProcessing">
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Traitement en cours...
+    </span>
+  </button>
+</div>

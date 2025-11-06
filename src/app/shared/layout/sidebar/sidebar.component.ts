@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
-import {filter, takeUntil} from 'rxjs/operators';
+import {catchError, filter, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {
   DASHBOARD_ACTIONS,
@@ -41,15 +41,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('🚀 SidebarComponent - Initialisation');
 
-    this.authService.getUserRoles().pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((roles: Role[]) => {
-      this.userRoles = roles;
-      this.initializeMenu();
+    this.authService.ensureUserLoaded().pipe(
+      takeUntil(this.destroy$),
+      catchError(() => {
+        // Si erreur, utiliser les rôles du localStorage
+        return this.authService.getUserRoles();
+      })
+    ).subscribe(() => {
+      // Ensuite écouter les changements de rôles
+      this.authService.getUserRoles().pipe(
+        takeUntil(this.destroy$)
+      ).subscribe((roles: Role[]) => {
+        this.userRoles = roles;
+        this.initializeMenu();
 
-      setTimeout(() => {
-        this.updateActiveMenuItem();
-      }, 100);
+        setTimeout(() => {
+          this.updateActiveMenuItem();
+        }, 100);
+      });
     });
 
     this.currentUrl = this.router.url;
@@ -87,7 +96,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
         actions: DASHBOARD_ACTIONS,
         roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
       },
-
       {
         id: 2,
         icon: 'bi bi-signpost-split',
@@ -200,7 +208,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         text: 'Configurations',
         permission: 'CONFIGURATIONS_READ',
         actions: CONFIGURATIONS_ACTIONS,
-        roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN'],
+        roles: ['ROLE_COMPANY_ADMIN'],
         children: [
           {
             id: 101,
@@ -208,7 +216,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             link: '/admin/my-company',
             icon: 'bi bi-building',
             permission: 'MY_COMPANY_READ',
-            roles: ['ROLE_ADMIN', 'ROLE_COMPANY_ADMIN']
+            roles: ['ROLE_COMPANY_ADMIN']
           }
         ]
       },

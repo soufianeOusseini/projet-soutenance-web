@@ -85,6 +85,23 @@
               </div>
             </div>
           </div>
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="profile" class="form-label">Rôle *</label>
+              <select
+                class="form-control"
+                id="role"
+                formControlName="role">
+                <option value="">Sélectionner un rôle</option>
+                <option *ngFor="let role of roles" [value]="role">
+                  {{ role.name }}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('role')" class="invalid-feedback">
+                Le rôle est obligatoire
+              </div>
+            </div>
+          </div>
           <div class="col-12" *ngIf="shouldShowAgencySelect()">
             <div class="mb-3">
               <label for="agency" class="form-label">Agence</label>

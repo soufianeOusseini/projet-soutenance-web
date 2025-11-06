@@ -137,4 +137,14 @@ export class SubscriptionService {
     console.error('Erreur dans SubscriptionService:', error);
     return throwError(() => error);
   }
+
+  updateAutoRenew(subscriptionId: number, autoRenew: boolean): Observable<Subscription> {
+    return this.http.patch<Subscription>(
+      `${this.apiUrl}/${subscriptionId}/auto-renew`,
+       autoRenew ,
+      this.httpOptions
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
 }
