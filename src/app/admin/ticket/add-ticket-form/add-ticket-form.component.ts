@@ -121,10 +121,10 @@ export class AddTicketFormComponent implements OnInit {
         });
 
         this.placesRestantes = this.selectedSchedule.nombrePlacesDisponibles;
+        this.busCapacity = this.selectedSchedule.bus?.capacite || 50;
 
-        // Récupérer la capacité du bus et charger les sièges occupés
-        this.busCapacity = this.selectedSchedule.bus?.capacity || 50; // Valeur par défaut si non défini
-        this.loadOccupiedSeats();
+        // Charger les sièges occupés pour ce schedule spécifique
+        this.loadOccupiedSeats(scheduleId);
       }
     } else {
       this.selectedSchedule = null;
@@ -142,16 +142,8 @@ export class AddTicketFormComponent implements OnInit {
     }
   }
 
-  /**
-   * Charge les sièges occupés depuis le backend
-   */
-  loadOccupiedSeats(): void {
-    if (!this.selectedSchedule) return;
-
-    this.ticketService.getOccupiedSeats(
-      this.selectedSchedule.trajet.id,
-      this.selectedSchedule.dateDepart!
-    ).subscribe({
+  loadOccupiedSeats(scheduleId: number): void {
+    this.ticketService.getOccupiedSeats(scheduleId).subscribe({
       next: (occupiedSeats) => {
         this.occupiedSeats = occupiedSeats;
         this.calculateAvailableSeats();
@@ -159,10 +151,10 @@ export class AddTicketFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors du chargement des sièges occupés:', error);
+        this.occupiedSeats = [];
       }
     });
   }
-
   /**
    * Calcule la liste des sièges disponibles
    */
@@ -253,7 +245,7 @@ export class AddTicketFormComponent implements OnInit {
     const selectedSeat = this.formGroup.get('seatNumber')?.value;
     if (!this.isSeatAvailable(selectedSeat)) {
       alert(`Le siège n°${selectedSeat} n'est plus disponible. Veuillez en choisir un autre.`);
-      this.loadOccupiedSeats(); // Recharger les sièges
+      this.loadOccupiedSeats(this.selectedSchedule?.id!); // Recharger les sièges
       return;
     }
 

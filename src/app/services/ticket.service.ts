@@ -135,7 +135,8 @@ export class TicketService {
     });
   }
 
-  getOccupiedSeats(trajetId: number, date: string): Observable<number[]> {
-    return this.http.get<number[]>(`${this.apiUrl}/occupied-seats/${trajetId}/${date}`);
+
+  getOccupiedSeats(scheduleId: number): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/occupied-seats/${scheduleId}`);
   }
 }

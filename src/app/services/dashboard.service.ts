@@ -16,6 +16,7 @@ export interface StatistiquesGenerales {
   percentageReservationsChange: number;
   totalColis: number;
   percentageColisChange: number;
+  totalAgencies: number
 }
 
 export interface RevenueByDay {
@@ -56,6 +57,8 @@ export interface Dashboard {
   colisStatistics: ColisStatistics;
   trajetRepartition: TrajetRepartition[];
   activitesRecentes: ActiviteRecente[];
+  isCompanyLevel: boolean,
+  totalAgencies: number
 }
 
 @Injectable({

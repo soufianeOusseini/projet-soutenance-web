@@ -1,6 +1,6 @@
 <div class="dashboard-container" *ngIf="!loading; else loadingTemplate">
   <div class="dashboard-header">
-    <h1>Dashboard</h1>
+    <h1>Dashboard {{ dashboard?.isCompanyLevel ? '- Vue Compagnie' : '- Vue Agence' }}</h1>
     <div class="user-info">
       <span>Bonjour, {{currentUser?.firstName}} {{currentUser?.lastName}}</span>
     </div>
@@ -8,6 +8,20 @@
 
   <!-- Statistiques Générales -->
   <div class="statistiques-section" *ngIf="dashboard?.statistiquesGenerales">
+    <!-- Carte Agences (uniquement pour admin compagnie) -->
+    <div class="stat-card agencies-card" *ngIf="dashboard?.isCompanyLevel && dashboard?.statistiquesGenerales?.totalAgencies !== null">
+      <div class="stat-icon">
+        <i class="bi bi-building"></i>
+      </div>
+      <div class="stat-content">
+        <p class="stat-change positive">
+          <i class="bi bi-caret-up-fill"></i>
+        </p>
+        <h2 class="stat-value">{{ dashboard?.statistiquesGenerales?.totalAgencies | number }}</h2>
+        <p class="stat-label">Agences</p>
+      </div>
+    </div>
+
     <div class="stat-card trips-card">
       <div class="stat-icon">
         <i class="bi bi-car-front"></i>
